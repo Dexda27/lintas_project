@@ -1,0 +1,305 @@
+<!-- resources/views/closures/connections.blade.php -->
+@extends('layouts.app')
+
+@section('title', 'Manage Connections - ' . $closure->name)
+
+@section('content')
+<div class="mb-8">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Manage Connections</h1>
+            <p class="text-gray-600 mt-2">{{ $closure->name }} ({{ $closure->closure_id }})</p>
+        </div>
+        <div class="flex space-x-2">
+            <button onclick="showConnectModal()" 
+                    class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 {{ $closure->available_capacity <= 0 ? 'opacity-50 cursor-not-allowed' : '' }}"
+                    {{ $closure->available_capacity <= 0 ? 'disabled' : '' }}>
+                Connect Cores
+            </button>
+            <a href="{{ route('closures.show', $closure) }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                Closure Details
+            </a>
+            <a href="{{ route('closures.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
+                Back to List
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Capacity Info -->
+<div class="bg-white rounded-lg shadow mb-6 p-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <h3 class="text-lg font-semibold text-gray-900">Capacity Information</h3>
+            <p class="text-sm text-gray-600">{{ $closure->location }}</p>
+        </div>
+        <div class="text-right">
+            <div class="flex items-center space-x-4">
+                <div>
+                    <p class="text-sm text-gray-600">Used / Total</p>
+                    <p class="text-2xl font-bold {{ $closure->used_capacity >= $closure->capacity ? 'text-red-600' : 'text-blue-600' }}">
+                        {{ $closure->used_capacity }} / {{ $closure->capacity }}
+                    </p>
+                </div>
+                <div class="w-32">
+                    <div class="flex-1 bg-gray-200 rounded-full h-4">
+                        <div class="bg-blue-600 h-4 rounded-full transition-all duration-300" 
+                             style="width: {{ $closure->capacity > 0 ? ($closure->used_capacity / $closure->capacity) * 100 : 0 }}%"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1 text-center">
+                        {{ $closure->available_capacity }} available
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Active Connections -->
+<div class="bg-white rounded-lg shadow">
+    <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-900">Active Connections ({{ $closure->coreConnections->count() }})</h2>
+    </div>
+    <div class="overflow-x-auto">
+        @if($closure->coreConnections->count() > 0)
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Connection</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Core A</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Core B</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Splice Loss</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                @foreach($closure->coreConnections as $connection)
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        #{{ $connection->id }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <div>
+                            <p class="font-medium">{{ $connection->coreA->cable->name }}</p>
+                            <p class="text-xs text-gray-500">
+                                T{{ $connection->coreA->tube_number }}C{{ $connection->coreA->core_number }} 
+                                ({{ $connection->coreA->cable->cable_id }})
+                            </p>
+                            <p class="text-xs text-gray-400">
+                                {{ $connection->coreA->cable->sourceSite->name }} → {{ $connection->coreA->cable->destinationSite->name }}
+                            </p>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <div>
+                            <p class="font-medium">{{ $connection->coreB->cable->name }}</p>
+                            <p class="text-xs text-gray-500">
+                                T{{ $connection->coreB->tube_number }}C{{ $connection->coreB->core_number }} 
+                                ({{ $connection->coreB->cable->cable_id }})
+                            </p>
+                            <p class="text-xs text-gray-400">
+                                {{ $connection->coreB->cable->sourceSite->name }} → {{ $connection->coreB->cable->destinationSite->name }}
+                            </p>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {{ $connection->splice_loss ? $connection->splice_loss . ' dB' : '-' }}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900">
+                        {{ $connection->description ?: '-' }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="disconnectConnection({{ $connection->id }})" 
+                                class="text-red-600 hover:text-red-900">
+                            Disconnect
+                        </button>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        @else
+        <div class="p-8 text-center text-gray-500">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+            </svg>
+            <p class="mt-4">No connections found</p>
+            <p class="text-sm">Connect cores to create fiber optic connections</p>
+        </div>
+        @endif
+    </div>
+</div>
+
+<!-- Connect Cores Modal -->
+<div id="connect-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden">
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Connect Cores</h3>
+                <p class="text-sm text-gray-600 mt-1">Select two cores from different cables to create a connection</p>
+            </div>
+            
+            <form id="connect-form" method="POST" action="{{ route('closures.connect', $closure) }}" class="p-6">
+                @csrf
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Core A Selection -->
+                    <div>
+                        <label for="core_a_id" class="block text-sm font-medium text-gray-700 mb-2">Select Core A</label>
+                        <select id="core_a_id" 
+                                name="core_a_id" 
+                                required 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Choose first core...</option>
+                            @foreach($availableCores as $cableId => $cores)
+                                @php $cable = $cores->first()->cable; @endphp
+                                <optgroup label="{{ $cable->name }} ({{ $cable->cable_id }})">
+                                    @foreach($cores as $core)
+                                        <option value="{{ $core->id }}" data-cable="{{ $cableId }}">
+                                            Tube {{ $core->tube_number }}, Core {{ $core->core_number }}
+                                            @if($core->attenuation) - {{ $core->attenuation }}dB @endif
+                                        </option>
+                                    @endforeach
+                                </optgroup>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Core B Selection -->
+                    <div>
+                        <label for="core_b_id" class="block text-sm font-medium text-gray-700 mb-2">Select Core B</label>
+                        <select id="core_b_id" 
+                                name="core_b_id" 
+                                required 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Choose second core...</option>
+                            @foreach($availableCores as $cableId => $cores)
+                                @php $cable = $cores->first()->cable; @endphp
+                                <optgroup label="{{ $cable->name }} ({{ $cable->cable_id }})">
+                                    @foreach($cores as $core)
+                                        <option value="{{ $core->id }}" data-cable="{{ $cableId }}">
+                                            Tube {{ $core->tube_number }}, Core {{ $core->core_number }}
+                                            @if($core->attenuation) - {{ $core->attenuation }}dB @endif
+                                        </option>
+                                    @endforeach
+                                </optgroup>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                    <!-- Splice Loss -->
+                    <div>
+                        <label for="splice_loss" class="block text-sm font-medium text-gray-700 mb-2">Splice Loss (dB)</label>
+                        <input type="number" 
+                               id="splice_loss" 
+                               name="splice_loss" 
+                               step="0.001" 
+                               min="0" 
+                               max="10"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="e.g., 0.15">
+                    </div>
+                    
+                    <!-- Connection Description -->
+                    <div>
+                        <label for="connection_description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        <input type="text" 
+                               id="connection_description" 
+                               name="description" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="Connection notes...">
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button type="button" 
+                            onclick="closeConnectModal()" 
+                            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                            class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                        Create Connection
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const coreASelect = document.getElementById('core_a_id');
+    const coreBSelect = document.getElementById('core_b_id');
+    
+    // Prevent selecting cores from the same cable
+    function updateCoreOptions() {
+        const selectedCableA = coreASelect.options[coreASelect.selectedIndex]?.dataset.cable;
+        const selectedCableB = coreBSelect.options[coreBSelect.selectedIndex]?.dataset.cable;
+        
+        // Update Core B options
+        Array.from(coreBSelect.options).forEach(option => {
+            if (option.value && option.dataset.cable === selectedCableA) {
+                option.disabled = true;
+                option.style.color = '#9CA3AF';
+            } else {
+                option.disabled = false;
+                option.style.color = '';
+            }
+        });
+        
+        // Update Core A options
+        Array.from(coreASelect.options).forEach(option => {
+            if (option.value && option.dataset.cable === selectedCableB) {
+                option.disabled = true;
+                option.style.color = '#9CA3AF';
+            } else {
+                option.disabled = false;
+                option.style.color = '';
+            }
+        });
+    }
+    
+    coreASelect.addEventListener('change', updateCoreOptions);
+    coreBSelect.addEventListener('change', updateCoreOptions);
+});
+
+function showConnectModal() {
+    document.getElementById('connect-modal').classList.remove('hidden');
+}
+
+function closeConnectModal() {
+    document.getElementById('connect-modal').classList.add('hidden');
+    document.getElementById('connect-form').reset();
+}
+
+function disconnectConnection(connectionId) {
+    if (!confirm('Are you sure you want to disconnect this core connection?')) {
+        return;
+    }
+
+    fetch(`/connections/${connectionId}`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error disconnecting cores: ' + (data.message || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error disconnecting cores');
+    });
+}
+</script>
+@endsection
