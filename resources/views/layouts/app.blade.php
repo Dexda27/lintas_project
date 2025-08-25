@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <title>@yield('title', 'Fiber Core Management')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+        });
+    </script>
 </head>
+
 <body class="bg-gray-50">
     <div class="min-h-screen">
         <!-- Navigation -->
@@ -16,31 +25,31 @@
                     <div class="flex items-center">
                         <h1 class="text-white text-xl font-bold">Fiber Core Management</h1>
                     </div>
-                    
+
                     <div class="flex items-center space-x-4">
                         <div class="text-white">
                             <span class="text-sm">{{ auth()->user()->name }}</span>
                             @if(auth()->user()->isAdminRegion())
-                                <span class="text-xs bg-blue-600 px-2 py-1 rounded ml-2">{{ auth()->user()->region }}</span>
+                            <span class="text-xs bg-blue-600 px-2 py-1 rounded ml-2">{{ auth()->user()->region }}</span>
                             @elseif(auth()->user()->isSuperAdmin())
-                                <span class="text-xs bg-purple-600 px-2 py-1 rounded ml-2">Super Admin</span>
+                            <span class="text-xs bg-purple-600 px-2 py-1 rounded ml-2">Super Admin</span>
                             @endif
 
-                        <!-- Divider before logout -->
-                        {{-- <li class="border-t border-gray-200 my-4"></li> --}}
-                        
-                        <!-- Logout -->
-                        {{-- <li>
+                            <!-- Divider before logout -->
+                            {{-- <li class="border-t border-gray-200 my-4"></li> --}}
+
+                            <!-- Logout -->
+                            {{-- <li>
                             <form method="POST" action="{{ route('logout') }}" id="logout-form">
-                                @csrf
-                                <button type="button" onclick="confirmLogout()" class="flex items-center w-full p-2 text-gray-700 rounded hover:bg-red-50 hover:text-red-700 transition-colors">
-                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                                    </svg>
-                                    Logout
-                                </button>
+                            @csrf
+                            <button type="button" onclick="confirmLogout()" class="flex items-center w-full p-2 text-gray-700 rounded hover:bg-red-50 hover:text-red-700 transition-colors">
+                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                                Logout
+                            </button>
                             </form>
-                        </li> --}}
+                            </li> --}}
                         </div>
                     </div>
                 </div>
@@ -53,76 +62,72 @@
                 <div class="p-4 flex-1">
                     <ul class="space-y-2">
                         <li>
-                            <a href="{{ route('dashboard') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-700' : '' }}">
-                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
-                                </svg>
-                                Dashboard
+                            <a href="{{ route('dashboard') }}"
+                                class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-50 {{ request()->routeIs('dashboard') ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-600' }}">
+                                <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
                             </a>
                         </li>
+
                         <li>
-                            <a href="{{ route('cables.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 {{ request()->routeIs('cables.*') ? 'bg-blue-50 text-blue-700' : '' }}">
-                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                                </svg>
-                                Fiber Cores
+                            <a href="{{ route('cables.index') }}"
+                                class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-50 {{ request()->routeIs('cables.index') ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-600' }}">
+                                <i data-lucide="cable" class="w-4 h-4"></i> Fiber Cores
                             </a>
                         </li>
+
+
                         <li>
-                            <a href="{{ route('closures.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 {{ request()->routeIs('closures.*') ? 'bg-blue-50 text-blue-700' : '' }}">
-                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                </svg>
-                                Joint Closures
+                            <a href="{{ route('closures.index') }}"
+                                class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-50 {{ request()->routeIs('closures.index') ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-600' }}">
+                                <i data-lucide="split" class="w-4 h-4"></i> Joint Closure
                             </a>
                         </li>
-                        
-                        
+
+
                         @if(auth()->user()->isSuperAdmin())
-                            <!-- Divider for admin sections -->
-                            <li class="border-t border-gray-200 my-4"></li>
-                            <li>
-                                <div class="px-2 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                    Administration
-                                </div>
-                            </li>
-                            <li>
-                                <a href="{{ route('users.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 {{ request()->routeIs('users.*') ? 'bg-blue-50 text-blue-700' : '' }}">
-                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                                    </svg>
-                                    User Management
-                                </a>
-                            </li>
+                        <!-- Divider for admin sections -->
+                        <li class="border-t border-gray-200 my-4"></li>
+                        <li>
+                            <div class="px-2 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                Administration
+                            </div>
+                        </li>
+                        <li>
+                            <a href="{{ route('users.index') }}"
+                                class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-50 {{ request()->routeIs('users.index') ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-600' }}">
+                                <i data-lucide="users" class="w-4 h-4"></i> User Management
+                            </a>
+                        </li>
+
                         @endif
                     </ul>
                 </div>
-                 <!-- Logout button at bottom -->
-    <div class="p-4 mt-auto">
-        <form method="POST" action="{{ route('logout') }}" id="logout-form">
-            @csrf
-            <button type="button" onclick="confirmLogout()" class="flex items-center w-full p-2 text-gray-700 rounded hover:bg-red-50 hover:text-red-700 transition-colors">
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                </svg>
-                Logout
-            </button>
-        </form>
-    </div>
+                <!-- Logout button at bottom -->
+                <div class="p-4 mt-auto">
+                    <form method="POST" action="{{ route('logout') }}" id="logout-form">
+                        @csrf
+                        <button type="button" onclick="confirmLogout()" class="flex items-center w-full p-2 text-gray-700 rounded hover:bg-red-50 hover:text-red-700 transition-colors">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                            Logout
+                        </button>
+                    </form>
+                </div>
             </div>
 
             <!-- Main Content -->
             <div class="flex-1 p-8">
                 @if(session('success'))
-                    <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                        {{ session('success') }}
-                    </div>
+                <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                    {{ session('success') }}
+                </div>
                 @endif
 
                 @if(session('error'))
-                    <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                        {{ session('error') }}
-                    </div>
+                <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    {{ session('error') }}
+                </div>
                 @endif
 
                 @yield('content')
@@ -187,4 +192,5 @@
     </script>
 </body>
 @stack('scripts')
+
 </html>
