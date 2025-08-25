@@ -37,6 +37,19 @@ class CableController extends Controller
         return view('cables.index', compact('cables'));
     }
 
+    public function create()
+    {
+        $user = Auth::user();
+
+        // Jika ingin membatasi region untuk admin region
+        $regions = $user->isAdminRegion() ? [$user->region] : Cable::select('region')->distinct()->pluck('region');
+
+        // Jika ingin menampilkan daftar site
+        // $sites = Site::orderBy('name')->get();
+
+        return view('cables.create', compact('regions'));
+    }
+
     public function store(Request $request)
     {
         $user = Auth::user();
