@@ -81,7 +81,7 @@ return $colors[($coreNumber - 1) % 12];
             @foreach($cores as $core)
             @php $coreColor = getCoreColor($core->core_number, $coreColors); @endphp
 
-            <div class="core-card border-2 border-gray-400 rounded-lg p-4 hover:shadow-md transition-shadow bg-gradient-to-b from-white to-gray-50"
+            <div class="core-card border border-gray-400 rounded-lg p-4 hover:shadow-md transition-shadow bg-gradient-to-b from-white to-gray-50"
 
                 data-tube="{{ $core->tube_number }}" data-status="{{ $core->status }}"
                 data-usage="{{ $core->usage }}" data-core="{{ $core->core_number }}"
@@ -97,7 +97,7 @@ return $colors[($coreNumber - 1) % 12];
 
                     </div>
                     <div class="flex space-x-1">
-                        <div class="w-3 h-3 rounded-full border-2 border-gray-400" style="background-color: {{ $coreColor }}"></div>
+                        <div class="w-3 h-3 rounded-full border border-gray-400" style="background-color: {{ $coreColor }}"></div>
                         <span class="w-3 h-3 rounded-full {{ $core->status === 'ok' ? 'bg-green-500' : 'bg-red-500' }}"
                             title="Status: {{ ucfirst(str_replace('_', ' ', $core->status)) }}"></span>
                         <span class="w-3 h-3 rounded-full {{ $core->usage === 'active' ? 'bg-blue-500' : 'bg-gray-400' }}"
