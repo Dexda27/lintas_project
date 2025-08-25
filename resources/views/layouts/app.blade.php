@@ -24,7 +24,7 @@
     <div class="min-h-screen">
         <!-- Navigation -->
         <nav class="bg-blue-800 shadow-lg">
-            <div class="max-w-7xl mx-auto px-4">
+            <div class=" mx-auto px-4">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
                         <h1 class="text-white text-xl font-bold">Fiber Core Management</h1>
@@ -91,7 +91,7 @@
                         </li>
                         <li>
                             <a href="{{ route('users.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 {{ request()->routeIs('users.*') ? 'bg-blue-50 text-blue-700' : '' }}">
-                                <i data-lucide="User" class="w-5 h-5 mr-3"></i>
+                                <i data-lucide="Users" class="w-5 h-5 mr-3"></i>
                                 User Management
                             </a>
                         </li>
