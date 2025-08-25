@@ -8,6 +8,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <title>@yield('title', 'Fiber Core Management')</title>
+
+    </script>
+
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -53,24 +57,26 @@
                 <div class="p-4 flex-1">
                     <ul class="space-y-2">
                         <li>
-                            <a href="{{ route('dashboard') }}"
-                                class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-50 {{ request()->routeIs('dashboard') ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-600' }}">
-                                <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+                            <a href="{{ route('dashboard') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-700' : '' }}">
+                                <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
+
+
+                                Dashboard
                             </a>
                         </li>
 
                         <li>
-                            <a href="{{ route('cables.index') }}"
-                                class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-50 {{ request()->routeIs('cables.index') ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-600' }}">
-                                <i data-lucide="cable" class="w-4 h-4"></i> Fiber Cores
+                            <a href="{{ route('cables.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 {{ request()->routeIs('cables.*') ? 'bg-blue-50 text-blue-700' : '' }}">
+                                <i data-lucide="Cable" class="w-5 h-5 mr-3"></i>
+                                Fiber Cores
                             </a>
                         </li>
 
 
                         <li>
-                            <a href="{{ route('closures.index') }}"
-                                class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-50 {{ request()->routeIs('closures.index') ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-600' }}">
-                                <i data-lucide="split" class="w-4 h-4"></i> Joint Closure
+                            <a href="{{ route('closures.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 {{ request()->routeIs('closures.*') ? 'bg-blue-50 text-blue-700' : '' }}">
+                                <i data-lucide="Split" class="w-5 h-5 mr-3"></i>
+                                Joint Closures
                             </a>
                         </li>
 
@@ -84,17 +90,23 @@
                             </div>
                         </li>
                         <li>
-                            <a href="{{ route('users.index') }}"
-                                class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-50 {{ request()->routeIs('users.index') ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-600' }}">
-                                <i data-lucide="users" class="w-4 h-4"></i> User Management
+                            <a href="{{ route('users.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 {{ request()->routeIs('users.*') ? 'bg-blue-50 text-blue-700' : '' }}">
+                                <i data-lucide="User" class="w-5 h-5 mr-3"></i>
+                                User Management
                             </a>
                         </li>
-
                         @endif
                     </ul>
                 </div>
+                <!-- Logout button at bottom -->
                 <div class="p-4 mt-auto">
-                    <!-- ...logout button... -->
+                    <form method="POST" action="{{ route('logout') }}" id="logout-form">
+                        @csrf
+                        <button type="button" onclick="confirmLogout()" class="flex items-center w-full p-2 text-gray-700 rounded hover:bg-red-50 hover:text-red-700 transition-colors">
+                            <i data-lucide="Log-Out" class="w-5 h-5 mr-3"></i>
+                            Logout
+                        </button>
+                    </form>
                 </div>
             </div>
             <!-- Overlay for mobile sidebar -->
@@ -188,6 +200,13 @@
             sidebarOverlay.classList.add('hidden');
         });
     </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            lucide.createIcons();
+        });
+    </script>
+
 </body>
 @stack('scripts')
 
