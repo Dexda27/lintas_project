@@ -21,19 +21,8 @@ class CableController extends Controller
         if ($user->isAdminRegion()) {
             $query->where('region', $user->region);
         }
-        // Search filter
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('source_site', 'like', "%{$search}%")
-                    ->orWhere('destination_site', 'like', "%{$search}%")
-                    ->orWhere('region', 'like', "%{$search}%");
-            });
-        }
 
-
-        $cables = $query->orderBy('created_at', 'desc')->paginate(5);
+        $cables = $query->orderBy('created_at', 'desc')->paginate(10);
 
         return view('cables.index', compact('cables'));
     }

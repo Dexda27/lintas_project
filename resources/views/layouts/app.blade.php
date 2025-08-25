@@ -1,4 +1,3 @@
-<!-- resources/views/layouts/app.blade.php -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,16 +22,26 @@
                             <span class="text-sm">{{ auth()->user()->name }}</span>
                             @if(auth()->user()->isAdminRegion())
                                 <span class="text-xs bg-blue-600 px-2 py-1 rounded ml-2">{{ auth()->user()->region }}</span>
+                            @elseif(auth()->user()->isSuperAdmin())
+                                <span class="text-xs bg-purple-600 px-2 py-1 rounded ml-2">Super Admin</span>
                             @endif
+
+                        <!-- Divider before logout -->
+                        {{-- <li class="border-t border-gray-200 my-4"></li> --}}
+                        
+                        <!-- Logout -->
+                        {{-- <li>
+                            <form method="POST" action="{{ route('logout') }}" id="logout-form">
+                                @csrf
+                                <button type="button" onclick="confirmLogout()" class="flex items-center w-full p-2 text-gray-700 rounded hover:bg-red-50 hover:text-red-700 transition-colors">
+                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                    </svg>
+                                    Logout
+                                </button>
+                            </form>
+                        </li> --}}
                         </div>
-                        <form method="POST" action="{{ route('logout') }}" class="inline">
-                            @csrf
-                            <button type="submit" class="text-white hover:text-gray-200">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                                </svg>
-                            </button>
-                        </form>
                     </div>
                 </div>
             </div>
@@ -40,8 +49,8 @@
 
         <!-- Sidebar -->
         <div class="flex">
-            <div class="w-64 bg-white shadow-md min-h-screen">
-                <div class="p-4">
+            <div class="w-64 bg-white shadow-md min-h-screen flex flex-col">
+                <div class="p-4 flex-1">
                     <ul class="space-y-2">
                         <li>
                             <a href="{{ route('dashboard') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-700' : '' }}">
@@ -67,8 +76,39 @@
                                 Joint Closures
                             </a>
                         </li>
+                        
+                        
+                        @if(auth()->user()->isSuperAdmin())
+                            <!-- Divider for admin sections -->
+                            <li class="border-t border-gray-200 my-4"></li>
+                            <li>
+                                <div class="px-2 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    Administration
+                                </div>
+                            </li>
+                            <li>
+                                <a href="{{ route('users.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 {{ request()->routeIs('users.*') ? 'bg-blue-50 text-blue-700' : '' }}">
+                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                    </svg>
+                                    User Management
+                                </a>
+                            </li>
+                        @endif
                     </ul>
                 </div>
+                 <!-- Logout button at bottom -->
+    <div class="p-4 mt-auto">
+        <form method="POST" action="{{ route('logout') }}" id="logout-form">
+            @csrf
+            <button type="button" onclick="confirmLogout()" class="flex items-center w-full p-2 text-gray-700 rounded hover:bg-red-50 hover:text-red-700 transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
+                Logout
+            </button>
+        </form>
+    </div>
             </div>
 
             <!-- Main Content -->
@@ -92,6 +132,59 @@
 
     <!-- Modal Container -->
     <div id="modal-container"></div>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logout-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 w-96 max-w-md mx-4">
+            <div class="flex items-center mb-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900">Confirm Logout</h3>
+            </div>
+            <p class="text-sm text-gray-500 mb-6">
+                Are you sure you want to logout? You will need to sign in again to access your account.
+            </p>
+            <div class="flex justify-end space-x-3">
+                <button type="button" onclick="closeLogoutModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                    Cancel
+                </button>
+                <button type="button" onclick="performLogout()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700">
+                    Yes, Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function confirmLogout() {
+            document.getElementById('logout-modal').classList.remove('hidden');
+        }
+
+        function closeLogoutModal() {
+            document.getElementById('logout-modal').classList.add('hidden');
+        }
+
+        function performLogout() {
+            document.getElementById('logout-form').submit();
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('logout-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLogoutModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !document.getElementById('logout-modal').classList.contains('hidden')) {
+                closeLogoutModal();
+            }
+        });
+    </script>
 </body>
 @stack('scripts')
 </html>
