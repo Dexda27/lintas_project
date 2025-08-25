@@ -5,8 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Fiber Core Management')</title>
+    
+</script>
+
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+
 <body class="bg-gray-50">
     <div class="min-h-screen">
         <!-- Navigation -->
@@ -54,25 +59,21 @@
                     <ul class="space-y-2">
                         <li>
                             <a href="{{ route('dashboard') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-700' : '' }}">
-                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
-                                </svg>
+                                <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
+
+
                                 Dashboard
                             </a>
                         </li>
                         <li>
                             <a href="{{ route('cables.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 {{ request()->routeIs('cables.*') ? 'bg-blue-50 text-blue-700' : '' }}">
-                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                                </svg>
+                                <i data-lucide="Cable" class="w-5 h-5 mr-3"></i>
                                 Fiber Cores
                             </a>
                         </li>
                         <li>
                             <a href="{{ route('closures.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 {{ request()->routeIs('closures.*') ? 'bg-blue-50 text-blue-700' : '' }}">
-                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                </svg>
+                                <i data-lucide="Split" class="w-5 h-5 mr-3"></i>
                                 Joint Closures
                             </a>
                         </li>
@@ -88,9 +89,7 @@
                             </li>
                             <li>
                                 <a href="{{ route('users.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 {{ request()->routeIs('users.*') ? 'bg-blue-50 text-blue-700' : '' }}">
-                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                                    </svg>
+                                    <i data-lucide="User" class="w-5 h-5 mr-3"></i>
                                     User Management
                                 </a>
                             </li>
@@ -102,9 +101,7 @@
         <form method="POST" action="{{ route('logout') }}" id="logout-form">
             @csrf
             <button type="button" onclick="confirmLogout()" class="flex items-center w-full p-2 text-gray-700 rounded hover:bg-red-50 hover:text-red-700 transition-colors">
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                </svg>
+                <i data-lucide="Log-Out" class="w-5 h-5 mr-3"></i>
                 Logout
             </button>
         </form>
@@ -185,6 +182,13 @@
             }
         });
     </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        lucide.createIcons();
+    });
+</script>
+
 </body>
 @stack('scripts')
 </html>
