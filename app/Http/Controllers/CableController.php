@@ -21,11 +21,12 @@ class CableController extends Controller
         if ($user->isAdminRegion()) {
             $query->where('region', $user->region);
         }
-        // Search filter
+        // Search filter (tambahkan cable_id)
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
+                $q->where('cable_id', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
                     ->orWhere('source_site', 'like', "%{$search}%")
                     ->orWhere('destination_site', 'like', "%{$search}%")
                     ->orWhere('region', 'like', "%{$search}%");

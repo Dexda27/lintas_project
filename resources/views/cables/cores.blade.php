@@ -89,6 +89,7 @@ return $colors[($coreNumber - 1) % 12];
 
                 <div class="flex justify-between items-start mb-3">
                     <div class="flex items-center space-x-2">
+
                         <div>
                             <h3 class="font-semibold text-gray-900">Core {{ $core->core_number }}</h3>
                             <p class="text-xs text-gray-500 mt-1">Tube {{ $core->tube_number }}</p>
