@@ -81,15 +81,14 @@ return $colors[($coreNumber - 1) % 12];
             @foreach($cores as $core)
             @php $coreColor = getCoreColor($core->core_number, $coreColors); @endphp
 
-            <div class="core-card border-2 rounded-lg p-4 hover:shadow-md transition-shadow bg-gradient-to-br from-white to-gray-50"
-                style="border-color: {{ $coreColor }}"
+            <div class="core-card  rounded-lg p-4 shadow hover:shadow-md transition-shadow bg-gradient-to-br from-white to-gray-50"
                 data-tube="{{ $core->tube_number }}" data-status="{{ $core->status }}"
                 data-usage="{{ $core->usage }}" data-core="{{ $core->core_number }}"
                 data-description="{{ $core->description }}">
 
                 <div class="flex justify-between items-start mb-3">
                     <div class="flex items-center space-x-2">
-                        
+
                         <div>
                             <h3 class="font-semibold text-white px-2 py-1 rounded text-sm" style="background-color: {{ $coreColor }}">Core {{ $core->core_number }}</h3>
                             <p class="text-xs text-gray-500 mt-1">Tube {{ $core->tube_number }}</p>

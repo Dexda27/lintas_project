@@ -21,7 +21,7 @@
         <div class="flex gap-2">
             <input type="text" name="search" value="{{ request('search') }}"
                 class="border border-gray-300 rounded-lg px-4 py-2 w-full"
-                placeholder="Cari nama kabel, site, atau region...">
+                placeholder="Cari Cable ID, namakabel, site, atau region...">
             <button type="submit"
                 class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition">
                 Cari
@@ -40,7 +40,7 @@
         <table class="min-w-full text-sm text-gray-700">
             <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
                 <tr>
-                    <th class="text-left px-6 py-3">#</th>
+                    <th class="text-left px-6 py-3">Cable ID</th>
                     <th class="text-left px-6 py-3">Nama Kabel</th>
                     <th class="text-left px-6 py-3">Source Site</th>
                     <th class="text-left px-6 py-3">Destination Site</th>
@@ -52,8 +52,8 @@
             <tbody>
                 @forelse ($cables as $index => $cable)
                 <tr class="hover:bg-gray-50 transition">
-                    <td class="px-6 py-4">{{ $cables->firstItem() + $index }}</td>
-                    <td class="px-6 py-4 font-medium text-gray-900">{{ $cable->name }}</td>
+                    <td class="px-6 py-4 ">{{ $cable->cable_id }}</td>
+                    <td class="px-6 py-4 ">{{ $cable->name }}</td>
                     <td class="px-6 py-4">{{ $cable->source_site ?? '-' }}</td>
                     <td class="px-6 py-4">{{ $cable->destination_site ?? '-' }}</td>
                     <td class="px-6 py-4">

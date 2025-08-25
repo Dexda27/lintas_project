@@ -25,8 +25,14 @@
                     <div class="flex items-center">
                         <h1 class="text-white text-xl font-bold">Fiber Core Management</h1>
                     </div>
-
-                    <div class="flex items-center space-x-4">
+                    <!-- Hamburger for mobile -->
+                    <div class="md:hidden flex items-center">
+                        <button id="sidebar-toggle" class="text-white focus:outline-none">
+                            <i data-lucide="menu" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                    <div class="hidden md:flex items-center space-x-4">
+                        <!-- ...user info & logout... -->
                         <div class="text-white">
                             <span class="text-sm">{{ auth()->user()->name }}</span>
                             @if(auth()->user()->isAdminRegion())
@@ -34,31 +40,16 @@
                             @elseif(auth()->user()->isSuperAdmin())
                             <span class="text-xs bg-purple-600 px-2 py-1 rounded ml-2">Super Admin</span>
                             @endif
-
-                            <!-- Divider before logout -->
-                            {{-- <li class="border-t border-gray-200 my-4"></li> --}}
-
-                            <!-- Logout -->
-                            {{-- <li>
-                            <form method="POST" action="{{ route('logout') }}" id="logout-form">
-                            @csrf
-                            <button type="button" onclick="confirmLogout()" class="flex items-center w-full p-2 text-gray-700 rounded hover:bg-red-50 hover:text-red-700 transition-colors">
-                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                                </svg>
-                                Logout
-                            </button>
-                            </form>
-                            </li> --}}
                         </div>
                     </div>
                 </div>
             </div>
         </nav>
 
-        <!-- Sidebar -->
+        <!-- Responsive Sidebar -->
         <div class="flex">
-            <div class="w-64 bg-white shadow-md min-h-screen flex flex-col">
+            <!-- Sidebar -->
+            <div id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-md min-h-screen flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-200 md:static md:inset-auto md:z-auto md:flex md:w-64">
                 <div class="p-4 flex-1">
                     <ul class="space-y-2">
                         <li>
@@ -102,22 +93,14 @@
                         @endif
                     </ul>
                 </div>
-                <!-- Logout button at bottom -->
                 <div class="p-4 mt-auto">
-                    <form method="POST" action="{{ route('logout') }}" id="logout-form">
-                        @csrf
-                        <button type="button" onclick="confirmLogout()" class="flex items-center w-full p-2 text-gray-700 rounded hover:bg-red-50 hover:text-red-700 transition-colors">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                            </svg>
-                            Logout
-                        </button>
-                    </form>
+                    <!-- ...logout button... -->
                 </div>
             </div>
-
+            <!-- Overlay for mobile sidebar -->
+            <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-40 z-30 hidden md:hidden"></div>
             <!-- Main Content -->
-            <div class="flex-1 p-8">
+            <div class="flex-1 p-4 md:p-8">
                 @if(session('success'))
                 <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
                     {{ session('success') }}
@@ -188,6 +171,21 @@
             if (e.key === 'Escape' && !document.getElementById('logout-modal').classList.contains('hidden')) {
                 closeLogoutModal();
             }
+        });
+
+        // Sidebar toggle for mobile
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+        sidebarToggle?.addEventListener('click', function() {
+            sidebar.classList.toggle('-translate-x-full');
+            sidebarOverlay.classList.toggle('hidden');
+        });
+
+        sidebarOverlay?.addEventListener('click', function() {
+            sidebar.classList.add('-translate-x-full');
+            sidebarOverlay.classList.add('hidden');
         });
     </script>
 </body>
