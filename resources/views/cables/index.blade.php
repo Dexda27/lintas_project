@@ -10,11 +10,31 @@
             <h1 class="text-3xl font-bold text-gray-800">Daftar Kabel</h1>
             <p class="text-gray-500 text-sm mt-1">Kelola data kabel dengan mudah</p>
         </div>
-        <a href="{{ route('cables.create') }}" 
-           class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg shadow transition">
+        <a href="{{ route('cables.create') }}"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg shadow transition">
             + Tambah Kabel
         </a>
     </div>
+
+    <!-- Search Form -->
+    <form method="GET" action="{{ route('cables.index') }}" class="mb-4">
+        <div class="flex gap-2">
+            <input type="text" name="search" value="{{ request('search') }}"
+                class="border border-gray-300 rounded-lg px-4 py-2 w-full"
+                placeholder="Cari nama kabel, site, atau region...">
+            <button type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition">
+                Cari
+            </button>
+            @if(request('search'))
+            <a href="{{ route('cables.index') }}"
+                class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg shadow transition">
+                Clear
+            </a>
+            @endif
+        </div>
+    </form>
+
 
     <!-- Table Container -->
     <div class="overflow-x-auto rounded-xl border border-gray-200">
@@ -44,12 +64,12 @@
                     <td class="px-6 py-4">{{ $cable->created_at->format('d M Y') }}</td>
                     <td class="px-6 py-4 text-center">
                         <div class="flex justify-center gap-2">
-                            <a href="{{ route('cables.show', $cable->id) }}" 
-                               class="text-blue-600 hover:text-blue-800 font-medium">Detail</a>
-                            <a href="{{ route('cables.edit', $cable->id) }}" 
-                               class="text-yellow-600 hover:text-yellow-800 font-medium">Edit</a>
-                            <form action="{{ route('cables.destroy', $cable->id) }}" method="POST" 
-                                  onsubmit="return confirm('Yakin hapus kabel ini?');">
+                            <a href="{{ route('cables.show', $cable->id) }}"
+                                class="text-blue-600 hover:text-blue-800 font-medium">Detail</a>
+                            <a href="{{ route('cables.edit', $cable->id) }}"
+                                class="text-yellow-600 hover:text-yellow-800 font-medium">Edit</a>
+                            <form action="{{ route('cables.destroy', $cable->id) }}" method="POST"
+                                onsubmit="return confirm('Yakin hapus kabel ini?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-600 hover:text-red-800 font-medium">

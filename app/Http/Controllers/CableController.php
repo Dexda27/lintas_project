@@ -10,9 +10,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
+
 class CableController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         $query = Cable::query();
@@ -20,8 +21,19 @@ class CableController extends Controller
         if ($user->isAdminRegion()) {
             $query->where('region', $user->region);
         }
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('source_site', 'like', "%{$search}%")
+                    ->orWhere('destination_site', 'like', "%{$search}%")
+                    ->orWhere('region', 'like', "%{$search}%");
+            });
+        }
 
-        $cables = $query->orderBy('created_at', 'desc')->paginate(20);
+
+        $cables = $query->orderBy('created_at', 'desc')->paginate(5);
 
         return view('cables.index', compact('cables'));
     }
@@ -82,7 +94,6 @@ class CableController extends Controller
 
             return redirect()->route('cables.index')
                 ->with('success', 'Cable created successfully with ' . $request->total_cores . ' fiber cores (sequential numbering).');
-
         } catch (\Exception $e) {
             DB::rollback();
             return back()->withErrors(['error' => 'Failed to create cable: ' . $e->getMessage()]);
@@ -176,7 +187,6 @@ class CableController extends Controller
 
             return redirect()->route('cables.index')
                 ->with('success', 'Cable deleted successfully.');
-
         } catch (\Exception $e) {
             DB::rollback();
             return back()->withErrors(['error' => 'Failed to delete cable: ' . $e->getMessage()]);
@@ -317,7 +327,7 @@ class CableController extends Controller
 
     // Add these methods to your existing CableController.php class
 
-        public function getTubes(Cable $cable)
+    public function getTubes(Cable $cable)
     {
         $this->checkRegionAccess($cable);
 
