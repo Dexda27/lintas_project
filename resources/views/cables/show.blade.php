@@ -152,11 +152,7 @@
         <div class="p-6 space-y-4">
             <div>
                 <p class="text-sm font-medium text-gray-600">Source Site</p>
-                <p class="text-lg text-gray-900">{{ $cable->sourceSite->name }}</p>
-                @if($cable->sourceSite->latitude && $cable->sourceSite->longitude)
-                <p class="text-sm text-gray-500">{{ $cable->sourceSite->latitude }}, {{ $cable->sourceSite->longitude }}
-                </p>
-                @endif
+                <p class="text-lg text-gray-900">{{ $cable->source_site }}</p>
             </div>
             <div class="flex justify-center">
                 <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,11 +162,7 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-gray-600">Destination Site</p>
-                <p class="text-lg text-gray-900">{{ $cable->destinationSite->name }}</p>
-                @if($cable->destinationSite->latitude && $cable->destinationSite->longitude)
-                <p class="text-sm text-gray-500">{{ $cable->destinationSite->latitude }}, {{
-                    $cable->destinationSite->longitude }}</p>
-                @endif
+                <p class="text-lg text-gray-900">{{ $cable->destination_site }}</p>
             </div>
         </div>
     </div>

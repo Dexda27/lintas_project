@@ -1,4 +1,3 @@
-<!-- resources/views/cables/cores.blade.php -->
 @extends('layouts.app')
 
 @section('title', 'Manage Cores - ' . $cable->name)
@@ -9,6 +8,7 @@
         <div>
             <h1 class="text-3xl font-bold text-gray-900">Manage Cores</h1>
             <p class="text-gray-600 mt-2">{{ $cable->name }} ({{ $cable->cable_id }})</p>
+            <p class="text-sm text-gray-500 mt-1">{{ $cable->source_site }} → {{ $cable->destination_site }}</p>
         </div>
         <div class="flex space-x-2">
             <a href="{{ route('cables.show', $cable) }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">

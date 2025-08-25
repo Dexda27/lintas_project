@@ -1,4 +1,3 @@
-<!-- resources/views/closures/connections.blade.php -->
 @extends('layouts.app')
 
 @section('title', 'Manage Connections - ' . $closure->name)
@@ -87,7 +86,7 @@
                                 ({{ $connection->coreA->cable->cable_id }})
                             </p>
                             <p class="text-xs text-gray-400">
-                                {{ $connection->coreA->cable->sourceSite->name }} → {{ $connection->coreA->cable->destinationSite->name }}
+                                {{ $connection->coreA->cable->source_site }} → {{ $connection->coreA->cable->destination_site }}
                             </p>
                         </div>
                     </td>
@@ -99,7 +98,7 @@
                                 ({{ $connection->coreB->cable->cable_id }})
                             </p>
                             <p class="text-xs text-gray-400">
-                                {{ $connection->coreB->cable->sourceSite->name }} → {{ $connection->coreB->cable->destinationSite->name }}
+                                {{ $connection->coreB->cable->source_site }} → {{ $connection->coreB->cable->destination_site }}
                             </p>
                         </div>
                     </td>

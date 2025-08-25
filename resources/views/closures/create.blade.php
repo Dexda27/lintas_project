@@ -81,10 +81,9 @@
                             required 
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('region') border-red-500 @enderror">
                         <option value="">Select Region</option>
-                        <option value="Jakarta" {{ old('region') === 'Jakarta' ? 'selected' : '' }}>Jakarta</option>
-                        <option value="Surabaya" {{ old('region') === 'Surabaya' ? 'selected' : '' }}>Surabaya</option>
-                        <option value="Bandung" {{ old('region') === 'Bandung' ? 'selected' : '' }}>Bandung</option>
-                        <option value="Medan" {{ old('region') === 'Medan' ? 'selected' : '' }}>Medan</option>
+                        <option value="Bali" {{ old('region') === 'Bali' ? 'selected' : '' }}>Bali</option>
+                        <option value="NTT" {{ old('region') === 'NTT' ? 'selected' : '' }}>NTT</option>
+                        <option value="NTB" {{ old('region') === 'NTB' ? 'selected' : '' }}>NTB</option>
                     </select>
                 @endif
                 @error('region')

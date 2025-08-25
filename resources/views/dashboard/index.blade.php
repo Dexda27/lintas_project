@@ -127,7 +127,7 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {{ $cable->sourceSite->name }} → {{ $cable->destinationSite->name }}
+                          {{ $cable->source_site }} → {{ $cable->destination_site }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         <div class="flex space-x-2">

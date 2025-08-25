@@ -19,7 +19,7 @@ class DashboardController extends Controller
             $query->where('region', $user->region);
         }
 
-        $cables = $query->with(['sourceSite', 'destinationSite'])->get();
+        $cables = $query->get();
 
         $totalCores = 0;
         $activeCores = 0;

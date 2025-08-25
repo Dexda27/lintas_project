@@ -19,20 +19,13 @@ class Cable extends Model
         'status',
         'usage',
         'otdr_length',
-        'source_site_id',
-        'destination_site_id',
+        'source_site',      // Changed from source_site_id
+        'destination_site', // Changed from destination_site_id
         'description',
     ];
 
-    public function sourceSite()
-    {
-        return $this->belongsTo(Site::class, 'source_site_id');
-    }
-
-    public function destinationSite()
-    {
-        return $this->belongsTo(Site::class, 'destination_site_id');
-    }
+    // Removed sourceSite() and destinationSite() relationships
+    // since we're now using text fields instead of foreign keys
 
     public function fiberCores()
     {

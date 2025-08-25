@@ -9,6 +9,7 @@ class CoreConnection extends Model
 {
     use HasFactory;
 
+    protected $table = 'core_connections';
     protected $fillable = [
         'closure_id',
         'core_a_id',

@@ -1,4 +1,5 @@
 <?php
+// app/Http/Controllers/JointClosureController.php
 
 namespace App\Http\Controllers;
 
@@ -152,21 +153,20 @@ class JointClosureController extends Controller
         $this->checkRegionAccess($closure);
 
         $closure->load([
-            'coreConnections.coreA.cable.sourceSite',
-            'coreConnections.coreA.cable.destinationSite',
-            'coreConnections.coreB.cable.sourceSite',
-            'coreConnections.coreB.cable.destinationSite'
+            'coreConnections.coreA.cable',
+            'coreConnections.coreA.cable',
+            'coreConnections.coreB.cable',
+            'coreConnections.coreB.cable'
         ]);
 
         // Get available cores for connection (inactive cores from different cables)
         $user = Auth::user();
-        $availableCoresQuery = FiberCore::with(['cable.sourceSite', 'cable.destinationSite'])
+        $availableCoresQuery = FiberCore::with(['cable'])
             ->whereHas('cable', function ($query) use ($user) {
                 if ($user->isAdminRegion()) {
                     $query->where('region', $user->region);
                 }
             })
-            ->where('usage', 'inactive')
             ->where('status', 'ok')
             ->whereDoesntHave('connectionA')
             ->whereDoesntHave('connectionB');

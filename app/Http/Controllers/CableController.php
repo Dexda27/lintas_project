@@ -15,7 +15,7 @@ class CableController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $query = Cable::with(['sourceSite', 'destinationSite']);
+        $query = Cable::query(); // Removed with(['sourceSite', 'destinationSite'])
 
         if ($user->isAdminRegion()) {
             $query->where('region', $user->region);
@@ -28,16 +28,8 @@ class CableController extends Controller
 
     public function create()
     {
-        $user = Auth::user();
-        $sites = Site::query();
-
-        if ($user->isAdminRegion()) {
-            $sites->where('region', $user->region);
-        }
-
-        $sites = $sites->orderBy('name')->get();
-
-        return view('cables.create', compact('sites'));
+        // Removed sites query since we don't need it anymore
+        return view('cables.create');
     }
 
     public function store(Request $request)
@@ -53,22 +45,14 @@ class CableController extends Controller
             'status' => 'required|in:ok,not_ok',
             'usage' => 'required|in:active,inactive',
             'otdr_length' => 'nullable|numeric|min:0',
-            'source_site_id' => 'required|exists:sites,id',
-            'destination_site_id' => 'required|exists:sites,id|different:source_site_id',
+            'source_site' => 'required|string|max:255',
+            'destination_site' => 'required|string|max:255|different:source_site',
             'description' => 'nullable|string|max:1000',
         ]);
 
         // Check region access for admin
         if ($user->isAdminRegion() && $request->region !== $user->region) {
             return back()->withErrors(['region' => 'Access denied to this region.']);
-        }
-
-        // Validate sites belong to the same region
-        $sourceSite = Site::findOrFail($request->source_site_id);
-        $destinationSite = Site::findOrFail($request->destination_site_id);
-
-        if ($sourceSite->region !== $request->region || $destinationSite->region !== $request->region) {
-            return back()->withErrors(['sites' => 'Sites must belong to the same region as the cable.']);
         }
 
         DB::beginTransaction();
@@ -86,8 +70,8 @@ class CableController extends Controller
                 'status' => $request->status,
                 'usage' => $request->usage,
                 'otdr_length' => $request->otdr_length,
-                'source_site_id' => $request->source_site_id,
-                'destination_site_id' => $request->destination_site_id,
+                'source_site' => $request->source_site,
+                'destination_site' => $request->destination_site,
                 'description' => $request->description,
             ]);
 
@@ -109,7 +93,7 @@ class CableController extends Controller
     {
         $this->checkRegionAccess($cable);
 
-        $cable->load(['sourceSite', 'destinationSite', 'fiberCores']);
+        $cable->load(['fiberCores']); // Removed sourceSite, destinationSite
 
         $coresByTube = $cable->fiberCores->groupBy('tube_number');
         $statistics = [
@@ -126,16 +110,8 @@ class CableController extends Controller
     {
         $this->checkRegionAccess($cable);
 
-        $user = Auth::user();
-        $sites = Site::query();
-
-        if ($user->isAdminRegion()) {
-            $sites->where('region', $user->region);
-        }
-
-        $sites = $sites->orderBy('name')->get();
-
-        return view('cables.edit', compact('cable', 'sites'));
+        // Removed sites query since we don't need it anymore
+        return view('cables.edit', compact('cable'));
     }
 
     public function update(Request $request, Cable $cable)
@@ -150,8 +126,8 @@ class CableController extends Controller
             'status' => 'required|in:ok,not_ok',
             'usage' => 'required|in:active,inactive',
             'otdr_length' => 'nullable|numeric|min:0',
-            'source_site_id' => 'required|exists:sites,id',
-            'destination_site_id' => 'required|exists:sites,id|different:source_site_id',
+            'source_site' => 'required|string|max:255',
+            'destination_site' => 'required|string|max:255|different:source_site',
             'description' => 'nullable|string|max:1000',
         ]);
 
@@ -167,8 +143,8 @@ class CableController extends Controller
             'status',
             'usage',
             'otdr_length',
-            'source_site_id',
-            'destination_site_id',
+            'source_site',
+            'destination_site',
             'description'
         ]));
 
@@ -213,7 +189,7 @@ class CableController extends Controller
     {
         $this->checkRegionAccess($cable);
 
-        $cable->load(['sourceSite', 'destinationSite']);
+        // Removed sourceSite, destinationSite from load
         $coresByTube = $cable->fiberCores()->with(['connectionA.coreB.cable', 'connectionB.coreA.cable'])->get()->groupBy('tube_number');
 
         return view('cables.cores', compact('cable', 'coresByTube'));

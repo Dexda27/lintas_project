@@ -608,7 +608,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Auto-hide flash messages after 5 seconds
     const flashMessages = document.querySelectorAll(
-        ".bg-green-101, .bg-red-101, .bg-yellow-100"
+        ".bg-green-100, .bg-red-100, .bg-yellow-100"
     );
     flashMessages.forEach((message) => {
         setTimeout(() => {

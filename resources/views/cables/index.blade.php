@@ -35,8 +35,8 @@
                 <tr class="hover:bg-gray-50 transition">
                     <td class="px-6 py-4">{{ $cables->firstItem() + $index }}</td>
                     <td class="px-6 py-4 font-medium text-gray-900">{{ $cable->name }}</td>
-                    <td class="px-6 py-4">{{ $cable->sourceSite->name ?? '-' }}</td>
-                    <td class="px-6 py-4">{{ $cable->destinationSite->name ?? '-' }}</td>
+                    <td class="px-6 py-4">{{ $cable->source_site ?? '-' }}</td>
+                    <td class="px-6 py-4">{{ $cable->destination_site ?? '-' }}</td>
                     <td class="px-6 py-4">
                         {{ $cable->region ?? '-' }}
                     </td>
