@@ -3,6 +3,7 @@
 @section('title', 'Manage Cores - ' . $cable->name)
 
 @section('content')
+<!-- Header -->
 <div class="mb-8">
     <div class="flex items-center justify-between">
         <div>
@@ -11,21 +12,17 @@
             <p class="text-sm text-gray-500 mt-1">{{ $cable->source_site }} → {{ $cable->destination_site }}</p>
         </div>
         <div class="flex space-x-2">
-            <a href="{{ route('cables.show', $cable) }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                Cable Details
-            </a>
-            <a href="{{ route('cables.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
-                Back to List
-            </a>
+            <a href="{{ route('cables.show', $cable) }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Cable Details</a>
+            <a href="{{ route('cables.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">Back to List</a>
         </div>
     </div>
 </div>
 
-<!-- Filter and Search -->
+<!-- Filters -->
 <div class="bg-white rounded-lg shadow mb-6 p-6">
     <div class="flex flex-wrap gap-4 items-center">
         <div>
-            <label for="tube-filter" class="block text-sm font-medium text-gray-700 mb-1">Filter by Tube</label>
+            <label for="tube-filter" class="block text-sm font-medium text-gray-700 mb-1">Tube</label>
             <select id="tube-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">All Tubes</option>
                 @for($i = 1; $i <= $cable->total_tubes; $i++)
@@ -33,40 +30,39 @@
                 @endfor
             </select>
         </div>
-        
         <div>
-            <label for="status-filter" class="block text-sm font-medium text-gray-700 mb-1">Filter by Status</label>
+            <label for="status-filter" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
             <select id="status-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">All Status</option>
                 <option value="ok">OK</option>
                 <option value="not_ok">Not OK</option>
             </select>
         </div>
-        
         <div>
-            <label for="usage-filter" class="block text-sm font-medium text-gray-700 mb-1">Filter by Usage</label>
+            <label for="usage-filter" class="block text-sm font-medium text-gray-700 mb-1">Usage</label>
             <select id="usage-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">All Usage</option>
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
             </select>
         </div>
-        
         <div class="flex-1">
-            <label for="search-core" class="block text-sm font-medium text-gray-700 mb-1">Search Core</label>
-            <input type="text" 
-                   id="search-core" 
-                   placeholder="Search by core number or description..."
+            <label for="search-core" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+            <input type="text" id="search-core" placeholder="Search by core number or description..."
                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
-        
         <div class="flex items-end">
-            <button id="clear-filters" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">
-                Clear Filters
-            </button>
+            <button id="clear-filters" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">Clear</button>
         </div>
     </div>
 </div>
+
+@php
+    $coreColors = ['#ef4444', '#3b82f6', '#10b981', '#eab308', '#8b5cf6', '#ec4899', '#6366f1', '#f97316', '#14b8a6', '#06b6d4', '#84cc16', '#f43f5e'];
+    function getCoreColor($coreNumber, $colors) {
+        return $colors[($coreNumber - 1) % 12];
+    }
+@endphp
 
 <!-- Cores by Tube -->
 @foreach($coresByTube as $tubeNumber => $cores)
@@ -74,42 +70,41 @@
     <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
         <h2 class="text-xl font-semibold text-gray-900">Tube {{ $tubeNumber }} ({{ $cores->count() }} cores)</h2>
         <div class="flex items-center space-x-4 text-sm">
-            <span class="flex items-center">
-                <span class="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
-                Active: {{ $cores->where('usage', 'active')->count() }}
-            </span>
-            <span class="flex items-center">
-                <span class="w-3 h-3 bg-gray-400 rounded-full mr-2"></span>
-                Inactive: {{ $cores->where('usage', 'inactive')->count() }}
-            </span>
-            <span class="flex items-center">
-                <span class="w-3 h-3 bg-red-500 rounded-full mr-2"></span>
-                Problems: {{ $cores->where('status', 'not_ok')->count() }}
-            </span>
+            <span class="flex items-center"><span class="w-3 h-3 bg-green-500 rounded-full mr-2"></span>Active: {{ $cores->where('usage', 'active')->count() }}</span>
+            <span class="flex items-center"><span class="w-3 h-3 bg-gray-400 rounded-full mr-2"></span>Inactive: {{ $cores->where('usage', 'inactive')->count() }}</span>
+            <span class="flex items-center"><span class="w-3 h-3 bg-red-500 rounded-full mr-2"></span>Problems: {{ $cores->where('status', 'not_ok')->count() }}</span>
         </div>
     </div>
-    
+
     <div class="p-6">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             @foreach($cores as $core)
-            <div class="core-card border rounded-lg p-4 hover:shadow-md transition-shadow"
-                 data-tube="{{ $core->tube_number }}"
-                 data-status="{{ $core->status }}"
-                 data-usage="{{ $core->usage }}"
-                 data-core="{{ $core->core_number }}"
+            @php $coreColor = getCoreColor($core->core_number, $coreColors); @endphp
+
+            <div class="core-card border-2 rounded-lg p-4 hover:shadow-md transition-shadow bg-gradient-to-br from-white to-gray-50"
+                 style="border-color: {{ $coreColor }}"
+                 data-tube="{{ $core->tube_number }}" data-status="{{ $core->status }}"
+                 data-usage="{{ $core->usage }}" data-core="{{ $core->core_number }}"
                  data-description="{{ $core->description }}">
-                
+
                 <div class="flex justify-between items-start mb-3">
-                    <div>
-                        <h3 class="font-semibold text-gray-900">Core {{ $core->core_number }}</h3>
-                        <p class="text-xs text-gray-500">Tube {{ $core->tube_number }}</p>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-5 h-5 rounded-full flex items-center justify-center" style="background-color: {{ $coreColor }}">
+                            <span class="text-white text-xs font-bold">{{ $core->core_number }}</span>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">Core {{ $core->core_number }}</h3>
+                            <p class="text-xs text-gray-500">Tube {{ $core->tube_number }}</p>
+                        </div>
                     </div>
                     <div class="flex space-x-1">
-                        <span class="w-3 h-3 rounded-full {{ $core->status === 'ok' ? 'bg-green-500' : 'bg-red-500' }}"></span>
-                        <span class="w-3 h-3 rounded-full {{ $core->usage === 'active' ? 'bg-blue-500' : 'bg-gray-400' }}"></span>
+                        <span class="w-3 h-3 rounded-full {{ $core->status === 'ok' ? 'bg-green-500' : 'bg-red-500' }}"
+                              title="Status: {{ ucfirst(str_replace('_', ' ', $core->status)) }}"></span>
+                        <span class="w-3 h-3 rounded-full {{ $core->usage === 'active' ? 'bg-blue-500' : 'bg-gray-400' }}"
+                              title="Usage: {{ ucfirst($core->usage) }}"></span>
                     </div>
                 </div>
-                
+
                 <div class="space-y-2 text-sm">
                     <div class="flex justify-between">
                         <span class="text-gray-600">Status:</span>
@@ -117,60 +112,36 @@
                             {{ ucfirst(str_replace('_', ' ', $core->status)) }}
                         </span>
                     </div>
-                    
                     <div class="flex justify-between">
                         <span class="text-gray-600">Usage:</span>
-                        <span class="font-medium {{ $core->usage === 'active' ? 'text-blue-600' : 'text-gray-600' }}">
-                            {{ ucfirst($core->usage) }}
-                        </span>
+                        <span class="font-medium {{ $core->usage === 'active' ? 'text-blue-600' : 'text-gray-600' }}">{{ ucfirst($core->usage) }}</span>
                     </div>
-                      <div class="flex justify-between">
-                        <span class="text-gray-600">Deskripsi : {{ $core->description }} </span>
-                        <span class="font-medium"></span>
-                    </div>
-                    
                     @if($core->attenuation)
                     <div class="flex justify-between">
                         <span class="text-gray-600">Attenuation:</span>
                         <span class="font-medium">{{ $core->attenuation }} dB</span>
                     </div>
                     @endif
-                    
+
                     @if($core->connection)
-                    <div class="mt-2 p-2 bg-blue-50 rounded text-xs">
-                        <p class="font-medium text-blue-800 mb-1">Connected to:</p>
-                        @php
-                            $connectedCore = $core->connection->coreA->id === $core->id ? $core->connection->coreB : $core->connection->coreA;
-                        @endphp
-                        <div class="text-blue-600 space-y-1">
-                            <p class="font-medium">{{ $connectedCore->cable->name }}</p>
-                            <p>Cable ID: {{ $connectedCore->cable->cable_id }}</p>
-                            @if($connectedCore->cable->name)
-                            <p>JC: {{ $connectedCore->cable->name }}</p>
-                            @endif
-                            @if($connectedCore->cable->closure_id)
-                            <p>Closure ID: {{ $connectedCore->cable->closure_id }}</p>
-                            @endif
-                            <p>T{{ $connectedCore->tube_number }}C{{ $connectedCore->core_number }}</p>
-                        </div>
+                    <div class="mt-2 p-2 bg-blue-50 rounded text-xs border-l-4 border-blue-400">
+                        <p class="font-medium text-blue-800">Connected to:</p>
+                        @php $connectedCore = $core->connection->coreA->id === $core->id ? $core->connection->coreB : $core->connection->coreA; @endphp
+                        <p class="text-blue-600">{{ $connectedCore->cable->name }} - T{{ $connectedCore->tube_number }}C{{ $connectedCore->core_number }}</p>
                     </div>
                     @endif
-                    
+
                     @if($core->description)
-                    
+                    <div class="mt-2"><p class="text-xs text-gray-600 italic">{{ $core->description }}</p></div>
                     @endif
                 </div>
-                
+
                 <div class="mt-4 flex space-x-2">
-                    <button onclick="editCore({{ $core->id }})" 
-                            class="flex-1 px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Edit
-                    </button>
+                    <button onclick="editCore({{ $core->id }})" class="flex-1 px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">Edit</button>
                     @if($core->connection)
-                    <button onclick="disconnectCore({{ $core->connection->id }})" 
-                            class="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700">
-                        Disconnect
-                    </button>
+                    <button onclick="disconnectCore({{ $core->connection->id }})" class="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700">Disconnect</button>
+                    @else
+                    <button onclick="joinCore({{ $core->id }})" class="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700">Join</button>
                     @endif
                 </div>
             </div>
@@ -180,63 +151,104 @@
 </div>
 @endforeach
 
+<!-- Join Core Modal -->
+<div id="join-core-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden">
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg">
+            <div class="px-6 py-4 border-b">
+                <h3 class="text-lg font-semibold">Join Core to Connection</h3>
+            </div>
+            <form id="join-core-form" class="p-6">
+                <input type="hidden" id="join-core-id">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Joint Closure (JC)</label>
+                        <select id="jc-selection" class="w-full px-3 py-2 border rounded-md" required>
+                            <option value="">Select JC...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Target Cable</label>
+                        <select id="target-cable" class="w-full px-3 py-2 border rounded-md" required disabled>
+                            <option value="">Select Cable...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Target Tube</label>
+                        <select id="target-tube" class="w-full px-3 py-2 border rounded-md" required disabled>
+                            <option value="">Select Tube...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Target Core</label>
+                        <select id="target-core" class="w-full px-3 py-2 border rounded-md" required disabled>
+                            <option value="">Select Core...</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Connection Type</label>
+                            <select id="connection-type" class="w-full px-3 py-2 border rounded-md">
+                                <option value="splice">Splice</option>
+                                <option value="patch">Patch</option>
+                                <option value="direct">Direct</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Loss (dB)</label>
+                            <input type="number" id="connection-loss" step="0.01" min="0" class="w-full px-3 py-2 border rounded-md">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Notes</label>
+                        <textarea id="connection-notes" rows="2" class="w-full px-3 py-2 border rounded-md"></textarea>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button type="button" onclick="closeJoinModal()" class="px-4 py-2 border rounded-md hover:bg-gray-50">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Create Connection</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Edit Core Modal -->
 <div id="edit-core-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden">
     <div class="flex items-center justify-center min-h-screen px-4">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900">Edit Core</h3>
+            <div class="px-6 py-4 border-b">
+                <h3 class="text-lg font-semibold">Edit Core</h3>
             </div>
-            
             <form id="edit-core-form" class="p-6">
                 <input type="hidden" id="core-id">
-                
                 <div class="space-y-4">
                     <div>
-                        <label for="core-status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                        <select id="core-status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-sm font-medium mb-1">Status</label>
+                        <select id="core-status" class="w-full px-3 py-2 border rounded-md">
                             <option value="ok">OK</option>
                             <option value="not_ok">Not OK</option>
                         </select>
                     </div>
-                    
                     <div>
-                        <label for="core-usage" class="block text-sm font-medium text-gray-700 mb-1">Usage</label>
-                        <select id="core-usage" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-sm font-medium mb-1">Usage</label>
+                        <select id="core-usage" class="w-full px-3 py-2 border rounded-md">
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
                         </select>
                     </div>
-                    
                     <div>
-                        <label for="core-attenuation" class="block text-sm font-medium text-gray-700 mb-1">Attenuation (dB)</label>
-                        <input type="number" 
-                               id="core-attenuation" 
-                               step="0.01" 
-                               min="0"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               placeholder="e.g., 0.25">
+                        <label class="block text-sm font-medium mb-1">Attenuation (dB)</label>
+                        <input type="number" id="core-attenuation" step="0.01" min="0" class="w-full px-3 py-2 border rounded-md">
                     </div>
-                    
                     <div>
-                        <label for="core-description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                        <textarea id="core-description" 
-                                  rows="3"
-                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                  placeholder="Additional notes about this core..."></textarea>
+                        <label class="block text-sm font-medium mb-1">Description</label>
+                        <textarea id="core-description" rows="3" class="w-full px-3 py-2 border rounded-md"></textarea>
                     </div>
                 </div>
-                
                 <div class="mt-6 flex justify-end space-x-4">
-                    <button type="button" 
-                            onclick="closeEditModal()" 
-                            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
-                        Cancel
-                    </button>
-                    <button type="submit" 
-                            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                        Update Core
-                    </button>
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 border rounded-md hover:bg-gray-50">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Update Core</button>
                 </div>
             </form>
         </div>
@@ -244,113 +256,74 @@
 </div>
 
 <script>
+// Filter functionality
 document.addEventListener('DOMContentLoaded', function() {
-    // Filter functionality
-    const tubeFilter = document.getElementById('tube-filter');
-    const statusFilter = document.getElementById('status-filter');
-    const usageFilter = document.getElementById('usage-filter');
-    const searchCore = document.getElementById('search-core');
-    const clearFilters = document.getElementById('clear-filters');
+    const filters = {
+        tube: document.getElementById('tube-filter'),
+        status: document.getElementById('status-filter'),
+        usage: document.getElementById('usage-filter'),
+        search: document.getElementById('search-core')
+    };
 
     function applyFilters() {
-        const tubeValue = tubeFilter.value;
-        const statusValue = statusFilter.value;
-        const usageValue = usageFilter.value;
-        const searchValue = searchCore.value.toLowerCase();
+        const values = {
+            tube: filters.tube.value,
+            status: filters.status.value,
+            usage: filters.usage.value,
+            search: filters.search.value.toLowerCase()
+        };
 
         const coreCards = document.querySelectorAll('.core-card');
         const tubeSections = document.querySelectorAll('.tube-section');
-
-        // Hide all tube sections first
-        tubeSections.forEach(section => {
-            section.style.display = 'none';
-        });
-
-        let visibleCards = 0;
         const visibleTubes = new Set();
 
+        tubeSections.forEach(section => section.style.display = 'none');
+
         coreCards.forEach(card => {
-            const cardTube = card.dataset.tube;
-            const cardStatus = card.dataset.status;
-            const cardUsage = card.dataset.usage;
-            const cardCore = card.dataset.core;
-            const cardDescription = card.dataset.description?.toLowerCase() || '';
+            const cardData = {
+                tube: card.dataset.tube,
+                status: card.dataset.status,
+                usage: card.dataset.usage,
+                core: card.dataset.core,
+                description: (card.dataset.description || '').toLowerCase()
+            };
 
-            let shouldShow = true;
+            const shouldShow = (!values.tube || cardData.tube === values.tube) &&
+                             (!values.status || cardData.status === values.status) &&
+                             (!values.usage || cardData.usage === values.usage) &&
+                             (!values.search || cardData.core.includes(values.search) || cardData.description.includes(values.search));
 
-            // Apply filters
-            if (tubeValue && cardTube !== tubeValue) shouldShow = false;
-            if (statusValue && cardStatus !== statusValue) shouldShow = false;
-            if (usageValue && cardUsage !== usageValue) shouldShow = false;
-            if (searchValue && !cardCore.includes(searchValue) && !cardDescription.includes(searchValue)) {
-                shouldShow = false;
-            }
-
-            if (shouldShow) {
-                card.style.display = 'block';
-                visibleCards++;
-                visibleTubes.add(cardTube);
-            } else {
-                card.style.display = 'none';
-            }
+            card.style.display = shouldShow ? 'block' : 'none';
+            if (shouldShow) visibleTubes.add(cardData.tube);
         });
 
-        // Show tube sections that have visible cards
         tubeSections.forEach(section => {
-            const sectionTube = section.dataset.tube;
-            if (visibleTubes.has(sectionTube)) {
-                section.style.display = 'block';
-            }
+            if (visibleTubes.has(section.dataset.tube)) section.style.display = 'block';
         });
-
-        // Show message if no results
-        if (visibleCards === 0) {
-            // You can add a "no results" message here
-            console.log('No cores match the current filters');
-        }
     }
 
-    // Add event listeners
-    tubeFilter.addEventListener('change', applyFilters);
-    statusFilter.addEventListener('change', applyFilters);
-    usageFilter.addEventListener('change', applyFilters);
-    searchCore.addEventListener('input', debounce(applyFilters, 300));
+    Object.values(filters).forEach(filter => {
+        filter.addEventListener(filter.type === 'text' ? 'input' : 'change',
+            filter.type === 'text' ? debounce(applyFilters, 300) : applyFilters);
+    });
 
-    clearFilters.addEventListener('click', function() {
-        tubeFilter.value = '';
-        statusFilter.value = '';
-        usageFilter.value = '';
-        searchCore.value = '';
+    document.getElementById('clear-filters').addEventListener('click', () => {
+        Object.values(filters).forEach(filter => filter.value = '');
         applyFilters();
     });
 
-    // Debounce function for search input
     function debounce(func, wait) {
         let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
+        return (...args) => {
             clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
+            timeout = setTimeout(() => func(...args), wait);
         };
     }
 });
 
 // Core management functions
 function editCore(coreId) {
-    // Find the core card
-    const coreCard = document.querySelector(`[data-core-id="${coreId}"]`);
-    if (!coreCard) {
-        console.error('Core card not found');
-        return;
-    }
-
-    // Get current values (you would typically fetch from server)
     document.getElementById('core-id').value = coreId;
-    
-    // Show modal
     document.getElementById('edit-core-modal').classList.remove('hidden');
 }
 
@@ -358,48 +331,165 @@ function closeEditModal() {
     document.getElementById('edit-core-modal').classList.add('hidden');
 }
 
-// Handle form submission
+function joinCore(coreId) {
+    document.getElementById('join-core-id').value = coreId;
+    loadJCs();
+    document.getElementById('join-core-modal').classList.remove('hidden');
+}
+
+function closeJoinModal() {
+    document.getElementById('join-core-modal').classList.add('hidden');
+    document.getElementById('join-core-form').reset();
+    ['target-cable', 'target-tube', 'target-core'].forEach(id => {
+        document.getElementById(id).disabled = true;
+    });
+}
+
+function loadJCs() {
+    fetch('/connections/joint-closures')
+        .then(response => response.json())
+        .then(data => {
+            const select = document.getElementById('jc-selection');
+            select.innerHTML = '<option value="">Select JC...</option>';
+            data.forEach(jc => {
+                const available = (jc.capacity - jc.used_capacity) || jc.available_capacity || 0;
+                select.innerHTML += `<option value="${jc.id}">${jc.name} (${jc.location}) - ${available}/${jc.capacity} available</option>`;
+            });
+        })
+        .catch(error => console.error('Error loading JCs:', error));
+}
+
+// Event handlers for cascading dropdowns
+document.getElementById('jc-selection').addEventListener('change', function() {
+    const jcId = this.value;
+    const cableSelect = document.getElementById('target-cable');
+
+    if (jcId) {
+        fetch(`/connections/joint-closures/${jcId}/cables`)
+            .then(response => response.json())
+            .then(data => {
+                cableSelect.innerHTML = '<option value="">Select Cable...</option>';
+                data.forEach(cable => {
+                    if (cable.id !== {{ $cable->id }}) {
+                        cableSelect.innerHTML += `<option value="${cable.id}">${cable.name} (${cable.cable_id})</option>`;
+                    }
+                });
+                cableSelect.disabled = false;
+            });
+    } else {
+        cableSelect.disabled = true;
+    }
+
+    ['target-tube', 'target-core'].forEach(id => document.getElementById(id).disabled = true);
+});
+
+document.getElementById('target-cable').addEventListener('change', function() {
+    const cableId = this.value;
+    const tubeSelect = document.getElementById('target-tube');
+
+    if (cableId) {
+        fetch(`/connections/cables/${cableId}/tubes`)
+            .then(response => response.json())
+            .then(data => {
+                tubeSelect.innerHTML = '<option value="">Select Tube...</option>';
+                for (let i = 1; i <= data.total_tubes; i++) {
+                    tubeSelect.innerHTML += `<option value="${i}">Tube ${i}</option>`;
+                }
+                tubeSelect.disabled = false;
+            });
+    } else {
+        tubeSelect.disabled = true;
+    }
+
+    document.getElementById('target-core').disabled = true;
+});
+
+document.getElementById('target-tube').addEventListener('change', function() {
+    const cableId = document.getElementById('target-cable').value;
+    const tubeNumber = this.value;
+    const coreSelect = document.getElementById('target-core');
+
+    if (cableId && tubeNumber) {
+        fetch(`/connections/cables/${cableId}/tubes/${tubeNumber}/cores`)
+            .then(response => response.json())
+            .then(data => {
+                coreSelect.innerHTML = '<option value="">Select Core...</option>';
+                data.forEach(core => {
+                    coreSelect.innerHTML += `<option value="${core.id}" ${core.status !== 'ok' ? 'style="color: #ef4444"' : ''}>Core ${core.core_number}${core.status !== 'ok' ? ' (!)' : ''}</option>`;
+                });
+                coreSelect.disabled = false;
+            });
+    } else {
+        coreSelect.disabled = true;
+    }
+});
+
+// Form submissions
+document.getElementById('join-core-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = new FormData();
+    ['join-core-id', 'target-core', 'jc-selection', 'connection-type', 'connection-loss', 'connection-notes'].forEach(id => {
+        const element = document.getElementById(id);
+        const name = id.replace('join-core-id', 'source_core_id')
+                      .replace('target-core', 'target_core_id')
+                      .replace('jc-selection', 'joint_closure_id')
+                      .replace(/-/g, '_');
+        formData.append(name, element.value);
+    });
+    formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+
+    fetch('/connections', { method: 'POST', body: formData })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Connection created successfully!');
+                location.reload();
+            } else {
+                alert('Error: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error creating connection');
+        });
+});
+
 document.getElementById('edit-core-form').addEventListener('submit', function(e) {
     e.preventDefault();
-    
+
     const coreId = document.getElementById('core-id').value;
     const formData = new FormData();
-    formData.append('status', document.getElementById('core-status').value);
-    formData.append('usage', document.getElementById('core-usage').value);
-    formData.append('attenuation', document.getElementById('core-attenuation').value);
-    formData.append('description', document.getElementById('core-description').value);
+    ['core-status', 'core-usage', 'core-attenuation', 'core-description'].forEach(id => {
+        const name = id.replace('core-', '');
+        formData.append(name, document.getElementById(id).value);
+    });
     formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
     formData.append('_method', 'PUT');
 
-    fetch(`/cores/${coreId}`, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Reload the page to show updated data
-            location.reload();
-        } else {
-            alert('Error updating core: ' + (data.message || 'Unknown error'));
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error updating core');
-    });
+    fetch(`/cores/${coreId}`, { method: 'POST', body: formData })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error updating core');
+        });
 });
 
 function disconnectCore(connectionId) {
-    if (!confirm('Are you sure you want to disconnect this core connection?')) {
-        return;
-    }
+    if (!confirm('Are you sure you want to disconnect this core connection?')) return;
 
     fetch(`/connections/${connectionId}`, {
         method: 'DELETE',
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            'Accept': 'application/json',
+            'Accept': 'application/json'
         }
     })
     .then(response => response.json())
@@ -407,7 +497,7 @@ function disconnectCore(connectionId) {
         if (data.success) {
             location.reload();
         } else {
-            alert('Error disconnecting core: ' + (data.message || 'Unknown error'));
+            alert('Error: ' + (data.message || 'Unknown error'));
         }
     })
     .catch(error => {
