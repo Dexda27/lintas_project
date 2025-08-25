@@ -35,7 +35,6 @@
         </div>
     </form>
 
-
     <!-- Table Container -->
     <div class="overflow-x-auto rounded-xl border border-gray-200">
         <table class="min-w-full text-sm text-gray-700">
@@ -85,12 +84,12 @@
                 </tr>
                 @endforelse
             </tbody>
-            
         </table>
-      
-
     </div>
 
-    
+    <!-- Pagination -->
+    <div class="mt-6">
+        {{ $cables->links('pagination::tailwind') }}
+    </div>
 </div>
 @endsection
