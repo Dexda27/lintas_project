@@ -131,8 +131,8 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div class="flex space-x-2">
-                            <a href="{{ route('closures.show', $closure) }}" class="text-indigo-600 hover:text-indigo-900">View</a>
-                            <a href="{{ route('closures.connections', $closure) }}" class="text-blue-600 hover:text-blue-900">Connections</a>
+                            {{-- <a href="{{ route('closures.show', $closure) }}" class="text-indigo-600 hover:text-indigo-900">View</a> --}}
+                            <a href="{{ route('closures.connections', $closure) }}" class="text-blue-600 hover:text-blue-900">Detail</a>
                             <a href="{{ route('closures.edit', $closure) }}" class="text-yellow-600 hover:text-yellow-900">Edit</a>
                         </div>
                     </td>

@@ -77,7 +77,10 @@ class JointClosureController extends Controller
     {
         $this->checkRegionAccess($closure);
 
-        $closure->load(['coreConnections.coreA.cable', 'coreConnections.coreB.cable']);
+        $closure->load([
+            'coreConnections.coreA.cable',
+            'coreConnections.coreB.cable'
+        ]);
 
         $statistics = [
             'total_capacity' => $closure->capacity,
@@ -86,7 +89,24 @@ class JointClosureController extends Controller
             'active_connections' => $closure->coreConnections->count(),
         ];
 
-        return view('closures.show', compact('closure', 'statistics'));
+        $user = Auth::user();
+
+        // Ambil core yang belum terkoneksi (Available Cores)
+        $availableCores = \App\Models\FiberCore::with('cable')
+            ->where('status', 'ok')
+            ->whereDoesntHave('connectionA')
+            ->whereDoesntHave('connectionB')
+            ->whereHas('cable', function ($q) use ($user, $closure) {
+                if ($user->isAdminRegion()) {
+                    $q->where('region', $user->region);
+                }
+                $q->where('region', $closure->region);
+            })
+            ->orderBy('cable_id')
+            ->get()
+            ->groupBy('cable_id');
+
+        return view('closures.show', compact('closure', 'statistics', 'availableCores'));
     }
 
     public function edit(JointClosure $closure)

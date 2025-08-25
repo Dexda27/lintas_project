@@ -15,9 +15,9 @@
                     {{ $closure->available_capacity <= 0 ? 'disabled' : '' }}>
                 Connect Cores
             </button>
-            <a href="{{ route('closures.show', $closure) }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+            {{-- <a href="{{ route('closures.show', $closure) }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
                 Closure Details
-            </a>
+            </a> --}}
             <a href="{{ route('closures.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
                 Back to List
             </a>
@@ -26,29 +26,50 @@
 </div>
 
 <!-- Capacity Info -->
-<div class="bg-white rounded-lg shadow mb-6 p-6">
-    <div class="flex items-center justify-between">
+<div class="bg-white rounded-lg shadow p-4 mb-6">
+    <h2 class="text-lg font-semibold mb-4 text-gray-800">Closure Information</h2>
+    
+    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-sm">
         <div>
-            <h3 class="text-lg font-semibold text-gray-900">Capacity Information</h3>
-            <p class="text-sm text-gray-600">{{ $closure->location }}</p>
+            <dt class="text-gray-500">Closure ID</dt>
+            <dd class="text-gray-900">{{ $closure->closure_id }}</dd>
         </div>
-        <div class="text-right">
-            <div class="flex items-center space-x-4">
-                <div>
-                    <p class="text-sm text-gray-600">Used / Total</p>
-                    <p class="text-2xl font-bold {{ $closure->used_capacity >= $closure->capacity ? 'text-red-600' : 'text-blue-600' }}">
-                        {{ $closure->used_capacity }} / {{ $closure->capacity }}
-                    </p>
-                </div>
-                <div class="w-32">
-                    <div class="flex-1 bg-gray-200 rounded-full h-4">
-                        <div class="bg-blue-600 h-4 rounded-full transition-all duration-300" 
-                             style="width: {{ $closure->capacity > 0 ? ($closure->used_capacity / $closure->capacity) * 100 : 0 }}%"></div>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-1 text-center">
-                        {{ $closure->available_capacity }} available
-                    </p>
-                </div>
+        <div>
+            <dt class="text-gray-500">Name</dt>
+            <dd class="text-gray-900">{{ $closure->name }}</dd>
+        </div>
+        <div>
+            <dt class="text-gray-500">Location</dt>
+            <dd class="text-gray-900">{{ $closure->location }}</dd>
+        </div>
+        <div>
+            <dt class="text-gray-500">Region</dt>
+            <dd class="text-gray-900">{{ $closure->region }}</dd>
+        </div>
+        <div>
+            <dt class="text-gray-500">Capacity</dt>
+            <dd class="text-gray-900">{{ $closure->used_capacity }} / {{ $closure->capacity }}</dd>
+        </div>
+        <div>
+            <dt class="text-gray-500">Status</dt>
+            <dd>
+                <span class="px-2 py-0.5 text-xs font-medium rounded-full 
+                    {{ $closure->status === 'ok' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                    {{ ucfirst(str_replace('_', ' ', $closure->status)) }}
+                </span>
+            </dd>
+        </div>
+    </dl>
+
+    <!-- Progress Bar -->
+    <div class="mt-4">
+        <div class="flex justify-between text-xs text-gray-500 mb-1">
+            <span>Usage</span>
+            <span>{{ $closure->available_capacity }} available</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+                 style="width: {{ $closure->capacity > 0 ? ($closure->used_capacity / $closure->capacity) * 100 : 0 }}%">
             </div>
         </div>
     </div>
@@ -64,7 +85,7 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Connection</th>
+                    {{-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Connection</th> --}}
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Core A</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Core B</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Splice Loss</th>
@@ -75,9 +96,9 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 @foreach($closure->coreConnections as $connection)
                 <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {{-- <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         #{{ $connection->id }}
-                    </td>
+                    </td> --}}
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         <div>
                             <p class="font-medium">{{ $connection->coreA->cable->name }}</p>

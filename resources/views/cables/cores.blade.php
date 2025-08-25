@@ -124,6 +124,10 @@
                             {{ ucfirst($core->usage) }}
                         </span>
                     </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-600">Deskripsi : {{ $core->description }} </span>
+                        <span class="font-medium"></span>
+                    </div>
                     
                     @if($core->attenuation)
                     <div class="flex justify-between">
@@ -134,20 +138,26 @@
                     
                     @if($core->connection)
                     <div class="mt-2 p-2 bg-blue-50 rounded text-xs">
-                        <p class="font-medium text-blue-800">Connected to:</p>
+                        <p class="font-medium text-blue-800 mb-1">Connected to:</p>
                         @php
                             $connectedCore = $core->connection->coreA->id === $core->id ? $core->connection->coreB : $core->connection->coreA;
                         @endphp
-                        <p class="text-blue-600">
-                            {{ $connectedCore->cable->name }} - T{{ $connectedCore->tube_number }}C{{ $connectedCore->core_number }}
-                        </p>
+                        <div class="text-blue-600 space-y-1">
+                            <p class="font-medium">{{ $connectedCore->cable->name }}</p>
+                            <p>Cable ID: {{ $connectedCore->cable->cable_id }}</p>
+                            @if($connectedCore->cable->name)
+                            <p>JC: {{ $connectedCore->cable->name }}</p>
+                            @endif
+                            @if($connectedCore->cable->closure_id)
+                            <p>Closure ID: {{ $connectedCore->cable->closure_id }}</p>
+                            @endif
+                            <p>T{{ $connectedCore->tube_number }}C{{ $connectedCore->core_number }}</p>
+                        </div>
                     </div>
                     @endif
                     
                     @if($core->description)
-                    <div class="mt-2">
-                        <p class="text-xs text-gray-600">{{ $core->description }}</p>
-                    </div>
+                    
                     @endif
                 </div>
                 

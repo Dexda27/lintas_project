@@ -19,7 +19,8 @@ class DashboardController extends Controller
             $query->where('region', $user->region);
         }
 
-        $cables = $query->get();
+        $cables = $query->paginate(5); // 5 item per halaman
+
 
         $totalCores = 0;
         $activeCores = 0;

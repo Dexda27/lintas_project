@@ -21,7 +21,7 @@ class CableController extends Controller
             $query->where('region', $user->region);
         }
 
-        $cables = $query->orderBy('created_at', 'desc')->paginate(20);
+        $cables = $query->orderBy('created_at', 'desc')->paginate(10);
 
         return view('cables.index', compact('cables'));
     }

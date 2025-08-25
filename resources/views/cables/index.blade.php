@@ -65,12 +65,12 @@
                 </tr>
                 @endforelse
             </tbody>
+            
         </table>
+      
+
     </div>
 
-    <!-- Pagination -->
-    <div class="mt-6">
-        {{ $cables->links('pagination::tailwind') }}
-    </div>
+    
 </div>
 @endsection
