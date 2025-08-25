@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CableController;
 use App\Http\Controllers\JointClosureController;
+use App\Http\Controllers\ConnectionController; // Add this import
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,8 +22,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cables/{cable}/cores', [CableController::class, 'cores'])->name('cables.cores');
     Route::put('/cores/{core}', [CableController::class, 'updateCore'])->name('cores.update');
 
+    // Add these new cable routes for AJAX calls
+    Route::get('/cables/{cable}/tubes', [CableController::class, 'getTubes'])->name('cables.tubes');
+    Route::get('/cables/{cable}/tubes/{tube}/cores/available', [CableController::class, 'getAvailableCores'])->name('cables.cores.available');
+
     Route::resource('closures', JointClosureController::class);
     Route::get('/closures/{closure}/connections', [JointClosureController::class, 'connections'])->name('closures.connections');
     Route::post('/closures/{closure}/connect', [JointClosureController::class, 'connectCores'])->name('closures.connect');
     Route::delete('/connections/{connection}', [JointClosureController::class, 'disconnectCores'])->name('connections.disconnect');
+
+    // Add these new connection routes
+    Route::post('/connections', [ConnectionController::class, 'store'])->name('connections.store');
+
+    // AJAX endpoints for connection form
+    Route::get('/connections/joint-closures', [ConnectionController::class, 'getJointClosures'])->name('connections.joint-closures');
+    Route::get('/connections/joint-closures/{closure}/cables', [ConnectionController::class, 'getCablesByJointClosure'])->name('connections.joint-closures.cables');
+    Route::get('/connections/cables/{cable}/tubes', [ConnectionController::class, 'getTubesByCable'])->name('connections.cables.tubes');
+    Route::get('/connections/cables/{cable}/tubes/{tube}/cores', [ConnectionController::class, 'getAvailableCores'])->name('connections.cables.cores');
 });

@@ -15,7 +15,7 @@ class CableController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $query = Cable::query(); // Removed with(['sourceSite', 'destinationSite'])
+        $query = Cable::query();
 
         if ($user->isAdminRegion()) {
             $query->where('region', $user->region);
@@ -28,7 +28,6 @@ class CableController extends Controller
 
     public function create()
     {
-        // Removed sites query since we don't need it anymore
         return view('cables.create');
     }
 
@@ -48,6 +47,7 @@ class CableController extends Controller
             'source_site' => 'required|string|max:255',
             'destination_site' => 'required|string|max:255|different:source_site',
             'description' => 'nullable|string|max:1000',
+            'core_structure' => 'nullable|string', // Added for core structure data
         ]);
 
         // Check region access for admin
@@ -57,7 +57,7 @@ class CableController extends Controller
 
         DB::beginTransaction();
         try {
-            // Calculate cores per tube
+            // Calculate cores per tube (base calculation)
             $coresPerTube = intval($request->total_cores / $request->total_tubes);
 
             $cable = Cable::create([
@@ -75,13 +75,13 @@ class CableController extends Controller
                 'description' => $request->description,
             ]);
 
-            // Auto-generate fiber cores
-            $this->generateFiberCores($cable);
+            // Generate fiber cores with sequential numbering
+            $this->generateSequentialFiberCores($cable, $request->core_structure);
 
             DB::commit();
 
             return redirect()->route('cables.index')
-                ->with('success', 'Cable created successfully with ' . $request->total_cores . ' fiber cores.');
+                ->with('success', 'Cable created successfully with ' . $request->total_cores . ' fiber cores (sequential numbering).');
 
         } catch (\Exception $e) {
             DB::rollback();
@@ -93,7 +93,7 @@ class CableController extends Controller
     {
         $this->checkRegionAccess($cable);
 
-        $cable->load(['fiberCores']); // Removed sourceSite, destinationSite
+        $cable->load(['fiberCores']);
 
         $coresByTube = $cable->fiberCores->groupBy('tube_number');
         $statistics = [
@@ -109,8 +109,6 @@ class CableController extends Controller
     public function edit(Cable $cable)
     {
         $this->checkRegionAccess($cable);
-
-        // Removed sites query since we don't need it anymore
         return view('cables.edit', compact('cable'));
     }
 
@@ -185,12 +183,19 @@ class CableController extends Controller
         }
     }
 
+    // Also update the cores method to load relationships properly:
     public function cores(Cable $cable)
     {
         $this->checkRegionAccess($cable);
 
-        // Removed sourceSite, destinationSite from load
-        $coresByTube = $cable->fiberCores()->with(['connectionA.coreB.cable', 'connectionB.coreA.cable'])->get()->groupBy('tube_number');
+        // Load both connectionA and connectionB with their related cores and cables
+        $coresByTube = $cable->fiberCores()
+            ->with([
+                'connectionA.coreB.cable',
+                'connectionB.coreA.cable'
+            ])
+            ->get()
+            ->groupBy('tube_number');
 
         return view('cables.cores', compact('cable', 'coresByTube'));
     }
@@ -214,46 +219,87 @@ class CableController extends Controller
         ]);
     }
 
-    private function generateFiberCores(Cable $cable)
+    /**
+     * Generate fiber cores with sequential numbering across all tubes
+     * Each core gets a unique sequential number from 1 to total_cores
+     */
+    private function generateSequentialFiberCores(Cable $cable, $coreStructureJson = null)
     {
         $coresData = [];
-        $coreNumber = 1;
+        $sequentialCoreNumber = 1; // This will be the unique sequential number across all tubes
 
-        for ($tube = 1; $tube <= $cable->total_tubes; $tube++) {
-            for ($core = 1; $core <= $cable->cores_per_tube; $core++) {
-                if ($coreNumber > $cable->total_cores)
-                    break 2;
+        // Parse core structure if provided
+        $coreStructure = null;
+        if ($coreStructureJson) {
+            $coreStructure = json_decode($coreStructureJson, true);
+        }
+
+        // Calculate distribution
+        $baseCoresPerTube = intval($cable->total_cores / $cable->total_tubes);
+        $extraCores = $cable->total_cores % $cable->total_tubes;
+
+        for ($tubeNumber = 1; $tubeNumber <= $cable->total_tubes; $tubeNumber++) {
+            // Determine how many cores this tube should have
+            $coresInThisTube = $baseCoresPerTube + ($tubeNumber <= $extraCores ? 1 : 0);
+
+            // Generate cores for this tube
+            for ($coreInTube = 1; $coreInTube <= $coresInThisTube; $coreInTube++) {
+                if ($sequentialCoreNumber > $cable->total_cores) {
+                    break 2; // Exit both loops
+                }
 
                 $coresData[] = [
                     'cable_id' => $cable->id,
-                    'tube_number' => $tube,
-                    'core_number' => $core,
+                    'tube_number' => $tubeNumber,
+                    'core_number' => $sequentialCoreNumber, // Sequential number across all tubes
                     'status' => 'ok',
                     'usage' => 'inactive',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
 
-                $coreNumber++;
+                $sequentialCoreNumber++;
             }
         }
 
-        // Handle remaining cores if total_cores is not evenly divisible
-        if ($coreNumber <= $cable->total_cores) {
-            $remainingCores = $cable->total_cores - ($coreNumber - 1);
-            $lastTube = $cable->total_tubes;
-            $startCore = $cable->cores_per_tube + 1;
+        // Insert all cores at once for better performance
+        if (!empty($coresData)) {
+            FiberCore::insert($coresData);
+        }
+    }
 
-            for ($i = 0; $i < $remainingCores; $i++) {
+    /**
+     * Alternative method: Generate cores with tube-based numbering but store sequential reference
+     * This maintains the old tube-core structure but adds sequential numbering
+     */
+    private function generateFiberCoresWithTubeReference(Cable $cable)
+    {
+        $coresData = [];
+        $sequentialNumber = 1;
+
+        // Calculate distribution
+        $baseCoresPerTube = intval($cable->total_cores / $cable->total_tubes);
+        $extraCores = $cable->total_cores % $cable->total_tubes;
+
+        for ($tubeNumber = 1; $tubeNumber <= $cable->total_tubes; $tubeNumber++) {
+            $coresInThisTube = $baseCoresPerTube + ($tubeNumber <= $extraCores ? 1 : 0);
+
+            for ($coreInTube = 1; $coreInTube <= $coresInThisTube; $coreInTube++) {
+                if ($sequentialNumber > $cable->total_cores) {
+                    break 2;
+                }
+
                 $coresData[] = [
                     'cable_id' => $cable->id,
-                    'tube_number' => $lastTube,
-                    'core_number' => $startCore + $i,
+                    'tube_number' => $tubeNumber,
+                    'core_number' => $sequentialNumber, // Using sequential instead of tube-based
                     'status' => 'ok',
                     'usage' => 'inactive',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
+
+                $sequentialNumber++;
             }
         }
 
@@ -267,5 +313,33 @@ class CableController extends Controller
         if ($user->isAdminRegion() && $cable->region !== $user->region) {
             abort(403, 'Access denied to this region.');
         }
+    }
+
+    // Add these methods to your existing CableController.php class
+
+        public function getTubes(Cable $cable)
+    {
+        $this->checkRegionAccess($cable);
+
+        return response()->json([
+            'total_tubes' => $cable->total_tubes,
+            'cable_name' => $cable->name
+        ]);
+    }
+
+    public function getAvailableCores(Cable $cable, $tubeNumber)
+    {
+        $this->checkRegionAccess($cable);
+
+        $cores = $cable->fiberCores()
+            ->select('id', 'core_number', 'tube_number', 'status')
+            ->where('tube_number', $tubeNumber)
+            ->where('status', 'ok')
+            ->whereDoesntHave('connectionA')
+            ->whereDoesntHave('connectionB')
+            ->orderBy('core_number')
+            ->get();
+
+        return response()->json($cores);
     }
 }
