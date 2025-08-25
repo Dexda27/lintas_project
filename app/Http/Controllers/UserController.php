@@ -103,7 +103,7 @@ class UserController extends Controller
             abort(403, 'Unauthorized access. Super Admin privileges required.');
         }
 
-        $regions = ['Jakarta', 'Surabaya', 'Medan', 'Bandung', 'Makassar', 'Palembang', 'Semarang', 'Denpasar'];
+        $regions = ['Bali', 'NTT', 'NTB'];
         return view('users.edit', compact('user', 'regions'));
     }
 
