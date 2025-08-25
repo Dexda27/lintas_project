@@ -81,7 +81,6 @@
                     <option value="">Select Role</option>
                     <option value="super_admin" {{ old('role', $user->role) == 'super_admin' ? 'selected' : '' }}>Super Admin</option>
                     <option value="admin_region" {{ old('role', $user->role) == 'admin_region' ? 'selected' : '' }}>Regional Admin</option>
-                    <option value="user" {{ old('role', $user->role) == 'user' ? 'selected' : '' }}>User</option>
                 </select>
                 @error('role')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
