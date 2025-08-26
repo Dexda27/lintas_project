@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <p class="text-gray-500 text-sm mt-1">Kelola data kabel dengan mudah</p>
         </div>
         <a href="{{ route('cables.create') }}"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg shadow transition">
+           class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg shadow transition">
             + Tambah Kabel
         </a>
     </div>
@@ -98,17 +98,17 @@ document.addEventListener('DOMContentLoaded', function() {
     <form method="GET" action="{{ route('cables.index') }}" class="mb-4">
         <div class="flex gap-2">
             <input type="text" name="search" value="{{ request('search') }}"
-                class="border border-gray-300 rounded-lg px-4 py-2 w-full"
-                placeholder="Cari Cable ID, namakabel, site, atau region...">
+                   class="border border-gray-300 rounded-lg px-4 py-2 w-full"
+                   placeholder="Cari Cable ID, nama kabel, site, atau region...">
             <button type="submit"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition">
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition">
                 Cari
             </button>
             @if(request('search'))
-            <a href="{{ route('cables.index') }}"
-                class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg shadow transition">
-                Clear
-            </a>
+                <a href="{{ route('cables.index') }}"
+                   class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg shadow transition">
+                    Clear
+                </a>
             @endif
         </div>
     </form>
@@ -128,12 +128,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 </tr>
             </thead>
             <tbody>
-                @forelse ($cables as $index => $cable)
+                @forelse ($cables as $cable)
                 <tr class="hover:bg-gray-50 transition">
+                    <td class="px-6 py-4">{{ $cable->cable_id }}</td>
+                    <td class="px-6 py-4">{{ $cable->name }}</td>
                     <td class="px-6 py-4">{{ $cable->cable_id }}</td>
                     <td class="px-6 py-4">{{ $cable->name }}</td>
                     <td class="px-6 py-4">{{ $cable->source_site ?? '-' }}</td>
                     <td class="px-6 py-4">{{ $cable->destination_site ?? '-' }}</td>
+                    <td class="px-6 py-4">{{ $cable->region ?? '-' }}</td>
                     <td class="px-6 py-4">{{ $cable->region ?? '-' }}</td>
                     <td class="px-6 py-4">{{ $cable->created_at->format('d M Y') }}</td>
                     <td class="px-6 py-4 text-center">
@@ -142,21 +145,14 @@ document.addEventListener('DOMContentLoaded', function() {
                                 class="text-blue-600 hover:text-blue-800 font-medium transition-colors">
                                 Detail
                             </a>
+                               class="text-blue-600 hover:text-blue-800 font-medium">Detail</a>
                             <a href="{{ route('cables.edit', $cable->id) }}"
-                                class="text-yellow-600 hover:text-yellow-800 font-medium transition-colors">
-                                Edit
-                            </a>
-                            <!-- Simple Delete Form -->
-                            <form method="POST" action="{{ route('cables.destroy', $cable->id) }}"
-                                  onsubmit="return confirmDelete(event, '{{ addslashes($cable->name) }}', '{{ addslashes($cable->cable_id) }}')"
-                                  style="display: inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                        class="text-red-600 hover:text-red-800 font-medium cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 rounded px-1">
-                                    Hapus
-                                </button>
-                            </form>
+                               class="text-yellow-600 hover:text-yellow-800 font-medium">Edit</a>
+                             <button
+                            class="text-red-600 hover:underline"
+                            onclick="showDeleteModal({{ $cable->id }}, '{{ $cable->name }}')">
+                            Hapus
+                        </button>
                         </div>
                     </td>
                 </tr>
@@ -170,6 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 
     <!-- Pagination Section -->
+    <!-- Pagination -->
     @if($cables->hasPages())
     <div class="bg-white px-6 py-4 border-t border-gray-200 flex items-center justify-between">
         <div class="flex-1 flex justify-between items-center">
@@ -236,6 +233,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 @endif
             </div>
         </div>
+        {{ $cables->links() }}
     </div>
     @endif
 </div>
@@ -275,6 +273,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     Ya, Hapus
                 </button>
             </div>
+<!-- Modal Delete -->
+<div id="deleteModal" class="hidden fixed inset-0 flex items-center justify-center">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+        <h2 class="text-lg font-semibold mb-4">Konfirmasi Hapus</h2>
+        <p id="deleteMessage" class="mb-6 text-gray-700">Apakah Anda yakin ingin menghapus kabel ini?</p>
+        <div class="flex justify-end gap-4">
+            <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Batal</button>
+            <form id="deleteForm" method="POST">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Hapus</button>
+            </form>
         </div>
     </div>
 </div>
