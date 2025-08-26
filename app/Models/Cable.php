@@ -19,13 +19,12 @@ class Cable extends Model
         'status',
         'usage',
         'otdr_length',
-        'source_site',      // Changed from source_site_id
-        'destination_site', // Changed from destination_site_id
+        'source_site',     
+        'destination_site',
         'description',
     ];
 
-    // Removed sourceSite() and destinationSite() relationships
-    // since we're now using text fields instead of foreign keys
+   
 
     public function fiberCores()
     {

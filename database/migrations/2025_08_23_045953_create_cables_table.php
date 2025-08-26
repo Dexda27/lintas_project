@@ -19,8 +19,8 @@ return new class extends Migration {
             $table->enum('status', ['ok', 'not_ok'])->default('ok');
             $table->enum('usage', ['active', 'inactive'])->default('inactive');
             $table->decimal('otdr_length', 10, 2)->nullable();
-            $table->foreignId('source_site_id')->constrained('sites');
-            $table->foreignId('destination_site_id')->constrained('sites');
+            $table->string('source_site');      
+            $table->string('destination_site');
             $table->text('description')->nullable();
             $table->timestamps();
         });
