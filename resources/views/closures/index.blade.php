@@ -80,6 +80,27 @@
     <div class="px-6 py-4 border-b border-gray-200">
         <h2 class="text-xl font-semibold text-gray-900">Joint Closures</h2>
     </div>
+
+
+    <!-- Search Form -->
+    <form method="GET" action="{{ route('closures.index') }}" class="px-6 py-4 border-b border-gray-200">
+        <div class="flex gap-2">
+            <input type="text" name="search" value="{{ request('search') }}"
+                class="border border-gray-300 rounded-lg px-4 py-2 w-full"
+                placeholder="Cari Closure ID, name, location, atau region...">
+            <button type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition">
+                Cari
+            </button>
+            @if(request('search'))
+            <a href="{{ route('closures.index') }}"
+                class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg shadow transition">
+                Clear
+            </a>
+            @endif
+        </div>
+    </form>
+
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
@@ -113,8 +134,8 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         <div class="flex items-center">
                             <div class="flex-1 bg-gray-200 rounded-full h-2 mr-2">
-                                <div class="bg-blue-600 h-2 rounded-full" 
-                                     style="width: {{ $closure->capacity > 0 ? ($closure->used_capacity / $closure->capacity) * 100 : 0 }}%"></div>
+                                <div class="bg-blue-600 h-2 rounded-full"
+                                    style="width: {{ $closure->capacity > 0 ? ($closure->used_capacity / $closure->capacity) * 100 : 0 }}%"></div>
                             </div>
                             <span class="text-xs font-medium">
                                 {{ $closure->used_capacity }}/{{ $closure->capacity }}
@@ -146,12 +167,92 @@
                 @endforelse
             </tbody>
         </table>
+        <!-- Pagination Section -->
+        @if($closures->hasPages())
+        <div class="bg-white px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+            <div class="flex-1 flex justify-between items-center">
+                <!-- Showing Results Info -->
+                <div>
+                    <p class="text-sm text-gray-700">
+                        Showing
+                        <span class="font-medium">{{ $closures->firstItem() }}</span>
+                        to
+                        <span class="font-medium">{{ $closures->lastItem() }}</span>
+                        of
+                        <span class="font-medium">{{ $closures->total() }}</span>
+                        results
+                    </p>
+                </div>
+
+                <!-- Pagination Links -->
+                <div class="flex items-center space-x-2">
+                    {{-- Previous Page Link --}}
+                    @if ($closures->onFirstPage())
+                    <span
+                        class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-300 bg-white border border-gray-300 cursor-default rounded-l-md">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                    @else
+                    <a href="{{ $closures->previousPageUrl() }}"
+                        class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    @endif
+
+                    {{-- Pagination Elements --}}
+                    @foreach ($closures->getUrlRange(1, $closures->lastPage()) as $page => $url)
+                    @if ($page == $closures->currentPage())
+                    <span
+                        class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600">
+                        {{ $page }}
+                    </span>
+                    @else
+                    <a href="{{ $url }}"
+                        class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50">
+                        {{ $page }}
+                    </a>
+                    @endif
+                    @endforeach
+
+                    {{-- Next Page Link --}}
+                    @if ($closures->hasMorePages())
+                    <a href="{{ $closures->nextPageUrl() }}"
+                        class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    @else
+                    <span
+                        class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-300 bg-white border border-gray-300 cursor-default rounded-r-md">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                    @endif
+                </div>
+            </div>
+        </div>
+        @endif
+
     </div>
-    
-    @if($closures->hasPages())
+
+    <!-- @if($closures->hasPages())
     <div class="px-6 py-4 border-t border-gray-200">
         {{ $closures->links() }}
     </div>
-    @endif
+    @endif -->
 </div>
 @endsection
