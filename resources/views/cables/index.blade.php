@@ -69,10 +69,10 @@
                             <a href="{{ route('cables.edit', $cable->id) }}"
                                class="text-yellow-600 hover:text-yellow-800 font-medium">Edit</a>
                              <button 
-                            class="text-red-600 hover:underline"
-                            onclick="showDeleteModal({{ $cable->id }}, '{{ $cable->name }}')">
-                            Hapus
-                        </button>
+                                class="text-red-600 hover:underline"
+                                onclick="showDeleteModal({{ $cable->id }}, '{{ $cable->name }}', '{{ $cable->cable_id }}')">
+                                Hapus
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -94,17 +94,32 @@
 </div>
 
 <!-- Modal Delete -->
-<div id="deleteModal" class="hidden fixed inset-0 flex items-center justify-center">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 class="text-lg font-semibold mb-4">Konfirmasi Hapus</h2>
-        <p id="deleteMessage" class="mb-6 text-gray-700">Apakah Anda yakin ingin menghapus kabel ini?</p>
-        <div class="flex justify-end gap-4">
-            <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Batal</button>
-            <form id="deleteForm" method="POST">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Hapus</button>
-            </form>
+<div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+    <div class="bg-white bg-opacity-95 backdrop-blur-sm rounded-lg shadow-xl border border-white border-opacity-20 p-6 w-96 mx-4">
+        <div class="flex items-center mb-4">
+            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 bg-opacity-80 flex items-center justify-center mr-3">
+                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+            </div>
+            <h2 class="text-lg font-semibold text-gray-900">Konfirmasi Hapus</h2>
+        </div>
+        
+        <div class="mb-6">
+            <p class="text-sm text-gray-600 mb-2">Apakah Anda yakin ingin menghapus kabel:</p>
+            <p class="font-medium text-gray-900" id="cableName">-</p>
+            <p class="text-sm text-gray-500" id="cableId">-</p>
+        </div>
+        
+        <div class="flex justify-end gap-3">
+            <button type="button" onclick="closeDeleteModal()" 
+                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white bg-opacity-80 backdrop-blur-sm border border-gray-300 border-opacity-50 rounded-md hover:bg-opacity-90 hover:bg-gray-50 transition-all duration-200">
+                Batal
+            </button>
+            <button type="button" onclick="executeDelete()" 
+                    class="px-4 py-2 text-sm font-medium text-white bg-red-600 bg-opacity-90 backdrop-blur-sm border border-transparent rounded-md hover:bg-opacity-100 hover:bg-red-700 transition-all duration-200">
+                Ya, Hapus
+            </button>
         </div>
     </div>
 </div>
@@ -115,6 +130,7 @@
     @method('DELETE')
 </form>
 
+@push('styles')
 <style>
     /* Quick hover transitions */
     tr:hover {
@@ -126,4 +142,5 @@
         transition: opacity 0.15s ease;
     }
 </style>
+@endpush
 @endsection
