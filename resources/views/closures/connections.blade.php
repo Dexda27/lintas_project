@@ -2,6 +2,10 @@
 
 @section('title', 'Manage Connections - ' . $closure->name)
 
+@push('scripts')
+<script src="{{ asset('js/jc-connection.js') }}"></script>
+@endpush
+
 @section('content')
 <div class="mb-8">
     <div class="flex items-center justify-between">
@@ -15,9 +19,6 @@
                     {{ $closure->available_capacity <= 0 ? 'disabled' : '' }}>
                 Connect Cores
             </button>
-            {{-- <a href="{{ route('closures.show', $closure) }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                Closure Details
-            </a> --}}
             <a href="{{ route('closures.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
                 Back to List
             </a>
@@ -85,7 +86,6 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    {{-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Connection</th> --}}
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Core A</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Core B</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Splice Loss</th>
@@ -96,9 +96,6 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 @foreach($closure->coreConnections as $connection)
                 <tr class="hover:bg-gray-50">
-                    {{-- <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        #{{ $connection->id }}
-                    </td> --}}
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         <div>
                             <p class="font-medium">{{ $connection->coreA->cable->name }}</p>
@@ -250,76 +247,4 @@
     </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const coreASelect = document.getElementById('core_a_id');
-    const coreBSelect = document.getElementById('core_b_id');
-    
-    // Prevent selecting cores from the same cable
-    function updateCoreOptions() {
-        const selectedCableA = coreASelect.options[coreASelect.selectedIndex]?.dataset.cable;
-        const selectedCableB = coreBSelect.options[coreBSelect.selectedIndex]?.dataset.cable;
-        
-        // Update Core B options
-        Array.from(coreBSelect.options).forEach(option => {
-            if (option.value && option.dataset.cable === selectedCableA) {
-                option.disabled = true;
-                option.style.color = '#9CA3AF';
-            } else {
-                option.disabled = false;
-                option.style.color = '';
-            }
-        });
-        
-        // Update Core A options
-        Array.from(coreASelect.options).forEach(option => {
-            if (option.value && option.dataset.cable === selectedCableB) {
-                option.disabled = true;
-                option.style.color = '#9CA3AF';
-            } else {
-                option.disabled = false;
-                option.style.color = '';
-            }
-        });
-    }
-    
-    coreASelect.addEventListener('change', updateCoreOptions);
-    coreBSelect.addEventListener('change', updateCoreOptions);
-});
-
-function showConnectModal() {
-    document.getElementById('connect-modal').classList.remove('hidden');
-}
-
-function closeConnectModal() {
-    document.getElementById('connect-modal').classList.add('hidden');
-    document.getElementById('connect-form').reset();
-}
-
-function disconnectConnection(connectionId) {
-    if (!confirm('Are you sure you want to disconnect this core connection?')) {
-        return;
-    }
-
-    fetch(`/connections/${connectionId}`, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            'Accept': 'application/json',
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            location.reload();
-        } else {
-            alert('Error disconnecting cores: ' + (data.message || 'Unknown error'));
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error disconnecting cores');
-    });
-}
-</script>
 @endsection

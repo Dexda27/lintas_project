@@ -126,52 +126,7 @@
 <!-- Connect Cores Modal -->
 {{-- @include('partials.connect-modal', ['closure' => $closure, 'availableCores' => $availableCores]) --}}
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const coreASelect = document.getElementById('core_a_id');
-    const coreBSelect = document.getElementById('core_b_id');
-    
-    function updateCoreOptions() {
-        const selectedCableA = coreASelect.options[coreASelect.selectedIndex]?.dataset.cable;
-        const selectedCableB = coreBSelect.options[coreBSelect.selectedIndex]?.dataset.cable;
-        
-        Array.from(coreBSelect.options).forEach(option => {
-            option.disabled = option.dataset.cable === selectedCableA;
-        });
-        Array.from(coreASelect.options).forEach(option => {
-            option.disabled = option.dataset.cable === selectedCableB;
-        });
-    }
-    
-    coreASelect.addEventListener('change', updateCoreOptions);
-    coreBSelect.addEventListener('change', updateCoreOptions);
-});
-
-function showConnectModal() {
-    document.getElementById('connect-modal').classList.remove('hidden');
-}
-
-function closeConnectModal() {
-    document.getElementById('connect-modal').classList.add('hidden');
-    document.getElementById('connect-form').reset();
-}
-
-function disconnectConnection(connectionId) {
-    if (!confirm('Are you sure you want to disconnect this core connection?')) return;
-
-    fetch(`/connections/${connectionId}`, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            'Accept': 'application/json',
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) location.reload();
-        else alert('Error: ' + (data.message || 'Unknown error'));
-    })
-    .catch(() => alert('Error disconnecting cores'));
-}
-</script>
+@push('scripts')
+<script src="{{ asset('js/jc-show.js') }}"></script>
+@endpush
 @endsection

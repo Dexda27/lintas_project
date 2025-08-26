@@ -2,6 +2,14 @@
 
 @section('title', 'Manage Cores - ' . $cable->name)
 
+@push('scripts')
+<script>
+    // Pass cable ID to JavaScript
+    window.currentCableId = {{ $cable->id }};
+</script>
+<script src="{{ asset('js/manage-cores.js') }}"></script>
+@endpush
+
 @section('content')
 <!-- Header -->
 <div class="mb-8">
@@ -27,7 +35,7 @@
                 <option value="">All Tubes</option>
                 @for($i = 1; $i <= $cable->total_tubes; $i++)
                     <option value="{{ $i }}">Tube {{ $i }}</option>
-                    @endfor
+                @endfor
             </select>
         </div>
         <div>
@@ -46,11 +54,6 @@
                 <option value="inactive">Inactive</option>
             </select>
         </div>
-        <!-- <div class="flex-1">
-            <label for="search-core" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-            <input type="text" id="search-core" placeholder="Search by core number or description..."
-                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div> -->
         <div class="flex items-end">
             <button id="clear-filters" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">Clear</button>
         </div>
@@ -60,7 +63,7 @@
 @php
 $coreColors = ['#0000ff', '#ff7f00', '#00ff00', '#964b00', '#808080', '#ffffff', '#ff0000', '#000000', '#ffff00', '#8f00ff', '#ff00ff', '#00ffff'];
 function getCoreColor($coreNumber, $colors) {
-return $colors[($coreNumber - 1) % 12];
+    return $colors[($coreNumber - 1) % 12];
 }
 @endphp
 
@@ -82,19 +85,18 @@ return $colors[($coreNumber - 1) % 12];
             @php $coreColor = getCoreColor($core->core_number, $coreColors); @endphp
 
             <div class="core-card border border-gray-400 rounded-lg p-4 hover:shadow-md transition-shadow bg-gradient-to-b from-white to-gray-50"
-
-                data-tube="{{ $core->tube_number }}" data-status="{{ $core->status }}"
-                data-usage="{{ $core->usage }}" data-core="{{ $core->core_number }}"
+                data-tube="{{ $core->tube_number }}" 
+                data-status="{{ $core->status }}"
+                data-usage="{{ $core->usage }}" 
+                data-core="{{ $core->core_number }}"
                 data-description="{{ $core->description }}">
 
                 <div class="flex justify-between items-start mb-3">
                     <div class="flex items-center space-x-2">
-
                         <div>
                             <h3 class="font-semibold text-gray-900">Core {{ $core->core_number }}</h3>
                             <p class="text-xs text-gray-500 mt-1">Tube {{ $core->tube_number }}</p>
                         </div>
-
                     </div>
                     <div class="flex space-x-1">
                         <div class="w-3 h-3 rounded-full border border-gray-400" style="background-color: {{ $coreColor }}"></div>
@@ -257,292 +259,4 @@ return $colors[($coreNumber - 1) % 12];
     </div>
 </div>
 
-<script>
-    // Core management functions (harus di luar DOMContentLoaded agar bisa diakses dari onclick)
-    function editCore(coreId) {
-        document.getElementById('core-id').value = coreId;
-        document.getElementById('edit-core-modal').classList.remove('hidden');
-    }
-
-    function closeEditModal() {
-        document.getElementById('edit-core-modal').classList.add('hidden');
-    }
-
-    function joinCore(coreId) {
-        document.getElementById('join-core-id').value = coreId;
-        loadJCs();
-        document.getElementById('join-core-modal').classList.remove('hidden');
-    }
-
-    function closeJoinModal() {
-        document.getElementById('join-core-modal').classList.add('hidden');
-        document.getElementById('join-core-form').reset();
-        ['target-cable', 'target-tube', 'target-core'].forEach(id => {
-            document.getElementById(id).disabled = true;
-        });
-    }
-
-    function loadJCs() {
-        fetch('/connections/joint-closures')
-            .then(response => response.json())
-            .then(data => {
-                const select = document.getElementById('jc-selection');
-                select.innerHTML = '<option value="">Select JC...</option>';
-                data.forEach(jc => {
-                    const available = (jc.capacity - jc.used_capacity) || jc.available_capacity || 0;
-                    select.innerHTML += `<option value="${jc.id}">${jc.name} (${jc.location}) - ${available}/${jc.capacity} available</option>`;
-                });
-            })
-            .catch(error => console.error('Error loading JCs:', error));
-    }
-
-    function disconnectCore(connectionId) {
-        if (!confirm('Are you sure you want to disconnect this core connection?')) return;
-
-        fetch(`/connections/${connectionId}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Error: ' + (data.message || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error disconnecting core');
-            });
-    }
-
-    // Filter functionality dan event listeners
-    document.addEventListener('DOMContentLoaded', function() {
-        const filters = {
-            tube: document.getElementById('tube-filter'),
-            status: document.getElementById('status-filter'),
-            usage: document.getElementById('usage-filter')
-            // Hapus search karena elemennya tidak ada
-        };
-
-        function applyFilters() {
-            const values = {
-                tube: filters.tube.value,
-                status: filters.status.value,
-                usage: filters.usage.value
-                // Hapus search
-            };
-
-            const coreCards = document.querySelectorAll('.core-card');
-            const tubeSections = document.querySelectorAll('.tube-section');
-            const visibleTubes = new Set();
-
-            tubeSections.forEach(section => section.style.display = 'none');
-
-            coreCards.forEach(card => {
-                const cardData = {
-                    tube: card.dataset.tube,
-                    status: card.dataset.status,
-                    usage: card.dataset.usage,
-                    core: card.dataset.core,
-                    description: (card.dataset.description || '').toLowerCase()
-                };
-
-                const shouldShow = (!values.tube || cardData.tube === values.tube) &&
-                    (!values.status || cardData.status === values.status) &&
-                    (!values.usage || cardData.usage === values.usage);
-                    // Hapus search filter
-
-                card.style.display = shouldShow ? 'block' : 'none';
-                if (shouldShow) visibleTubes.add(cardData.tube);
-            });
-
-            tubeSections.forEach(section => {
-                if (visibleTubes.has(section.dataset.tube)) section.style.display = 'block';
-            });
-        }
-
-        Object.values(filters).forEach(filter => {
-            if (filter) { // Pastikan elemen ada
-                filter.addEventListener('change', applyFilters);
-            }
-        });
-
-        const clearButton = document.getElementById('clear-filters');
-        if (clearButton) {
-            clearButton.addEventListener('click', () => {
-                Object.values(filters).forEach(filter => {
-                    if (filter) filter.value = '';
-                });
-                applyFilters();
-            });
-        }
-
-        // Event handlers for cascading dropdowns
-        const jcSelection = document.getElementById('jc-selection');
-        if (jcSelection) {
-            jcSelection.addEventListener('change', function() {
-                const jcId = this.value;
-                const cableSelect = document.getElementById('target-cable');
-
-                if (jcId) {
-                    fetch(`/connections/joint-closures/${jcId}/cables`)
-                        .then(response => response.json())
-                        .then(data => {
-                            cableSelect.innerHTML = '<option value="">Select Cable...</option>';
-                            data.forEach(cable => {
-                                // Perbaiki syntax error di sini
-                                if (cable.id !== {{ $cable->id }}) {
-                                    cableSelect.innerHTML += `<option value="${cable.id}">${cable.name} (${cable.cable_id})</option>`;
-                                }
-                            });
-                            cableSelect.disabled = false;
-                        });
-                } else {
-                    cableSelect.disabled = true;
-                }
-
-                ['target-tube', 'target-core'].forEach(id => {
-                    const element = document.getElementById(id);
-                    if (element) element.disabled = true;
-                });
-            });
-        }
-
-        const targetCable = document.getElementById('target-cable');
-        if (targetCable) {
-            targetCable.addEventListener('change', function() {
-                const cableId = this.value;
-                const tubeSelect = document.getElementById('target-tube');
-
-                if (cableId) {
-                    fetch(`/connections/cables/${cableId}/tubes`)
-                        .then(response => response.json())
-                        .then(data => {
-                            tubeSelect.innerHTML = '<option value="">Select Tube...</option>';
-                            for (let i = 1; i <= data.total_tubes; i++) {
-                                tubeSelect.innerHTML += `<option value="${i}">Tube ${i}</option>`;
-                            }
-                            tubeSelect.disabled = false;
-                        });
-                } else {
-                    tubeSelect.disabled = true;
-                }
-
-                const targetCore = document.getElementById('target-core');
-                if (targetCore) targetCore.disabled = true;
-            });
-        }
-
-        const targetTube = document.getElementById('target-tube');
-        if (targetTube) {
-            targetTube.addEventListener('change', function() {
-                const cableId = document.getElementById('target-cable').value;
-                const tubeNumber = this.value;
-                const coreSelect = document.getElementById('target-core');
-
-                if (cableId && tubeNumber) {
-                    fetch(`/connections/cables/${cableId}/tubes/${tubeNumber}/cores`)
-                        .then(response => response.json())
-                        .then(data => {
-                            coreSelect.innerHTML = '<option value="">Select Core...</option>';
-                            data.forEach(core => {
-                                coreSelect.innerHTML += `<option value="${core.id}" ${core.status !== 'ok' ? 'style="color: #ef4444"' : ''}>Core ${core.core_number}${core.status !== 'ok' ? ' (!)' : ''}</option>`;
-                            });
-                            coreSelect.disabled = false;
-                        });
-                } else {
-                    coreSelect.disabled = true;
-                }
-            });
-        }
-
-        // Form submissions
-        const joinForm = document.getElementById('join-core-form');
-        if (joinForm) {
-            joinForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                const formData = new FormData();
-                ['join-core-id', 'target-core', 'jc-selection', 'connection-type', 'connection-loss', 'connection-notes'].forEach(id => {
-                    const element = document.getElementById(id);
-                    if (element) {
-                        const name = id.replace('join-core-id', 'source_core_id')
-                            .replace('target-core', 'target_core_id')
-                            .replace('jc-selection', 'joint_closure_id')
-                            .replace(/-/g, '_');
-                        formData.append(name, element.value);
-                    }
-                });
-
-                const csrfToken = document.querySelector('meta[name="csrf-token"]');
-                if (csrfToken) {
-                    formData.append('_token', csrfToken.getAttribute('content'));
-                }
-
-                fetch('/connections', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Connection created successfully!');
-                            location.reload();
-                        } else {
-                            alert('Error: ' + (data.message || 'Unknown error'));
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Error creating connection');
-                    });
-            });
-        }
-
-        const editForm = document.getElementById('edit-core-form');
-        if (editForm) {
-            editForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                const coreId = document.getElementById('core-id').value;
-                const formData = new FormData();
-                ['core-status', 'core-usage', 'core-attenuation', 'core-description'].forEach(id => {
-                    const element = document.getElementById(id);
-                    if (element) {
-                        const name = id.replace('core-', '');
-                        formData.append(name, element.value);
-                    }
-                });
-
-                const csrfToken = document.querySelector('meta[name="csrf-token"]');
-                if (csrfToken) {
-                    formData.append('_token', csrfToken.getAttribute('content'));
-                }
-                formData.append('_method', 'PUT');
-
-                fetch(`/cores/${coreId}`, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            alert('Error: ' + (data.message || 'Unknown error'));
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Error updating core');
-                    });
-            });
-        }
-    });
-</script>
 @endsection
