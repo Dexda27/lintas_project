@@ -2,6 +2,10 @@
 
 @section('title', 'Daftar Kabel')
 
+@push('scripts')
+<script src="{{ asset('js/cables-index.js') }}"></script>
+@endpush
+
 @section('content')
 <div class="max-w-7xl mx-auto bg-white shadow-lg rounded-2xl p-6">
     <!-- Header -->
@@ -105,56 +109,21 @@
     </div>
 </div>
 
+<!-- Hidden Delete Form -->
+<form id="deleteForm" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
 
-<script>
-    let currentCableId = null;
-
-    function confirmDelete(cableId, cableName, cableIdText) {
-        currentCableId = cableId;
-        document.getElementById('cableName').textContent = cableName;
-        document.getElementById('cableId').textContent = `Cable ID: ${cableIdText}`;
-        const modal = document.getElementById('deleteModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+<style>
+    /* Quick hover transitions */
+    tr:hover {
+        transition: background-color 0.1s ease;
     }
 
-     function showDeleteModal(id, name) {
-        const modal = document.getElementById('deleteModal');
-        const form = document.getElementById('deleteForm');
-        const message = document.getElementById('deleteMessage');
-
-        form.action = "{{ route('cables.destroy', ':id') }}".replace(':id', id);
-        message.textContent = `Apakah Anda yakin ingin menghapus kabel "${name}"?`;
-
-        modal.classList.remove('hidden');
+    /* Ensure modal appears above everything */
+    #deleteModal {
+        transition: opacity 0.15s ease;
     }
-
-    function closeDeleteModal() {
-        document.getElementById('deleteModal').classList.add('hidden');
-    }
-
-    function executeDelete() {
-        if (currentCableId) {
-            const form = document.getElementById('deleteForm');
-            // Gunakan route destroy Laravel dengan placeholder
-            const urlTemplate = "{{ route('cables.destroy', ':id') }}";
-            form.action = urlTemplate.replace(':id', currentCableId);
-            form.submit();
-        }
-    }
-
-    // Close modal ketika klik di luar box
-    document.getElementById('deleteModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeDeleteModal();
-        }
-    });
-
-    // Close modal dengan tombol ESC
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeDeleteModal();
-        }
-    });
-</script>
+</style>
 @endsection
