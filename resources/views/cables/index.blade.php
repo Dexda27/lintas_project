@@ -84,10 +84,71 @@
         </table>
     </div>
 
-    <!-- Pagination -->
-    <div class="mt-6">
-        {{ $cables->links('pagination::tailwind') }}
+    <!-- Pagination Section - Dipindah ke dalam card dan diberi styling yang lebih rapi -->
+    @if($cables->hasPages())
+    <div class="bg-white px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+        <div class="flex-1 flex justify-between items-center">
+            <!-- Showing Results Info -->
+            <div>
+                <p class="text-sm text-gray-700">
+                    Showing
+                    <span class="font-medium">{{ $cables->firstItem() }}</span>
+                    to
+                    <span class="font-medium">{{ $cables->lastItem() }}</span>
+                    of
+                    <span class="font-medium">{{ $cables->total() }}</span>
+                    results
+                </p>
+            </div>
+
+            <!-- Pagination Links -->
+            <div class="flex items-center space-x-2">
+                {{-- Previous Page Link --}}
+                @if ($cables->onFirstPage())
+                <span class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-300 bg-white border border-gray-300 cursor-default rounded-l-md">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </span>
+                @else
+                <a href="{{ $cables->previousPageUrl() }}" class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </a>
+                @endif
+
+                {{-- Pagination Elements --}}
+                @foreach ($cables->getUrlRange(1, $cables->lastPage()) as $page => $url)
+                @if ($page == $cables->currentPage())
+                <span class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600">
+                    {{ $page }}
+                </span>
+                @else
+                <a href="{{ $url }}" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50">
+                    {{ $page }}
+                </a>
+                @endif
+                @endforeach
+
+                {{-- Next Page Link --}}
+                @if ($cables->hasMorePages())
+                <a href="{{ $cables->nextPageUrl() }}" class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </a>
+                @else
+                <span class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-300 bg-white border border-gray-300 cursor-default rounded-r-md">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </span>
+                @endif
+            </div>
+        </div>
     </div>
+    @endif
 </div>
 
 <!-- Delete Confirmation Modal -->
@@ -98,7 +159,7 @@
                 <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
                     <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                     </svg>
                 </div>
                 <div>
@@ -117,11 +178,11 @@
 
             <div class="flex gap-3 justify-end">
                 <button type="button" onclick="closeDeleteModal()"
-                        class="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50">
+                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50">
                     Batal
                 </button>
                 <button type="button" onclick="executeDelete()"
-                        class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                    class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
                     Ya, Hapus
                 </button>
             </div>
@@ -136,54 +197,54 @@
 </form>
 
 <script>
-let currentCableId = null;
+    let currentCableId = null;
 
-function confirmDelete(cableId, cableName, cableIdText) {
-    currentCableId = cableId;
-    document.getElementById('cableName').textContent = cableName;
-    document.getElementById('cableId').textContent = `Cable ID: ${cableIdText}`;
-    document.getElementById('deleteModal').classList.remove('hidden');
-    document.getElementById('deleteModal').classList.add('flex');
-}
-
-function closeDeleteModal() {
-    document.getElementById('deleteModal').classList.add('hidden');
-    document.getElementById('deleteModal').classList.remove('flex');
-    currentCableId = null;
-}
-
-function executeDelete() {
-    if (currentCableId) {
-        const form = document.getElementById('deleteForm');
-        form.action = `{{ route('cables.index') }}/${currentCableId}`;
-        form.submit();
+    function confirmDelete(cableId, cableName, cableIdText) {
+        currentCableId = cableId;
+        document.getElementById('cableName').textContent = cableName;
+        document.getElementById('cableId').textContent = `Cable ID: ${cableIdText}`;
+        document.getElementById('deleteModal').classList.remove('hidden');
+        document.getElementById('deleteModal').classList.add('flex');
     }
-}
 
-// Close modal when clicking outside
-document.getElementById('deleteModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeDeleteModal();
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+        document.getElementById('deleteModal').classList.remove('flex');
+        currentCableId = null;
     }
-});
 
-// Close modal with Escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeDeleteModal();
+    function executeDelete() {
+        if (currentCableId) {
+            const form = document.getElementById('deleteForm');
+            form.action = `{{ route('cables.index') }}/${currentCableId}`;
+            form.submit();
+        }
     }
-});
+
+    // Close modal when clicking outside
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeDeleteModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeDeleteModal();
+        }
+    });
 </script>
 
 <style>
-/* Quick hover transitions */
-tr:hover {
-    transition: background-color 0.1s ease;
-}
+    /* Quick hover transitions */
+    tr:hover {
+        transition: background-color 0.1s ease;
+    }
 
-/* Ensure modal appears above everything */
-#deleteModal {
-    transition: opacity 0.15s ease;
-}
+    /* Ensure modal appears above everything */
+    #deleteModal {
+        transition: opacity 0.15s ease;
+    }
 </style>
 @endsection
