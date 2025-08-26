@@ -91,7 +91,7 @@
 </div>
 
 <!-- Delete Confirmation Modal -->
-<div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-30 hidden items-center justify-center z-50">
+<div id="deleteModal" class="fixed inset-0  hidden items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
         <div class="p-6">
             <div class="flex items-center mb-4">
@@ -112,7 +112,7 @@
                     <p class="font-semibold text-gray-900" id="cableName"></p>
                     <p class="text-sm text-gray-600" id="cableId"></p>
                 </div>
-                <p class="text-sm text-red-600 mt-2">⚠ Tindakan ini tidak dapat dibatalkan!</p>
+                <p class="text-sm text-red-600 mt-2">⚠️ Tindakan ini tidak dapat dibatalkan!</p>
             </div>
 
             <div class="flex gap-3 justify-end">
@@ -141,9 +141,7 @@
     function confirmDelete(cableId, cableName, cableIdText) {
         currentCableId = cableId;
         document.getElementById('cableName').textContent = cableName;
-        document.getElementById('cableId').textContent = Cable ID: $ {
-            cableIdText
-        };
+        document.getElementById('cableId').textContent = `Cable ID: ${cableIdText}`;
         document.getElementById('deleteModal').classList.remove('hidden');
         document.getElementById('deleteModal').classList.add('flex');
     }
@@ -157,12 +155,7 @@
     function executeDelete() {
         if (currentCableId) {
             const form = document.getElementById('deleteForm');
-            form.action = {
-                {
-                    route('cables.index')
-                }
-            }
-            /${currentCableId};
+            form.action = `{{ route('cables.index') }}/${currentCableId}`;
             form.submit();
         }
     }

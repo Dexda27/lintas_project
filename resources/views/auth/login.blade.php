@@ -16,7 +16,6 @@
         
         <!-- Overlay Content -->
         <div class="absolute bottom-10 left-10 text-white">
-            <h1 class="text-3xl font-bold mb-2">Lintasarta</h1>
             <p class="text-sm"></p>
             <p class="text-sm"></p>
         </div>

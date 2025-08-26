@@ -142,28 +142,29 @@
     <div id="modal-container"></div>
 
     <!-- Logout Confirmation Modal -->
-    <div id="logout-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg p-6 w-96 max-w-md mx-4">
+    <div id="logout-modal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+        <div class="bg-white bg-opacity-95 backdrop-blur-sm rounded-lg p-6 w-96 max-w-md mx-4 shadow-xl border border-white border-opacity-20">
             <div class="flex items-center mb-4">
-                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 bg-opacity-80 flex items-center justify-center mr-3">
                     <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                     </svg>
                 </div>
                 <h3 class="text-lg font-medium text-gray-900">Confirm Logout</h3>
             </div>
-            <p class="text-sm text-gray-500 mb-6">
+            <p class="text-sm text-gray-600 mb-6">
                 Are you sure you want to logout? You will need to sign in again to access your account.
             </p>
             <div class="flex justify-end space-x-3">
-                <button type="button" onclick="closeLogoutModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                <button type="button" onclick="closeLogoutModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white bg-opacity-80 backdrop-blur-sm border border-gray-300 border-opacity-50 rounded-md hover:bg-opacity-90 hover:bg-gray-50 transition-all duration-200">
                     Cancel
                 </button>
-                <button type="button" onclick="performLogout()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700">
+                <button type="button" onclick="performLogout()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 bg-opacity-90 backdrop-blur-sm border border-transparent rounded-md hover:bg-opacity-100 hover:bg-red-700 transition-all duration-200">
                     Yes, Logout
                 </button>
             </div>
         </div>
+    </div>
     </div>
 
     <script>
