@@ -14,18 +14,33 @@ use Illuminate\Validation\Rule;
 
 class JointClosureController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         $query = JointClosure::query();
 
+        // Apply regional filter for admin region users
         if ($user->isAdminRegion()) {
             $query->where('region', $user->region);
         }
 
+        // Apply search filter if search parameter exists
+        if ($request->filled('search')) {
+            $searchTerm = $request->get('search');
+
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('closure_id', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('name', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('location', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('region', 'LIKE', '%' . $searchTerm . '%');
+            });
+        }
+
+        // Get closures with core connections count and pagination
         $closures = $query->withCount('coreConnections')
             ->orderBy('created_at', 'desc')
-            ->paginate(20);
+            ->paginate(10)
+            ->appends($request->query()); // Preserve search parameters in pagination
 
         return view('closures.index', compact('closures'));
     }
@@ -252,7 +267,6 @@ class JointClosureController extends Controller
 
             return redirect()->route('closures.connections', $closure)
                 ->with('success', 'Cores connected successfully.');
-
         } catch (\Exception $e) {
             DB::rollback();
             return back()->withErrors(['error' => 'Failed to connect cores: ' . $e->getMessage()]);
@@ -282,7 +296,6 @@ class JointClosureController extends Controller
                 'success' => true,
                 'message' => 'Cores disconnected successfully.'
             ]);
-
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
