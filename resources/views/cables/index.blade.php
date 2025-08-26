@@ -2,6 +2,10 @@
 
 @section('title', 'Daftar Kabel')
 
+@push('scripts')
+<script src="{{ asset('js/cables-index.js') }}"></script>
+@endpush
+
 @section('content')
 <div class="max-w-7xl mx-auto bg-white shadow-lg rounded-2xl p-6">
     <!-- Header -->
@@ -195,46 +199,6 @@
     @csrf
     @method('DELETE')
 </form>
-
-<script>
-    let currentCableId = null;
-
-    function confirmDelete(cableId, cableName, cableIdText) {
-        currentCableId = cableId;
-        document.getElementById('cableName').textContent = cableName;
-        document.getElementById('cableId').textContent = `Cable ID: ${cableIdText}`;
-        document.getElementById('deleteModal').classList.remove('hidden');
-        document.getElementById('deleteModal').classList.add('flex');
-    }
-
-    function closeDeleteModal() {
-        document.getElementById('deleteModal').classList.add('hidden');
-        document.getElementById('deleteModal').classList.remove('flex');
-        currentCableId = null;
-    }
-
-    function executeDelete() {
-        if (currentCableId) {
-            const form = document.getElementById('deleteForm');
-            form.action = `{{ route('cables.index') }}/${currentCableId}`;
-            form.submit();
-        }
-    }
-
-    // Close modal when clicking outside
-    document.getElementById('deleteModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeDeleteModal();
-        }
-    });
-
-    // Close modal with Escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeDeleteModal();
-        }
-    });
-</script>
 
 <style>
     /* Quick hover transitions */
