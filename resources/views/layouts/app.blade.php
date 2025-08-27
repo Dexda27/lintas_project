@@ -26,7 +26,8 @@
 
     <div class="min-h-screen">
         <!-- Navigation -->
-        <nav class="bg-blue-800 shadow-lg fixed top-0 left-0 right-0 z-30 transition-all duration-300" id="navbar">
+       <nav class="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 shadow-lg fixed top-0 left-0 right-0 z-30 transition-all duration-300" id="navbar">
+
             <div class=" mx-auto px-4">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
@@ -41,12 +42,18 @@
                     </div>
 
                     <div class="flex items-center space-x-4">
-                        <!-- User info & logout -->
-                        <div class="text-white">
+                        <!-- User info -->
+                        <div class="text-yellow-600">
                             @if(auth()->user()->isAdminRegion())
-                            <span class="text-xs bg-purple-600 px-2 py-1 rounded ml-2">{{ auth()->user()->region }}</span>
+                                <span class="flex items-center text-xs bg-white px-2 py-1 rounded">
+                                    <i data-lucide="user" class="w-4 h-4 mr-1"></i>
+                                    {{ auth()->user()->region }}
+                                </span>
                             @elseif(auth()->user()->isSuperAdmin())
-                            <span class="text-xs bg-purple-600 px-2 py-1 rounded ml-2">Super Admin</span>
+                                <span class="flex items-center text-xs bg-white px-2 py-1 rounded">
+                                    <i data-lucide="crown" class="w-4 h-4 mr-1 text-yellow-500"></i>
+                                    Super Admin
+                                </span>
                             @endif
                         </div>
                     </div>

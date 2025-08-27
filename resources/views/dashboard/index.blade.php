@@ -11,7 +11,7 @@
 
 <!-- Statistics Cards -->
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 shadow hover:shadow-lg transition">
+    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-blue-500">
         <div class="flex items-center space-x-4">
             <div class="bg-blue-500 text-white p-3 rounded-lg">
                 <i data-lucide="layers" class="w-6 h-6"></i>
@@ -23,7 +23,8 @@
         </div>
     </div>
 
-    <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 shadow hover:shadow-lg transition">
+  <!-- Active Cores -->
+    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-green-500">
         <div class="flex items-center space-x-4">
             <div class="bg-green-500 text-white p-3 rounded-lg">
                 <i data-lucide="check-circle" class="w-6 h-6"></i>
@@ -35,7 +36,8 @@
         </div>
     </div>
 
-    <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 shadow hover:shadow-lg transition">
+    <!-- Inactive Cores -->
+    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-gray-500">
         <div class="flex items-center space-x-4">
             <div class="bg-gray-500 text-white p-3 rounded-lg">
                 <i data-lucide="circle-minus" class="w-6 h-6"></i>
@@ -47,7 +49,8 @@
         </div>
     </div>
 
-    <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-6 shadow hover:shadow-lg transition">
+    <!-- Problems Cores -->
+    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-red-500">
         <div class="flex items-center space-x-4">
             <div class="bg-red-500 text-white p-3 rounded-lg">
                 <i data-lucide="triangle-alert" class="w-6 h-6"></i>
@@ -70,13 +73,13 @@
     <div class="p-4 sm:p-6">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             @foreach($regionalData as $region)
-                <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 shadow hover:shadow-lg transition">
-                <h3 class="font-semibold text-gray-900 text-sm sm:text-base truncate">{{ $region->region }}</h3>
-                <div class="mt-2 space-y-1">
-                    <p class="text-xs sm:text-sm text-gray-600">Cables: {{ $region->total_cables }}</p>
-                    <p class="text-xs sm:text-sm text-gray-600">Total Cores: {{ number_format($region->total_cores) }}</p>
+                <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-orange-300">
+                    <h3 class="font-semibold text-gray-900 text-sm sm:text-base truncate">{{ $region->region }}</h3>
+                    <div class="mt-2 space-y-1">
+                        <p class="text-xs sm:text-sm text-gray-600">Total Sites : {{ $region->total_cables ?? 0}}</p>
+                        <p class="text-xs sm:text-sm text-gray-600">Total JC : {{ number_format($region->total_jc ?? 0) }}</p>
+                    </div>
                 </div>
-            </div>
             @endforeach
         </div>
     </div>
