@@ -496,48 +496,115 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initialize connection manager validation
     window.connectionManager.validateCoreSelection();
 
-    // Handle edit core form submission
-    const editCoreForm = document.getElementById("edit-core-form");
-    if (editCoreForm) {
-        editCoreForm.addEventListener("submit", function (e) {
+    // Final fixed version
+    const editForm = document.getElementById("edit-core-form");
+    if (editForm) {
+        editForm.addEventListener("submit", function (e) {
             e.preventDefault();
 
             const coreId = document.getElementById("core-id").value;
-            const formData = {
-                status: document.getElementById("core-status").value,
-                usage: document.getElementById("core-usage").value,
-                attenuation: document.getElementById("core-attenuation").value,
-                description: document.getElementById("core-description").value,
+
+            // Get form values
+            const status = document.getElementById("core-status").value;
+            const usage = document.getElementById("core-usage").value;
+            const attenuation =
+                document.getElementById("core-attenuation").value;
+            const description =
+                document.getElementById("core-description").value;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+
+            if (!csrfToken) {
+                alert("CSRF token not found");
+                return;
+            }
+
+            // Use URLSearchParams instead of FormData for Firefox compatibility
+            const formData = new URLSearchParams();
+            formData.append("_method", "PUT");
+            formData.append("_token", csrfToken.getAttribute("content"));
+            formData.append("status", status);
+            formData.append("usage", usage);
+            if (attenuation && attenuation !== "") {
+                formData.append("attenuation", attenuation);
+            }
+            if (description && description !== "") {
+                formData.append("description", description);
+            }
+
+            // Use XMLHttpRequest instead of fetch for better Firefox compatibility
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", `/cores/${coreId}`, true);
+
+            // Set headers explicitly
+            xhr.setRequestHeader(
+                "Content-Type",
+                "application/x-www-form-urlencoded; charset=UTF-8"
+            );
+            xhr.setRequestHeader(
+                "X-CSRF-TOKEN",
+                csrfToken.getAttribute("content")
+            );
+            xhr.setRequestHeader("Accept", "application/json, text/plain, */*");
+            xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        let response;
+                        try {
+                            response = JSON.parse(xhr.responseText);
+                        } catch (e) {
+                            // If not JSON, assume success for 200 status
+                            response = {
+                                success: true,
+                                message: "Core updated successfully",
+                            };
+                        }
+
+                        if (response.success !== false) {
+                            // Close modal
+                            const modal =
+                                document.getElementById("edit-core-modal");
+                            if (modal) {
+                                modal.classList.add("hidden");
+                            }
+
+                            alert("Core updated successfully!");
+
+                            // Use setTimeout to ensure modal is closed before reload
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 100);
+                        } else {
+                            alert(
+                                "Error: " +
+                                    (response.message || "Update failed")
+                            );
+                        }
+                    } else {
+                        console.error(
+                            "HTTP Error:",
+                            xhr.status,
+                            xhr.statusText
+                        );
+                        alert("Error updating core: HTTP " + xhr.status);
+                    }
+                }
             };
 
-            window.coreManager
-                .updateCore(coreId, formData)
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.success) {
-                        window.notificationManager.show(
-                            "Core updated successfully",
-                            "success"
-                        );
-                        window.coreManager.closeEditModal();
-                        setTimeout(() => location.reload(), 1000);
-                    } else {
-                        window.notificationManager.show(
-                            data.message || "Error updating core",
-                            "error"
-                        );
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                    window.notificationManager.show(
-                        "Error updating core",
-                        "error"
-                    );
-                });
+            xhr.onerror = function () {
+                console.error("Network error");
+                alert("Network error occurred");
+            };
+
+            xhr.ontimeout = function () {
+                alert("Request timed out");
+            };
+
+            xhr.timeout = 30000; // 30 second timeout
+            xhr.send(formData.toString());
         });
     }
-
     // Handle connect form submission
     const connectForm = document.getElementById("connect-form");
     if (connectForm) {
@@ -608,7 +675,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Auto-hide flash messages after 5 seconds
     const flashMessages = document.querySelectorAll(
-        ".bg-green-200, .bg-red-200, .bg-yellow-200"
+        ".bg-green-100, .bg-red-100, .bg-yellow-100"
     );
     flashMessages.forEach((message) => {
         setTimeout(() => {

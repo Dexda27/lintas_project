@@ -14,9 +14,7 @@
     <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center">
             <div class="p-2 bg-blue-100 rounded-lg">
-                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
+                <i data-lucide="database" class="w-6 h-6 text-blue-600"></i>
             </div>
             <div class="ml-4">
                 <p class="text-sm font-medium text-gray-600">Total Cores</p>
@@ -28,9 +26,7 @@
     <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center">
             <div class="p-2 bg-green-100 rounded-lg">
-                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
+                <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
             </div>
             <div class="ml-4">
                 <p class="text-sm font-medium text-gray-600">Active Cores</p>
@@ -42,9 +38,7 @@
     <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center">
             <div class="p-2 bg-gray-100 rounded-lg">
-                <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
-                </svg>
+                <i data-lucide="pause-circle" class="w-6 h-6 text-gray-600"></i>
             </div>
             <div class="ml-4">
                 <p class="text-sm font-medium text-gray-600">Inactive Cores</p>
@@ -56,9 +50,7 @@
     <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center">
             <div class="p-2 bg-red-100 rounded-lg">
-                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                </svg>
+                <i data-lucide="alert-triangle" class="w-6 h-6 text-red-600"></i>
             </div>
             <div class="ml-4">
                 <p class="text-sm font-medium text-gray-600">Problem Cores</p>
@@ -94,7 +86,8 @@
 <div class="bg-white rounded-lg shadow">
     <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
         <h2 class="text-xl font-semibold text-gray-900">Fiber Cables</h2>
-        <a href="{{ route('cables.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200">
+        <a href="{{ route('cables.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 flex items-center gap-2">
+            <i data-lucide="plus" class="w-5 h-5"></i>
             Add New Cable
         </a>
     </div>
@@ -149,12 +142,16 @@
                             {{ ucfirst($cable->usage) }}
                         </span>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div class="flex space-x-2">
-                            <a href="{{ route('cables.show', $cable) }}" class="text-indigo-600 hover:text-indigo-900">View</a>
-                            <a href="{{ route('cables.cores', $cable) }}" class="text-blue-600 hover:text-blue-900">Cores</a>
-                            <a href="{{ route('cables.edit', $cable) }}" class="text-yellow-600 hover:text-yellow-900">Edit</a>
-                        </div>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-2">
+                        <a href="{{ route('cables.show', $cable) }}" class="text-indigo-600 hover:text-indigo-900 flex items-center gap-1">
+                            <i data-lucide="eye" class="w-4 h-4"></i> View
+                        </a>
+                        <a href="{{ route('cables.cores', $cable) }}" class="text-blue-600 hover:text-blue-900 flex items-center gap-1">
+                            <i data-lucide="layers" class="w-4 h-4"></i> Cores
+                        </a>
+                        <a href="{{ route('cables.edit', $cable) }}" class="text-yellow-600 hover:text-yellow-900 flex items-center gap-1">
+                            <i data-lucide="edit" class="w-4 h-4"></i> Edit
+                        </a>
                     </td>
                 </tr>
                 @empty
@@ -167,70 +164,11 @@
             </tbody>
         </table>
     </div>
-    
-    <!-- Pagination Section - Dipindah ke dalam card dan diberi styling yang lebih rapi -->
+
+    <!-- Pagination Section -->
     @if($cables->hasPages())
     <div class="bg-white px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-        <div class="flex-1 flex justify-between items-center">
-            <!-- Showing Results Info -->
-            <div>
-                <p class="text-sm text-gray-700">
-                    Showing
-                    <span class="font-medium">{{ $cables->firstItem() }}</span>
-                    to
-                    <span class="font-medium">{{ $cables->lastItem() }}</span>
-                    of
-                    <span class="font-medium">{{ $cables->total() }}</span>
-                    results
-                </p>
-            </div>
-            
-            <!-- Pagination Links -->
-            <div class="flex items-center space-x-2">
-                {{-- Previous Page Link --}}
-                @if ($cables->onFirstPage())
-                    <span class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-300 bg-white border border-gray-300 cursor-default rounded-l-md">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
-                    </span>
-                @else
-                    <a href="{{ $cables->previousPageUrl() }}" class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
-                @endif
-
-                {{-- Pagination Elements --}}
-                @foreach ($cables->getUrlRange(1, $cables->lastPage()) as $page => $url)
-                    @if ($page == $cables->currentPage())
-                        <span class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600">
-                            {{ $page }}
-                        </span>
-                    @else
-                        <a href="{{ $url }}" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50">
-                            {{ $page }}
-                        </a>
-                    @endif
-                @endforeach
-
-                {{-- Next Page Link --}}
-                @if ($cables->hasMorePages())
-                    <a href="{{ $cables->nextPageUrl() }}" class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
-                @else
-                    <span class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-300 bg-white border border-gray-300 cursor-default rounded-r-md">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                        </svg>
-                    </span>
-                @endif
-            </div>
-        </div>
+        {{ $cables->links() }}
     </div>
     @endif
 </div>

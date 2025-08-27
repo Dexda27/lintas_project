@@ -54,9 +54,6 @@
                 <option value="inactive">Inactive</option>
             </select>
         </div>
-        <div class="flex items-end">
-            <button id="clear-filters" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">Clear</button>
-        </div>
     </div>
 </div>
 
