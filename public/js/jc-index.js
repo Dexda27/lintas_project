@@ -27,7 +27,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.executeDelete = function () {
         if (currentClosureId) {
-            deleteForm.action = `{{ route('closures.index') }}/${currentClosureId}`;
+            // Fix: Use relative URL construction instead of Laravel route helper
+            deleteForm.action = `/closures/${currentClosureId}`;
             deleteForm.submit();
         }
     };
