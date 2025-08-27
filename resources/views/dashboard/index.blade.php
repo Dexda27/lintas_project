@@ -10,63 +10,58 @@
 </div>
 
 <!-- Statistics Cards -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8">
-    <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
-        <div class="flex items-center">
-            <div class="p-1.5 sm:p-2 bg-blue-100 rounded-lg flex-shrink-0">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 shadow hover:shadow-lg transition">
+        <div class="flex items-center space-x-4">
+            <div class="bg-blue-500 text-white p-3 rounded-lg">
+                <i data-lucide="layers" class="w-6 h-6"></i>
             </div>
-            <div class="ml-2 sm:ml-3 lg:ml-4 min-w-0 flex-1">
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Cores</p>
-                <p class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{{ number_format($totalCores) }}</p>
+            <div>
+                <p class="text-gray-600 text-sm">Total Cores</p>
+                <h3 class="text-2xl font-bold text-gray-900">{{ number_format($totalCores) }}</h3>
             </div>
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
-        <div class="flex items-center">
-            <div class="p-1.5 sm:p-2 bg-green-100 rounded-lg flex-shrink-0">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
+    <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 shadow hover:shadow-lg transition">
+        <div class="flex items-center space-x-4">
+            <div class="bg-green-500 text-white p-3 rounded-lg">
+                <i data-lucide="check-circle" class="w-6 h-6"></i>
             </div>
-            <div class="ml-2 sm:ml-3 lg:ml-4 min-w-0 flex-1">
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Cores</p>
-                <p class="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">{{ number_format($activeCores) }}</p>
+            <div>
+                <p class="text-gray-600 text-sm">Active Cores</p>
+                <h3 class="text-2xl font-bold text-gray-900">{{ number_format($activeCores) }}</h3>
             </div>
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
-        <div class="flex items-center">
-            <div class="p-1.5 sm:p-2 bg-gray-100 rounded-lg flex-shrink-0">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
-                </svg>
+    <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 shadow hover:shadow-lg transition">
+        <div class="flex items-center space-x-4">
+            <div class="bg-gray-500 text-white p-3 rounded-lg">
+                <i data-lucide="circle-minus" class="w-6 h-6"></i>
             </div>
-            <div class="ml-2 sm:ml-3 lg:ml-4 min-w-0 flex-1">
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Inactive Cores</p>
-                <p class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-600">{{ number_format($inactiveCores) }}</p>
+            <div>
+                <p class="text-gray-600 text-sm">Inactive Cores</p>
+                <h3 class="text-2xl font-bold text-gray-900">{{ number_format($inactiveCores) }}</h3>
             </div>
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
-        <div class="flex items-center">
-            <div class="p-1.5 sm:p-2 bg-red-100 rounded-lg flex-shrink-0">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                </svg>
+    <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-6 shadow hover:shadow-lg transition">
+        <div class="flex items-center space-x-4">
+            <div class="bg-red-500 text-white p-3 rounded-lg">
+                <i data-lucide="triangle-alert" class="w-6 h-6"></i>
             </div>
-            <div class="ml-2 sm:ml-3 lg:ml-4 min-w-0 flex-1">
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Problem Cores</p>
-                <p class="text-lg sm:text-xl lg:text-2xl font-bold text-red-600">{{ number_format($problemCores) }}</p>
+            <div>
+                <p class="text-gray-600 text-sm">Problems Cores</p>
+                <h3 class="text-2xl font-bold text-gray-900">{{ number_format($problemCores) }}</h3>
             </div>
         </div>
     </div>
+    
+    <!-- Tambahkan 2 card lainnya dengan warna sesuai status -->
 </div>
+
 
 @if(auth()->user()->isSuperAdmin() && $regionalData->count() > 0)
 <!-- Regional Overview -->
