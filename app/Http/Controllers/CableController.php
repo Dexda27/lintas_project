@@ -218,6 +218,7 @@ class CableController extends Controller
         return view('cables.cores', compact('cable', 'coresByTube'));
     }
 
+
     public function updateCore(Request $request, FiberCore $core)
     {
         $this->checkRegionAccess($core->cable);

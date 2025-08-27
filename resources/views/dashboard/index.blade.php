@@ -209,12 +209,16 @@
                             {{ ucfirst($cable->usage) }}
                         </span>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div class="flex space-x-2">
-                            <a href="{{ route('cables.show', $cable) }}" class="text-indigo-600 hover:text-indigo-900">View</a>
-                            <a href="{{ route('cables.cores', $cable) }}" class="text-blue-600 hover:text-blue-900">Cores</a>
-                            <a href="{{ route('cables.edit', $cable) }}" class="text-yellow-600 hover:text-yellow-900">Edit</a>
-                        </div>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-2">
+                        <a href="{{ route('cables.show', $cable) }}" class="text-indigo-600 hover:text-indigo-900 flex items-center gap-1">
+                            <i data-lucide="eye" class="w-4 h-4"></i> View
+                        </a>
+                        <a href="{{ route('cables.cores', $cable) }}" class="text-blue-600 hover:text-blue-900 flex items-center gap-1">
+                            <i data-lucide="layers" class="w-4 h-4"></i> Cores
+                        </a>
+                        <a href="{{ route('cables.edit', $cable) }}" class="text-yellow-600 hover:text-yellow-900 flex items-center gap-1">
+                            <i data-lucide="edit" class="w-4 h-4"></i> Edit
+                        </a>
                     </td>
                 </tr>
                 @empty
