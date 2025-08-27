@@ -2,28 +2,6 @@
 function editCore(coreId) {
     document.getElementById("core-id").value = coreId;
     document.getElementById("edit-core-modal").classList.remove("hidden");
-
-    // Jika core memiliki koneksi, tampilkan info koneksi
-    if (coreData.connection) {
-        document.getElementById("connection-info").classList.remove("hidden");
-        document.getElementById(
-            "connected-cable"
-        ).textContent = `Cable: ${coreData.connection.connected_cable}`;
-        document.getElementById(
-            "connected-core"
-        ).textContent = `Tube ${coreData.connection.tube} Core ${coreData.connection.core}`;
-
-        if (coreData.connection.jc_name) {
-            document.getElementById(
-                "connected-jc"
-            ).textContent = `JC: ${coreData.connection.jc_name}`;
-            document.getElementById(
-                "connected-jc-id"
-            ).textContent = `JC ID: ${coreData.connection.jc_id}`;
-        }
-    } else {
-        document.getElementById("connection-info").classList.add("hidden");
-    }
 }
 
 function closeEditModal() {
@@ -42,6 +20,10 @@ function closeJoinModal() {
     ["target-cable", "target-tube", "target-core"].forEach((id) => {
         document.getElementById(id).disabled = true;
     });
+}
+function closeModal() {
+    const modal = document.getElementById("my-modal-id");
+    modal.classList.add("hidden"); // sembunyikan modal
 }
 
 function loadJCs() {

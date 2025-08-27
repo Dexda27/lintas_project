@@ -404,7 +404,7 @@
 </div>
 
 <!-- Edit Core Modal -->
-<div id="edit-core-modal" class="fixed inset-0 backdrop-blur-xs hidden">
+<div id="edit-core-modal" class="fixed inset-0 backdrop-blur-xs  hidden">
     <div class="flex items-center justify-center min-h-screen px-4">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
             <div class="px-6 py-4 border-b">
@@ -448,7 +448,10 @@
                     </div>
                 </div>
                 <div class="mt-6 flex justify-end space-x-4">
-                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 border rounded-md hover:bg-gray-50">Cancel</button>
+                    <a href="{{ route('cables.show', $cable->id) }}"
+                        class="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
+                        Cancel
+                    </a>
                     <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Update Core</button>
                 </div>
             </form>
