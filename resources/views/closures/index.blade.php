@@ -20,65 +20,62 @@
         </a>
     </div>
 </div>
+<ul class="border-t border-gray-200 my-4"></ul>
 
 <!-- Statistics Cards -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8">
-    <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
-        <div class="flex items-center">
-            <div class="p-1.5 sm:p-2 bg-purple-100 rounded-lg flex-shrink-0">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
-            </div>
-            <div class="ml-2 sm:ml-3 lg:ml-4 min-w-0 flex-1">
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Closures</p>
+<div class="mb-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition">
+            <div class="flex items-center space-x-4">
+                <div class="bg-blue-500 text-white p-3 rounded-lg">
+                    <i data-lucide="layers" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Closures</p>
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{{ $statistics['total_closures'] ?? $closures->total() }}</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
-        <div class="flex items-center">
-            <div class="p-1.5 sm:p-2 bg-green-100 rounded-lg flex-shrink-0">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-            </div>
-            <div class="ml-2 sm:ml-3 lg:ml-4 min-w-0 flex-1">
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Closures</p>
-                <p class="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">{{ $statistics['active_closures'] ?? 0 }}</p>
+        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition">
+            <div class="flex items-center space-x-4">
+                <div class="bg-green-500 text-white p-3 rounded-lg">
+                    <i data-lucide="check-circle" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Closures</p>
+                    <p class="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">{{ $statistics['active_closures'] ?? 0 }}</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
-        <div class="flex items-center">
-            <div class="p-1.5 sm:p-2 bg-blue-100 rounded-lg flex-shrink-0">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                </svg>
-            </div>
-            <div class="ml-2 sm:ml-3 lg:ml-4 min-w-0 flex-1">
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Connections</p>
+        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition">
+            <div class="flex items-center space-x-4">
+                <div class="bg-gray-500 text-white p-3 rounded-lg">
+                    <i data-lucide="circle-minus" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Connections</p>
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">{{ $statistics['total_connections'] ?? 0 }}</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
-        <div class="flex items-center">
-            <div class="p-1.5 sm:p-2 bg-red-100 rounded-lg flex-shrink-0">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                </svg>
-            </div>
-            <div class="ml-2 sm:ml-3 lg:ml-4 min-w-0 flex-1">
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Problem Closures</p>
+        <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition">
+            <div class="flex items-center space-x-4">
+                <div class="bg-red-500 text-white p-3 rounded-lg">
+                    <i data-lucide="triangle-alert" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Problem Closures</p>
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-red-600">{{ $statistics['problem_closures'] ?? 0 }}</p>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+
 
 <!-- Closures Table -->
 <div class="bg-white rounded-lg shadow overflow-hidden">

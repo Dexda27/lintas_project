@@ -171,6 +171,11 @@
             </div>
         </div>
     </div>
+    <footer class="mt-10 bg-white shadow-inner border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-center text-gray-600 text-sm">
+            <p>&copy; {{ date('Y') }} Fiber Core Management. All rights reserved.</p>
+        </div>
+    </footer>
     </div>
 
     <script>

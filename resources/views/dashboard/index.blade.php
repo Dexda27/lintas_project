@@ -58,8 +58,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Tambahkan 2 card lainnya dengan warna sesuai status -->
 </div>
 
 
@@ -72,7 +70,7 @@
     <div class="p-4 sm:p-6">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             @foreach($regionalData as $region)
-            <div class="border rounded-lg p-3 sm:p-4">
+                <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 shadow hover:shadow-lg transition">
                 <h3 class="font-semibold text-gray-900 text-sm sm:text-base truncate">{{ $region->region }}</h3>
                 <div class="mt-2 space-y-1">
                     <p class="text-xs sm:text-sm text-gray-600">Cables: {{ $region->total_cables }}</p>
