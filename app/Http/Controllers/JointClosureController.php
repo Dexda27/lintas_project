@@ -141,7 +141,7 @@ class JointClosureController extends Controller
             'name' => 'required|string|max:255',
             'location' => 'required|string|max:255',
             'region' => 'required|string',
-            'capacity' => 'required|integer|min:' . $closure->used_capacity . '|max:1000',
+            'capacity' => 'integer|min:' . $closure->used_capacity . '|max:1000',
             'status' => 'required|in:ok,not_ok',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',

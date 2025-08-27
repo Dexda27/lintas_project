@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('closures', JointClosureController::class);
     Route::get('/closures/{closure}/connections', [JointClosureController::class, 'connections'])->name('closures.connections');
     Route::post('/closures/{closure}/connect', [JointClosureController::class, 'connectCores'])->name('closures.connect');
+    Route::get('/{closure}/edit', [JointClosureController::class, 'edit'])->name('edit');
     Route::delete('/connections/{connection}', [JointClosureController::class, 'disconnectCores'])->name('connections.disconnect');
 
     // Connection routes
