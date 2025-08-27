@@ -15,48 +15,30 @@
             <p class="text-gray-500 text-lg">Kelola data kabel dengan mudah</p>
         </div>
         <a href="{{ route('cables.create') }}"
-           class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-md group">
-            <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-            </svg>
-            Tambah Kabel
+            class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg shadow transition">
+            + Tambah Kabel
         </a>
     </div>
 </div>
 
-<!-- Main Content Card -->
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-    <!-- Search Section -->
-    <div class="p-6 border-b border-gray-100">
-        <form method="GET" action="{{ route('cables.index') }}">
-            <div class="flex gap-3">
-                <div class="flex-1 relative">
-                    <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                    <input
-                        type="text"
-                        name="search"
-                        value="{{ request('search') }}"
-                        class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 text-sm"
-                        placeholder="Cari Cable ID, nama kabel, site, atau region..."
-                        aria-label="Search cables">
-                </div>
-                <button
-                    type="submit"
-                    class="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 font-medium text-sm">
-                    Cari
-                </button>
-                @if(request('search'))
-                <a
-                    href="{{ route('cables.index') }}"
-                    class="px-6 py-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-all duration-200 font-medium text-sm">
-                    Clear
-                </a>
-                @endif
-            </div>
-        </form>
-    </div>
+    <!-- Search Form -->
+    <form method="GET" action="{{ route('cables.index') }}" class="mb-4">
+        <div class="flex gap-2">
+            <input type="text" name="search" value="{{ request('search') }}"
+                class="border border-gray-300 rounded-lg px-4 py-2 w-full"
+                placeholder="Cari Cable ID, nama kabel, site, atau region...">
+            <button type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition">
+                Cari
+            </button>
+            @if(request('search'))
+            <a href="{{ route('cables.index') }}"
+                class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg shadow transition">
+                Clear
+            </a>
+            @endif
+        </div>
+    </form>
 
     <!-- Table Section -->
     <div class="overflow-x-auto">
@@ -102,16 +84,12 @@
                     <td class="px-6 py-5">
                         <div class="flex items-center space-x-3">
                             <a href="{{ route('cables.show', $cable->id) }}"
-                               class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-150">
-                                Detail
-                            </a>
+                                class="text-blue-600 hover:text-blue-800 font-medium">Detail</a>
                             <a href="{{ route('cables.edit', $cable->id) }}"
-                               class="text-yellow-600 hover:text-yellow-800 text-sm font-medium transition-colors duration-150">
-                                Edit
-                            </a>
+                                class="text-yellow-600 hover:text-yellow-800 font-medium">Edit</a>
                             <button
-                                class="text-red-600 hover:text-red-800 text-sm font-medium transition-colors duration-150"
-                                onclick="showDeleteModal({{ $cable->id }},'{{ addslashes($cable->name) }}', '{{ $cable->cable_id }}')">
+                                class="text-red-600 hover:underline"
+                                onclick="showDeleteModal('{{ $cable->id }}', '{{ $cable->name }}', '{{ $cable->cable_id }}')">
                                 Hapus
                             </button>
                         </div>
@@ -146,81 +124,65 @@
         </table>
     </div>
 
-    <!-- Pagination Section -->
+    <!-- Pagination Section - Dipindah ke dalam card dan diberi styling yang lebih rapi -->
     @if($cables->hasPages())
-    <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between bg-gray-50">
+    <div class="bg-white px-6 py-4 border-t border-gray-200 flex items-center justify-between">
         <div class="flex-1 flex justify-between items-center">
             <!-- Showing Results Info -->
             <div>
-                <p class="text-sm text-gray-600">
-                    Showing <span class="font-medium text-gray-900">{{ $cables->firstItem() ?: 0 }}</span>
-                    to <span class="font-medium text-gray-900">{{ $cables->lastItem() ?: 0 }}</span>
-                    of <span class="font-medium text-gray-900">{{ $cables->total() }}</span> results
+                <p class="text-sm text-gray-700">
+                    Showing
+                    <span class="font-medium">{{ $cables->firstItem() }}</span>
+                    to
+                    <span class="font-medium">{{ $cables->lastItem() }}</span>
+                    of
+                    <span class="font-medium">{{ $cables->total() }}</span>
+                    results
                 </p>
             </div>
 
             <!-- Pagination Links -->
-            <div class="flex items-center space-x-1">
+            <div class="flex items-center space-x-2">
                 {{-- Previous Page Link --}}
                 @if ($cables->onFirstPage())
-                <span class="px-3 py-2 text-sm text-gray-400 bg-white border border-gray-200 rounded-lg cursor-not-allowed">
-                    Previous
+                <span class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-300 bg-white border border-gray-300 cursor-default rounded-l-md">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
                 </span>
                 @else
-                <a href="{{ $cables->appends(request()->query())->previousPageUrl() }}"
-                   class="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-150">
-                    Previous
+                <a href="{{ $cables->previousPageUrl() }}" class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
                 </a>
                 @endif
 
                 {{-- Pagination Elements --}}
-                @php
-                $start = max(1, $cables->currentPage() - 2);
-                $end = min($cables->lastPage(), $cables->currentPage() + 2);
-                @endphp
-
-                @if($start > 1)
-                <a href="{{ $cables->appends(request()->query())->url(1) }}"
-                   class="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-150">
-                    1
+                @foreach ($cables->getUrlRange(1, $cables->lastPage()) as $page => $url)
+                @if ($page == $cables->currentPage())
+                <span class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600">
+                    {{ $page }}
+                </span>
+                @else
+                <a href="{{ $url }}" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50">
+                    {{ $page }}
                 </a>
-                @if($start > 2)
-                <span class="px-3 py-2 text-sm text-gray-400">...</span>
                 @endif
-                @endif
-
-                @for($page = $start; $page <= $end; $page++)
-                    @if ($page == $cables->currentPage())
-                    <span class="px-3 py-2 text-sm text-white bg-gray-900 border border-gray-900 rounded-lg">
-                        {{ $page }}
-                    </span>
-                    @else
-                    <a href="{{ $cables->appends(request()->query())->url($page) }}"
-                       class="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-150">
-                        {{ $page }}
-                    </a>
-                    @endif
-                @endfor
-
-                @if($end < $cables->lastPage())
-                    @if($end < $cables->lastPage() - 1)
-                    <span class="px-3 py-2 text-sm text-gray-400">...</span>
-                    @endif
-                    <a href="{{ $cables->appends(request()->query())->url($cables->lastPage()) }}"
-                       class="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-150">
-                        {{ $cables->lastPage() }}
-                    </a>
-                @endif
+                @endforeach
 
                 {{-- Next Page Link --}}
                 @if ($cables->hasMorePages())
-                <a href="{{ $cables->appends(request()->query())->nextPageUrl() }}"
-                   class="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-150">
-                    Next
+                <a href="{{ $cables->nextPageUrl() }}" class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
                 </a>
                 @else
-                <span class="px-3 py-2 text-sm text-gray-400 bg-white border border-gray-200 rounded-lg cursor-not-allowed">
-                    Next
+                <span class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-300 bg-white border border-gray-300 cursor-default rounded-r-md">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
                 </span>
                 @endif
             </div>
@@ -229,41 +191,33 @@
     @endif
 </div>
 
-<!-- Delete Confirmation Modal -->
-<div id="deleteModal" class="fixed inset-0 hidden items-center justify-center z-50 bg-black/50" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all" id="modalContent">
-        <div class="p-6">
-            <div class="flex items-start mb-6">
-                <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
-                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                    </svg>
-                </div>
-                <div class="flex-1">
-                    <h3 id="modal-title" class="text-xl font-semibold text-gray-900 mb-2">Delete Kabel</h3>
-                    <p class="text-gray-600 mb-4">Tindakan ini tidak dapat dibatalkan. Apakah Anda yakin ingin menghapus kabel ini?</p>
-
-                    <div class="bg-gray-50 rounded-xl p-4 border-l-4 border-red-400">
-                        <p class="font-semibold text-gray-900" id="cableName"></p>
-                        <p class="text-sm text-gray-600 font-mono" id="cableId"></p>
-                    </div>
-                </div>
+<!-- Modal Delete -->
+<div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+    <div class="bg-white bg-opacity-95 backdrop-blur-sm rounded-lg shadow-xl border border-white border-opacity-20 p-6 w-96 mx-4">
+        <div class="flex items-center mb-4">
+            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 bg-opacity-80 flex items-center justify-center mr-3">
+                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
             </div>
+            <h2 class="text-lg font-semibold text-gray-900">Konfirmasi Hapus</h2>
+        </div>
 
-            <div class="flex gap-3 justify-end">
-                <button
-                    type="button"
-                    onclick="closeDeleteModal()"
-                    class="px-6 py-2 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-200 font-medium">
-                    Cancel
-                </button>
-                <button
-                    type="button"
-                    onclick="executeDelete()"
-                    class="px-6 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all duration-200 font-medium">
-                    Ya, Hapus
-                </button>
-            </div>
+        <div class="mb-6">
+            <p class="text-sm text-gray-600 mb-2">Apakah Anda yakin ingin menghapus kabel:</p>
+            <p class="font-medium text-gray-900" id="cableName">-</p>
+            <p class="text-sm text-gray-500" id="cableId">-</p>
+        </div>
+
+        <div class="flex justify-end gap-3">
+            <button type="button" onclick="closeDeleteModal()"
+                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white bg-opacity-80 backdrop-blur-sm border border-gray-300 border-opacity-50 rounded-md hover:bg-opacity-90 hover:bg-gray-50 transition-all duration-200">
+                Batal
+            </button>
+            <button type="button" onclick="executeDelete()"
+                class="px-4 py-2 text-sm font-medium text-white bg-red-600 bg-opacity-90 backdrop-blur-sm border border-transparent rounded-md hover:bg-opacity-100 hover:bg-red-700 transition-all duration-200">
+                Ya, Hapus
+            </button>
         </div>
     </div>
 </div>
@@ -273,4 +227,27 @@
     @csrf
     @method('DELETE')
 </form>
+
+@push('styles')
+<style>
+    /* Quick hover transitions */
+    tr:hover {
+        transition: background-color 0.1s ease;
+    }
+
+    /* Ensure modal appears above everything */
+    #deleteModal {
+        transition: opacity 0.15s ease;
+    }
+</style>
+@endpush
 @endsection
+
+<script>
+    function executeDelete() {
+        const cableId = window.selectedCableId;
+        const form = document.getElementById('deleteForm');
+        form.action = `/cables/${cableId}`;
+        form.submit();
+    }
+</script>
