@@ -58,8 +58,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Tambahkan 2 card lainnya dengan warna sesuai status -->
 </div>
 
 
@@ -72,7 +70,7 @@
     <div class="p-4 sm:p-6">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             @foreach($regionalData as $region)
-            <div class="border rounded-lg p-3 sm:p-4">
+                <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 shadow hover:shadow-lg transition">
                 <h3 class="font-semibold text-gray-900 text-sm sm:text-base truncate">{{ $region->region }}</h3>
                 <div class="mt-2 space-y-1">
                     <p class="text-xs sm:text-sm text-gray-600">Cables: {{ $region->total_cables }}</p>
@@ -128,10 +126,10 @@
 
             <div class="flex justify-between items-center">
                 <div class="flex space-x-2">
-                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $cable->status === 'ok' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                    <span class="px-2 py-1 text-xs font-semibold {{ $cable->status }}">
                         {{ ucfirst($cable->status) }}
                     </span>
-                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $cable->usage === 'active' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
+                    <span class="px-2 py-1 text-xs font-semibold {{ $cable->usage}}">
                         {{ ucfirst($cable->usage) }}
                     </span>
                 </div>
@@ -195,7 +193,7 @@
                         <div class="text-xs text-gray-500">Total: {{ $cable->total_cores }}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $cable->status === 'ok' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-800' }}">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $cable->status === 'ok' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">
                             {{ ucfirst($cable->status) }}
                         </span>
                     </td>

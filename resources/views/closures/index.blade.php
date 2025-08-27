@@ -20,65 +20,62 @@
         </a>
     </div>
 </div>
+<ul class="border-t border-gray-200 my-4"></ul>
 
 <!-- Statistics Cards -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8">
-    <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
-        <div class="flex items-center">
-            <div class="p-1.5 sm:p-2 bg-purple-100 rounded-lg flex-shrink-0">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
-            </div>
-            <div class="ml-2 sm:ml-3 lg:ml-4 min-w-0 flex-1">
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Closures</p>
+<div class="mb-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition">
+            <div class="flex items-center space-x-4">
+                <div class="bg-blue-500 text-white p-3 rounded-lg">
+                    <i data-lucide="layers" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Closures</p>
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{{ $statistics['total_closures'] ?? $closures->total() }}</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
-        <div class="flex items-center">
-            <div class="p-1.5 sm:p-2 bg-green-100 rounded-lg flex-shrink-0">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-            </div>
-            <div class="ml-2 sm:ml-3 lg:ml-4 min-w-0 flex-1">
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Closures</p>
-                <p class="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">{{ $statistics['active_closures'] ?? 0 }}</p>
+        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition">
+            <div class="flex items-center space-x-4">
+                <div class="bg-green-500 text-white p-3 rounded-lg">
+                    <i data-lucide="check-circle" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Closures</p>
+                    <p class="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">{{ $statistics['active_closures'] ?? 0 }}</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
-        <div class="flex items-center">
-            <div class="p-1.5 sm:p-2 bg-blue-100 rounded-lg flex-shrink-0">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                </svg>
-            </div>
-            <div class="ml-2 sm:ml-3 lg:ml-4 min-w-0 flex-1">
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Connections</p>
+        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition">
+            <div class="flex items-center space-x-4">
+                <div class="bg-gray-500 text-white p-3 rounded-lg">
+                    <i data-lucide="circle-minus" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Connections</p>
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">{{ $statistics['total_connections'] ?? 0 }}</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
-        <div class="flex items-center">
-            <div class="p-1.5 sm:p-2 bg-red-100 rounded-lg flex-shrink-0">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                </svg>
-            </div>
-            <div class="ml-2 sm:ml-3 lg:ml-4 min-w-0 flex-1">
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Problem Closures</p>
+        <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition">
+            <div class="flex items-center space-x-4">
+                <div class="bg-red-500 text-white p-3 rounded-lg">
+                    <i data-lucide="triangle-alert" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Problem Closures</p>
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-red-600">{{ $statistics['problem_closures'] ?? 0 }}</p>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+
 
 <!-- Closures Table -->
 <div class="bg-white rounded-lg shadow overflow-hidden">
@@ -264,7 +261,7 @@
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $closure->status === 'ok' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $closure->status === 'ok' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">
                             {{ ucfirst(str_replace('_', ' ', $closure->status)) }}
                         </span>
                     </td>
@@ -272,20 +269,30 @@
                         <div class="flex space-x-2">
                             <a
                                 href="{{ route('closures.connections', $closure) }}"
-                                class="text-blue-600 hover:text-blue-900 transition-colors">
-                                Detail
+                                class="flex items-center justify-center w-8 h-8 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-full transition-colors"
+                                title="Detail">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
                             </a>
                             <a
                                 href="{{ route('closures.edit', $closure) }}"
-                                class="text-yellow-600 hover:text-yellow-900 transition-colors">
-                                Edit
+                                class="flex items-center justify-center w-8 h-8 text-yellow-600 hover:text-yellow-900 hover:bg-yellow-50 rounded-full transition-colors"
+                                title="Edit">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
                             </a>
                             @if($closure->core_connections_count == 0)
                             <button
                                 type="button"
                                 onclick="confirmDelete('{{ $closure->id }}', '{{ addslashes($closure->name) }}', '{{ $closure->closure_id }}')"
-                                class="text-red-600 hover:text-red-900 cursor-pointer transition-colors">
-                                Delete
+                                class="flex items-center justify-center w-8 h-8 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-full transition-colors"
+                                title="Hapus">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
                             </button>
                             @else
                             <span

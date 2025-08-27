@@ -497,113 +497,94 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Final fixed version
     const editForm = document.getElementById("edit-core-form");
-    if (editForm) {
-        editForm.addEventListener("submit", function (e) {
-            e.preventDefault();
+if (editForm) {
+    editForm.addEventListener("submit", function (e) {
+        e.preventDefault();
 
-            const coreId = document.getElementById("core-id").value;
+        const coreId = document.getElementById("core-id").value;
+        
+        // Get form values
+        const status = document.getElementById("core-status").value;
+        const usage = document.getElementById("core-usage").value;
+        const attenuation = document.getElementById("core-attenuation").value;
+        const description = document.getElementById("core-description").value;
+        const csrfToken = document.querySelector('meta[name="csrf-token"]');
 
-            // Get form values
-            const status = document.getElementById("core-status").value;
-            const usage = document.getElementById("core-usage").value;
-            const attenuation =
-                document.getElementById("core-attenuation").value;
-            const description =
-                document.getElementById("core-description").value;
-            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+        if (!csrfToken) {
+            alert("CSRF token not found");
+            return;
+        }
 
-            if (!csrfToken) {
-                alert("CSRF token not found");
-                return;
-            }
+        // Use URLSearchParams instead of FormData for Firefox compatibility
+        const formData = new URLSearchParams();
+        formData.append("_method", "PUT");
+        formData.append("_token", csrfToken.getAttribute("content"));
+        formData.append("status", status);
+        formData.append("usage", usage);
+        if (attenuation && attenuation !== '') {
+            formData.append("attenuation", attenuation);
+        }
+        if (description && description !== '') {
+            formData.append("description", description);
+        }
 
-            // Use URLSearchParams instead of FormData for Firefox compatibility
-            const formData = new URLSearchParams();
-            formData.append("_method", "PUT");
-            formData.append("_token", csrfToken.getAttribute("content"));
-            formData.append("status", status);
-            formData.append("usage", usage);
-            if (attenuation && attenuation !== "") {
-                formData.append("attenuation", attenuation);
-            }
-            if (description && description !== "") {
-                formData.append("description", description);
-            }
+        // Use XMLHttpRequest instead of fetch for better Firefox compatibility
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", `/cores/${coreId}`, true);
+        
+        // Set headers explicitly
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        xhr.setRequestHeader("X-CSRF-TOKEN", csrfToken.getAttribute("content"));
+        xhr.setRequestHeader("Accept", "application/json, text/plain, */*");
+        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 
-            // Use XMLHttpRequest instead of fetch for better Firefox compatibility
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", `/cores/${coreId}`, true);
-
-            // Set headers explicitly
-            xhr.setRequestHeader(
-                "Content-Type",
-                "application/x-www-form-urlencoded; charset=UTF-8"
-            );
-            xhr.setRequestHeader(
-                "X-CSRF-TOKEN",
-                csrfToken.getAttribute("content")
-            );
-            xhr.setRequestHeader("Accept", "application/json, text/plain, */*");
-            xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        let response;
-                        try {
-                            response = JSON.parse(xhr.responseText);
-                        } catch (e) {
-                            // If not JSON, assume success for 200 status
-                            response = {
-                                success: true,
-                                message: "Core updated successfully",
-                            };
-                        }
-
-                        if (response.success !== false) {
-                            // Close modal
-                            const modal =
-                                document.getElementById("edit-core-modal");
-                            if (modal) {
-                                modal.classList.add("hidden");
-                            }
-
-                            alert("Core updated successfully!");
-
-                            // Use setTimeout to ensure modal is closed before reload
-                            setTimeout(function () {
-                                window.location.reload();
-                            }, 100);
-                        } else {
-                            alert(
-                                "Error: " +
-                                    (response.message || "Update failed")
-                            );
-                        }
-                    } else {
-                        console.error(
-                            "HTTP Error:",
-                            xhr.status,
-                            xhr.statusText
-                        );
-                        alert("Error updating core: HTTP " + xhr.status);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    let response;
+                    try {
+                        response = JSON.parse(xhr.responseText);
+                    } catch (e) {
+                        // If not JSON, assume success for 200 status
+                        response = { success: true, message: "Core updated successfully" };
                     }
+                    
+                    if (response.success !== false) {
+                        // Close modal
+                        const modal = document.getElementById("edit-core-modal");
+                        if (modal) {
+                            modal.classList.add("hidden");
+                        }
+                        
+                        alert("Core updated successfully!");
+                        
+                        // Use setTimeout to ensure modal is closed before reload
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 100);
+                    } else {
+                        alert("Error: " + (response.message || "Update failed"));
+                    }
+                } else {
+                    console.error("HTTP Error:", xhr.status, xhr.statusText);
+                    alert("Error updating core: HTTP " + xhr.status);
                 }
-            };
+            }
+        };
 
-            xhr.onerror = function () {
-                console.error("Network error");
-                alert("Network error occurred");
-            };
+        xhr.onerror = function() {
+            console.error("Network error");
+            alert("Network error occurred");
+        };
 
-            xhr.ontimeout = function () {
-                alert("Request timed out");
-            };
+        xhr.ontimeout = function() {
+            alert("Request timed out");
+        };
 
-            xhr.timeout = 30000; // 30 second timeout
-            xhr.send(formData.toString());
-        });
-    }
+        xhr.timeout = 30000; // 30 second timeout
+        xhr.send(formData.toString());
+    });
+}
     // Handle connect form submission
     const connectForm = document.getElementById("connect-form");
     if (connectForm) {
