@@ -169,7 +169,9 @@
 
     <script>
         // Sidebar state management
-        let sidebarOpen = true;
+        let sidebarOpen = window.innerWidth >= 1024; // desktop terbuka, mobile/tablet tertutup
+
+
 
         // DOM elements
         const sidebarToggle = document.getElementById('sidebar-toggle');
@@ -265,6 +267,15 @@
                 closeLogoutModal();
             }
         });
+        // Tutup sidebar otomatis saat klik link (khusus mobile)
+        document.querySelectorAll('#sidebar a').forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth < 768 && sidebarOpen) {
+                    toggleSidebar();
+                }
+            });
+        });
+
 
         // Initialize icons
         document.addEventListener("DOMContentLoaded", function() {
