@@ -1,3 +1,4 @@
+<!-- resources/views/dashboard/index.blade.php -->
 @extends('layouts.app')
 
 @section('title', 'Dashboard')
@@ -22,7 +23,6 @@
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{{ number_format($totalCores) }}</p>
             </div>
         </div>
-        <div class="absolute inset-0 bg-gradient-to-r from-transparent to-blue-900/5 group-hover:to-blue-900/10 transition-all duration-300"></div>
     </div>
 
     <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
@@ -37,7 +37,6 @@
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">{{ number_format($activeCores) }}</p>
             </div>
         </div>
-        <div class="absolute inset-0 bg-gradient-to-r from-transparent to-emerald-900/5 group-hover:to-emerald-900/10 transition-all duration-300"></div>
     </div>
 
     <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
@@ -52,7 +51,6 @@
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-600">{{ number_format($inactiveCores) }}</p>
             </div>
         </div>
-        <div class="absolute inset-0 bg-gradient-to-r from-transparent to-slate-900/5 group-hover:to-slate-900/10 transition-all duration-300"></div>
     </div>
 
     <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
@@ -67,7 +65,6 @@
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-red-600">{{ number_format($problemCores) }}</p>
             </div>
         </div>
-        <div class="absolute inset-0 bg-gradient-to-r from-transparent to-red-900/5 group-hover:to-red-900/10 transition-all duration-300"></div>
     </div>
 </div>
 
@@ -175,17 +172,17 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-50">
+            <tbody class="bg-white divide-y divide-gray-200">
                 @forelse($cables as $cable)
-                <tr class="hover:bg-gray-50 group transition-colors duration-150">
-                    <td class="px-6 py-5">
-                        <div class="font-mono text-sm font-medium text-gray-900">{{ $cable->cable_id }}</div>
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {{ $cable->cable_id }}
                     </td>
-                    <td class="px-6 py-5">
-                        <div class="text-sm font-medium text-gray-900">{{ $cable->name }}</div>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {{ $cable->name }}
                     </td>
-                    <td class="px-6 py-5">
-                        <span class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-700">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
                             {{ $cable->region }}
                         </span>
                     </td>
@@ -202,72 +199,28 @@
                         </div>
                         <div class="text-xs text-gray-500">Total: {{ $cable->total_cores }}</div>
                     </td>
-                    <td class="px-6 py-5">
-                        @php
-                        $statusConfig = [
-                            'ok' => ['bg-emerald-100', 'text-emerald-800', 'border-emerald-200'],
-                            'problem' => ['bg-red-100', 'text-red-800', 'border-red-200']
-                        ];
-                        $status = $cable->status ?? 'ok';
-                        $config = $statusConfig[$status] ?? $statusConfig['ok'];
-                        @endphp
-                        <span class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full border {{ implode(' ', $config) }}">
-                            <div class="w-1.5 h-1.5 rounded-full mr-2 {{ str_replace('bg-', 'bg-', $config[0]) === 'bg-emerald-100' ? 'bg-emerald-500' : 'bg-red-500' }}"></div>
-                            {{ ucfirst($status) }}
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $cable->status === 'ok' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                            {{ ucfirst($cable->status) }}
                         </span>
                     </td>
-                    <td class="px-6 py-5">
-                        @php
-                        $usageConfig = [
-                            'active' => ['bg-blue-100', 'text-blue-800'],
-                            'inactive' => ['bg-gray-100', 'text-gray-800']
-                        ];
-                        $usage = $cable->usage ?? 'inactive';
-                        $usageStyle = $usageConfig[$usage] ?? $usageConfig['inactive'];
-                        @endphp
-                        <span class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full {{ implode(' ', $usageStyle) }}">
-                            {{ ucfirst($usage) }}
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $cable->usage === 'active' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
+                            {{ ucfirst($cable->usage) }}
                         </span>
                     </td>
-                    <td class="px-6 py-5">
-                        <div class="flex items-center space-x-3">
-                            <a href="{{ route('cables.show', $cable) }}"
-                               class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-150">
-                                View
-                            </a>
-                            <a href="{{ route('cables.cores', $cable) }}"
-                               class="text-indigo-600 hover:text-indigo-800 text-sm font-medium transition-colors duration-150">
-                                Cores
-                            </a>
-                            <a href="{{ route('cables.edit', $cable) }}"
-                               class="text-yellow-600 hover:text-yellow-800 text-sm font-medium transition-colors duration-150">
-                                Edit
-                            </a>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex space-x-2">
+                            <a href="{{ route('cables.show', $cable) }}" class="text-indigo-600 hover:text-indigo-900">View</a>
+                            <a href="{{ route('cables.cores', $cable) }}" class="text-blue-600 hover:text-blue-900">Cores</a>
+                            <a href="{{ route('cables.edit', $cable) }}" class="text-yellow-600 hover:text-yellow-900">Edit</a>
                         </div>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="8" class="px-6 py-16 text-center">
-                        <div class="flex flex-col items-center space-y-4">
-                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
-                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
-                                </svg>
-                            </div>
-                            <div class="space-y-2">
-                                <p class="text-gray-600 font-medium">No cables found</p>
-                                <p class="text-gray-400 text-sm">Get started by creating your first cable</p>
-                            </div>
-                            <a
-                                href="{{ route('cables.create') }}"
-                                class="inline-flex items-center px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all duration-200 text-sm font-medium">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                                </svg>
-                                Create First Cable
-                            </a>
-                        </div>
+                    <td colspan="8" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                        No cables found. <a href="{{ route('cables.create') }}" class="text-blue-600 hover:text-blue-900">Create your first cable</a>
                     </td>
                 </tr>
                 @endforelse

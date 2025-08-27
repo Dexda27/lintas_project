@@ -35,7 +35,6 @@
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{{ $statistics['total_closures'] ?? $closures->total() }}</p>
             </div>
         </div>
-        <div class="absolute inset-0 bg-gradient-to-r from-transparent to-slate-900/5 group-hover:to-slate-900/10 transition-all duration-300"></div>
     </div>
 
     <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
@@ -50,7 +49,6 @@
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">{{ $statistics['active_closures'] ?? 0 }}</p>
             </div>
         </div>
-        <div class="absolute inset-0 bg-gradient-to-r from-transparent to-emerald-900/5 group-hover:to-emerald-900/10 transition-all duration-300"></div>
     </div>
 
     <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
@@ -65,7 +63,6 @@
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">{{ $statistics['total_connections'] ?? 0 }}</p>
             </div>
         </div>
-        <div class="absolute inset-0 bg-gradient-to-r from-transparent to-blue-900/5 group-hover:to-blue-900/10 transition-all duration-300"></div>
     </div>
 
     <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
@@ -80,7 +77,6 @@
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-red-600">{{ $statistics['problem_closures'] ?? 0 }}</p>
             </div>
         </div>
-        <div class="absolute inset-0 bg-gradient-to-r from-transparent to-red-900/5 group-hover:to-red-900/10 transition-all duration-300"></div>
     </div>
 </div>
 
@@ -228,89 +224,72 @@
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-50">
+            <tbody class="bg-white divide-y divide-gray-200">
                 @forelse($closures as $closure)
-                <tr class="hover:bg-gray-50 group transition-colors duration-150">
-                    <td class="px-6 py-5">
-                        <div class="font-mono text-sm font-medium text-gray-900">{{ $closure->closure_id }}</div>
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {{ $closure->closure_id }}
                     </td>
-                    <td class="px-6 py-5">
-                        <div class="text-sm font-medium text-gray-900">{{ $closure->name }}</div>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {{ $closure->name }}
                     </td>
-                    <td class="px-6 py-5">
-                        <div class="text-sm text-gray-600 flex items-center">
-                            <svg class="w-4 h-4 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
-                            {{ $closure->location }}
-                        </div>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {{ $closure->location }}
                     </td>
-                    <td class="px-6 py-5">
-                        <span class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-700">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
                             {{ $closure->region }}
                         </span>
                     </td>
-                    <td class="px-6 py-5">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         @php
                         $capacityPercentage = $closure->capacity > 0 ? ($closure->used_capacity / $closure->capacity) * 100 : 0;
-                        $colorClass = $capacityPercentage >= 80 ? 'bg-red-500' : ($capacityPercentage >= 60 ? 'bg-yellow-500' : 'bg-emerald-500');
                         @endphp
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm font-medium text-gray-900">
-                                    {{ $closure->used_capacity }}/{{ $closure->capacity }}
-                                </span>
-                                <span class="text-xs text-gray-500">{{ round($capacityPercentage) }}%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div class="flex items-center">
+                            <div class="flex-1 bg-gray-200 rounded-full h-2 mr-2">
                                 <div
-                                    class="{{ $colorClass }} h-full rounded-full transition-all duration-500 ease-out"
-                                    style="width: {{ $capacityPercentage }}%">
-                                </div>
+                                    class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                    style="width: {{ $capacityPercentage }}%"
+                                    role="progressbar"
+                                    aria-valuenow="{{ $capacityPercentage }}"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"></div>
                             </div>
-                            <div class="text-xs text-gray-500">
-                                {{ $closure->core_connections_count }} connections
-                            </div>
+                            <span class="text-xs font-medium">
+                                {{ $closure->used_capacity }}/{{ $closure->capacity }}
+                            </span>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">
+                            {{ $closure->core_connections_count }} connections
                         </div>
                     </td>
-                    <td class="px-6 py-5">
-                        @php
-                        $statusConfig = [
-                            'ok' => ['bg-emerald-100', 'text-emerald-800', 'border-emerald-200'],
-                            'problem' => ['bg-red-100', 'text-red-800', 'border-red-200'],
-                            'maintenance' => ['bg-yellow-100', 'text-yellow-800', 'border-yellow-200']
-                        ];
-                        $status = $closure->status ?? 'ok';
-                        $config = $statusConfig[$status] ?? $statusConfig['ok'];
-                        @endphp
-                        <span class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full border {{ implode(' ', $config) }}">
-                            <div class="w-1.5 h-1.5 rounded-full mr-2 {{ str_replace('bg-', 'bg-', $config[0]) === 'bg-emerald-100' ? 'bg-emerald-500' : (str_replace('bg-', 'bg-', $config[0]) === 'bg-red-100' ? 'bg-red-500' : 'bg-yellow-500') }}"></div>
-                            {{ ucfirst(str_replace('_', ' ', $status)) }}
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $closure->status === 'ok' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                            {{ ucfirst(str_replace('_', ' ', $closure->status)) }}
                         </span>
                     </td>
-                    <td class="px-6 py-5">
-                        <div class="flex items-center space-x-3">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex space-x-2">
                             <a
                                 href="{{ route('closures.connections', $closure) }}"
-                                class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-150">
-                                View
+                                class="text-blue-600 hover:text-blue-900 transition-colors">
+                                Detail
                             </a>
                             <a
                                 href="{{ route('closures.edit', $closure) }}"
-                                class="text-yellow-600 hover:text-yellow-800 text-sm font-medium transition-colors duration-150">
+                                class="text-yellow-600 hover:text-yellow-900 transition-colors">
                                 Edit
                             </a>
                             @if($closure->core_connections_count == 0)
                             <button
                                 type="button"
                                 onclick="confirmDelete('{{ $closure->id }}', '{{ addslashes($closure->name) }}', '{{ $closure->closure_id }}')"
-                                class="text-red-600 hover:text-red-800 text-sm font-medium transition-colors duration-150">
+                                class="text-red-600 hover:text-red-900 cursor-pointer transition-colors">
                                 Delete
                             </button>
                             @else
                             <span
-                                class="text-gray-300 cursor-not-allowed text-sm"
+                                class="text-gray-400 cursor-not-allowed"
                                 title="Cannot delete closure with active connections">
                                 Delete
                             </span>
@@ -320,24 +299,16 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="px-6 py-16 text-center">
-                        <div class="flex flex-col items-center space-y-4">
-                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
-                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                                </svg>
-                            </div>
-                            <div class="space-y-2">
-                                <p class="text-gray-600 font-medium">No joint closures found</p>
-                                <p class="text-gray-400 text-sm">Get started by creating your first closure</p>
-                            </div>
+                    <td colspan="7" class="px-6 py-12 whitespace-nowrap text-sm text-gray-500 text-center">
+                        <div class="flex flex-col items-center">
+                            <svg class="w-12 h-12 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                            </svg>
+                            <p class="text-gray-500 mb-2">No joint closures found</p>
                             <a
                                 href="{{ route('closures.create') }}"
-                                class="inline-flex items-center px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all duration-200 text-sm font-medium">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                                </svg>
-                                Create First Closure
+                                class="text-blue-600 hover:text-blue-900 font-medium">
+                                Create your first closure
                             </a>
                         </div>
                     </td>
