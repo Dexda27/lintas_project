@@ -45,15 +45,15 @@
 
     <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center">
-            <div class="p-2 bg-green-100 rounded-lg">
-                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="p-2 bg-emerald-100 rounded-lg">
+                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
             </div>
             <div class="ml-4">
                 <p class="text-sm font-medium text-gray-600">Active Cores</p>
-                <p class="text-2xl font-bold text-green-600">{{ $statistics['active_cores'] }}</p>
+                <p class="text-2xl font-bold text-emerald-600">{{ $statistics['active_cores'] }}</p>
             </div>
         </div>
     </div>
@@ -74,8 +74,8 @@
 
     <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center">
-            <div class="p-2 bg-red-100 rounded-lg">
-                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="p-2 bg-black-100 rounded-lg">
+                <svg class="w-6 h-6 text-black-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z">
                     </path>
@@ -83,7 +83,7 @@
             </div>
             <div class="ml-4">
                 <p class="text-sm font-medium text-gray-600">Problem Cores</p>
-                <p class="text-2xl font-bold text-red-600">{{ $statistics['problem_cores'] }}</p>
+                <p class="text-2xl font-bold text-black-600">{{ $statistics['problem_cores'] }}</p>
             </div>
         </div>
     </div>
