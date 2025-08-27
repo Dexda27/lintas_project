@@ -118,7 +118,7 @@
                 <div>
                     <p class="text-sm font-medium text-gray-600">Status</p>
                     <span
-                        class="inline-block px-2 py-1 text-sm font-semibold rounded-full {{ $cable->status === 'ok' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                        class="inline-block px-2 py-1 text-sm font-semibold rounded-full {{ $cable->status === 'ok' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800' }}">
                         {{ ucfirst($cable->status) }}
                     </span>
                 </div>
