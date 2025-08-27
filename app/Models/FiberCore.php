@@ -58,4 +58,9 @@ class FiberCore extends Model
     {
         return $this->belongsTo(Cable::class);
     }
+    public function getJointClosure()
+    {
+        $connection = $this->connection();
+        return $connection ? $connection->closure : null;
+    }
 }

@@ -20,65 +20,62 @@
         </a>
     </div>
 </div>
+<ul class="border-t border-gray-200 my-4"></ul>
 
 <!-- Statistics Cards -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8">
-    <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
-        <div class="flex items-center">
-            <div class="p-1.5 sm:p-2 bg-purple-100 rounded-lg flex-shrink-0">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
-            </div>
-            <div class="ml-2 sm:ml-3 lg:ml-4 min-w-0 flex-1">
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Closures</p>
+<div class="mb-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition">
+            <div class="flex items-center space-x-4">
+                <div class="bg-blue-500 text-white p-3 rounded-lg">
+                    <i data-lucide="layers" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Closures</p>
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{{ $statistics['total_closures'] ?? $closures->total() }}</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
-        <div class="flex items-center">
-            <div class="p-1.5 sm:p-2 bg-green-100 rounded-lg flex-shrink-0">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-            </div>
-            <div class="ml-2 sm:ml-3 lg:ml-4 min-w-0 flex-1">
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Closures</p>
-                <p class="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">{{ $statistics['active_closures'] ?? 0 }}</p>
+        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition">
+            <div class="flex items-center space-x-4">
+                <div class="bg-green-500 text-white p-3 rounded-lg">
+                    <i data-lucide="check-circle" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Closures</p>
+                    <p class="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">{{ $statistics['active_closures'] ?? 0 }}</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
-        <div class="flex items-center">
-            <div class="p-1.5 sm:p-2 bg-blue-100 rounded-lg flex-shrink-0">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                </svg>
-            </div>
-            <div class="ml-2 sm:ml-3 lg:ml-4 min-w-0 flex-1">
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Connections</p>
+        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition">
+            <div class="flex items-center space-x-4">
+                <div class="bg-gray-500 text-white p-3 rounded-lg">
+                    <i data-lucide="circle-minus" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Connections</p>
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">{{ $statistics['total_connections'] ?? 0 }}</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
-        <div class="flex items-center">
-            <div class="p-1.5 sm:p-2 bg-red-100 rounded-lg flex-shrink-0">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                </svg>
-            </div>
-            <div class="ml-2 sm:ml-3 lg:ml-4 min-w-0 flex-1">
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Problem Closures</p>
+        <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition">
+            <div class="flex items-center space-x-4">
+                <div class="bg-red-500 text-white p-3 rounded-lg">
+                    <i data-lucide="triangle-alert" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Problem Closures</p>
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-red-600">{{ $statistics['problem_closures'] ?? 0 }}</p>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+
 
 <!-- Closures Table -->
 <div class="bg-white rounded-lg shadow overflow-hidden">
@@ -165,42 +162,29 @@
                     </span>
                 </div>
 
-                <!-- Mobile Actions with Icons -->
-                <div class="flex space-x-3">
+                <div class="flex space-x-1">
                     <a
                         href="{{ route('closures.connections', $closure) }}"
-                        class="flex items-center justify-center w-8 h-8 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 rounded-full transition-colors"
-                        title="Detail">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
+                        class="text-blue-600 hover:text-blue-900 transition-colors text-xs">
+                        Detail
                     </a>
                     <a
                         href="{{ route('closures.edit', $closure) }}"
-                        class="flex items-center justify-center w-8 h-8 text-amber-600 hover:text-amber-900 hover:bg-amber-50 rounded-full transition-colors"
-                        title="Edit">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
+                        class="text-yellow-600 hover:text-yellow-900 transition-colors text-xs">
+                        Edit
                     </a>
                     @if($closure->core_connections_count == 0)
                     <button
                         type="button"
                         onclick="confirmDelete('{{ $closure->id }}', '{{ addslashes($closure->name) }}', '{{ $closure->closure_id }}')"
-                        class="flex items-center justify-center w-8 h-8 text-rose-600 hover:text-rose-900 hover:bg-rose-50 rounded-full transition-colors"
-                        title="Delete">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
+                        class="text-red-600 hover:text-red-900 cursor-pointer transition-colors text-xs">
+                        Delete
                     </button>
                     @else
                     <span
-                        class="flex items-center justify-center w-8 h-8 text-gray-400 bg-gray-100 rounded-full cursor-not-allowed"
+                        class="text-gray-400 cursor-not-allowed text-xs"
                         title="Cannot delete closure with active connections">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
+                        Delete
                     </span>
                     @endif
                 </div>
@@ -234,7 +218,7 @@
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Region</th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Capacity</th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
@@ -282,11 +266,10 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <!-- Desktop Actions with Icons -->
-                        <div class="flex justify-center space-x-2">
+                        <div class="flex space-x-2">
                             <a
                                 href="{{ route('closures.connections', $closure) }}"
-                                class="flex items-center justify-center w-8 h-8 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 rounded-full transition-colors"
+                                class="flex items-center justify-center w-8 h-8 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-full transition-colors"
                                 title="Detail">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -295,7 +278,7 @@
                             </a>
                             <a
                                 href="{{ route('closures.edit', $closure) }}"
-                                class="flex items-center justify-center w-8 h-8 text-amber-600 hover:text-amber-900 hover:bg-amber-50 rounded-full transition-colors"
+                                class="flex items-center justify-center w-8 h-8 text-yellow-600 hover:text-yellow-900 hover:bg-yellow-50 rounded-full transition-colors"
                                 title="Edit">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -305,19 +288,17 @@
                             <button
                                 type="button"
                                 onclick="confirmDelete('{{ $closure->id }}', '{{ addslashes($closure->name) }}', '{{ $closure->closure_id }}')"
-                                class="flex items-center justify-center w-8 h-8 text-rose-600 hover:text-rose-900 hover:bg-rose-50 rounded-full transition-colors"
-                                title="Delete">
+                                class="flex items-center justify-center w-8 h-8 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-full transition-colors"
+                                title="Hapus">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                 </svg>
                             </button>
                             @else
                             <span
-                                class="flex items-center justify-center w-8 h-8 text-gray-400 bg-gray-100 rounded-full cursor-not-allowed"
+                                class="text-gray-400 cursor-not-allowed"
                                 title="Cannot delete closure with active connections">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
+                                Delete
                             </span>
                             @endif
                         </div>
@@ -507,4 +488,93 @@
     @csrf
     @method('DELETE')
 </form>
+
+@push('styles')
+<style>
+    /* Smooth transitions */
+    .transition-colors {
+        transition-property: color, background-color, border-color;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 150ms;
+    }
+
+    /* Ensure modal appears above everything with backdrop */
+    #deleteModal {
+        backdrop-filter: blur(4px);
+        background-color: rgba(0, 0, 0, 0.5);
+        transition: all 0.15s ease;
+    }
+
+    /* Custom focus styles for better accessibility */
+    .focus\:ring-2:focus {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+    }
+
+    /* Progress bar animation */
+    .transition-all {
+        transition-property: all;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 300ms;
+    }
+
+    /* Mobile-specific adjustments */
+    @media (max-width: 640px) {
+        #deleteModal .transform {
+            transform: scale(0.95);
+        }
+
+        /* Ensure touch targets are large enough */
+        button,
+        a {
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Better spacing for mobile */
+        .space-x-1>*+* {
+            margin-left: 0.25rem;
+        }
+
+        /* Improve readability on small screens */
+        .truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    /* Tablet adjustments */
+    @media (min-width: 641px) and (max-width: 1023px) {
+
+        /* Optimize for tablet portrait/landscape */
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    /* Desktop enhancements */
+    @media (min-width: 1024px) {
+
+        /* Hover effects only on desktop */
+        .hover\:bg-gray-50:hover {
+            background-color: #f9fafb;
+        }
+
+        .hover\:text-blue-900:hover {
+            color: #1e3a8a;
+        }
+
+        .hover\:text-yellow-900:hover {
+            color: #78350f;
+        }
+
+        .hover\:text-red-900:hover {
+            color: #7f1d1d;
+        }
+    }
+</style>
+@endpush
 @endsection

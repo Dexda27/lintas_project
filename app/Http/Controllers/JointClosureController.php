@@ -14,6 +14,10 @@ use Illuminate\Validation\Rule;
 
 class JointClosureController extends Controller
 {
+
+
+
+
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -36,13 +40,24 @@ class JointClosureController extends Controller
             });
         }
 
+
+        $allClosures = $query->get();
+        $statistics = [
+            'total_closures' => $allClosures->count(),
+            'active_closures' => $allClosures->where('status', 'ok')->count(),
+            'problem_closures' => $allClosures->where('status', 'not_ok')->count(),
+            'total_connections' => $allClosures->sum('used_capacity')
+        ];
+
+
+
         // Get closures with core connections count and pagination
         $closures = $query->withCount('coreConnections')
             ->orderBy('created_at', 'desc')
             ->paginate(10)
-            ->appends($request->query()); // Preserve search parameters in pagination
+            ->appends($request->query());
 
-        return view('closures.index', compact('closures'));
+        return view('closures.index', compact('closures', 'statistics'));
     }
 
     public function create()
