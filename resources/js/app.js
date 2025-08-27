@@ -25,10 +25,9 @@ window.coreManager = {
     closeEditModal: function () {
         const modal = document.getElementById("edit-core-modal");
         if (modal) {
-            modal.classList.add("hidden");
+            modal.style.display = "none";
         }
     },
-
     // Update core via AJAX
     updateCore: function (coreId, formData) {
         return fetch(`/cores/${coreId}`, {

@@ -5,7 +5,11 @@
 @push('scripts')
 <script>
     // Pass cable ID to JavaScript
-    window.currentCableId = {{ $cable->id }};
+    window.currentCableId = {
+        {
+            $cable - > id
+        }
+    };
 </script>
 <script src="{{ asset('js/manage-cores.js') }}"></script>
 @endpush
@@ -35,7 +39,7 @@
                 <option value="">All Tubes</option>
                 @for($i = 1; $i <= $cable->total_tubes; $i++)
                     <option value="{{ $i }}">Tube {{ $i }}</option>
-                @endfor
+                    @endfor
             </select>
         </div>
         <div>
@@ -60,7 +64,7 @@
 @php
 $coreColors = ['#0000ff', '#ff7f00', '#00ff00', '#964b00', '#808080', '#ffffff', '#ff0000', '#000000', '#ffff00', '#8f00ff', '#ff00ff', '#00ffff'];
 function getCoreColor($coreNumber, $colors) {
-    return $colors[($coreNumber - 1) % 12];
+return $colors[($coreNumber - 1) % 12];
 }
 @endphp
 
@@ -82,9 +86,9 @@ function getCoreColor($coreNumber, $colors) {
             @php $coreColor = getCoreColor($core->core_number, $coreColors); @endphp
 
             <div class="core-card border border-gray-400 rounded-lg p-4 hover:shadow-md transition-shadow bg-gradient-to-b from-white to-gray-50"
-                data-tube="{{ $core->tube_number }}" 
+                data-tube="{{ $core->tube_number }}"
                 data-status="{{ $core->status }}"
-                data-usage="{{ $core->usage }}" 
+                data-usage="{{ $core->usage }}"
                 data-core="{{ $core->core_number }}"
                 data-description="{{ $core->description }}">
 
@@ -122,11 +126,32 @@ function getCoreColor($coreNumber, $colors) {
                     </div>
                     @endif
 
+
                     @if($core->connection)
                     <div class="mt-2 p-2 bg-blue-50 rounded text-xs border-l-4 border-blue-400">
-                        <p class="font-medium text-blue-800">Connected to:</p>
+                        <p class="font-medium text-blue-800 border-b border-blue-300 pb-1 mb-2">Connected to:</p>
+
                         @php $connectedCore = $core->connection->coreA->id === $core->id ? $core->connection->coreB : $core->connection->coreA; @endphp
-                        <p class="text-blue-600">{{ $connectedCore->cable->name }} - T{{ $connectedCore->tube_number }}C{{ $connectedCore->core_number }}</p>
+                        <div class="space-y-1">
+                            <p class="text-blue-700 font-medium">{{ $connectedCore->cable->name }}</p>
+                            <p class="text-blue-700 font-medium">Nama JC : {{ $core->connection->closure->name ?? $core->connection->closure->closure_id }}</p>
+                            <p class="text-blue-600">Cable ID: {{ $connectedCore->cable->cable_id }}</p>
+                            <p class="text-blue-600">JC ID : {{ $core->connection->closure->closure_id }}</p>
+                            <p class="text-blue-600">Tube {{ $connectedCore->tube_number }} Core {{ $connectedCore->core_number }}</p>
+                            <p class="text-gray-600">{{ $connectedCore->cable->source_site }} → {{ $connectedCore->cable->destination_site }}</p>
+                            @if($core->connection->connection_type)
+                            <p class="text-blue-600">Type: {{ ucfirst($core->connection->connection_type) }}</p>
+                            @endif
+                            @if($core->connection->loss)
+                            <p class="text-blue-600">Loss: {{ $core->connection->loss }} dB</p>
+                            @endif
+                            @if($core->connection->joint_closure_id)
+                            <p class="text-gray-600">via JC: {{ $core->connection->jointClosure->name ?? 'JC-' . $core->connection->joint_closure_id }} (ID: {{ $core->connection->joint_closure_id }})</p>
+                            @endif
+                            @if($core->connection->notes)
+                            <p class="text-gray-500 italic">{{ $core->connection->notes }}</p>
+                            @endif
+                        </div>
                     </div>
                     @endif
 
@@ -224,6 +249,17 @@ function getCoreColor($coreNumber, $colors) {
             <form id="edit-core-form" class="p-6">
                 <input type="hidden" id="core-id">
                 <div class="space-y-4">
+                    <!-- Connection Info -->
+                    <div id="connection-info" class="hidden p-3 bg-blue-50 rounded-md border-l-4 border-blue-400">
+                        <h4 class="font-medium text-blue-800 mb-2">Connection Information</h4>
+                        <div class="space-y-1 text-sm">
+                            <p id="connected-cable" class="text-blue-700"></p>
+                            <p id="connected-core" class="text-blue-600"></p>
+                            <p id="connected-jc" class="text-purple-600 font-medium"></p>
+                            <p id="connected-jc-id" class="text-purple-600"></p>
+                        </div>
+                    </div>
+
                     <div>
                         <label class="block text-sm font-medium mb-1">Status</label>
                         <select id="core-status" class="w-full px-3 py-2 border rounded-md">
