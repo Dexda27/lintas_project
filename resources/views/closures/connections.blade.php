@@ -56,7 +56,7 @@
             <dt class="text-gray-500 font-medium">Status</dt>
             <dd>
                 <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full
-                    {{ $closure->status === 'ok' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                    {{ $closure->status === 'ok' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">
                     {{ ucfirst(str_replace('_', ' ', $closure->status)) }}
                 </span>
             </dd>

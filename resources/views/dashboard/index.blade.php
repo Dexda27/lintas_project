@@ -196,7 +196,7 @@
                         <div class="text-xs text-gray-500">Total: {{ $cable->total_cores }}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $cable->status === 'ok' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-800' }}">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $cable->status === 'ok' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">
                             {{ ucfirst($cable->status) }}
                         </span>
                     </td>
@@ -209,9 +209,7 @@
                         <a href="{{ route('cables.show', $cable) }}" class="text-indigo-600 hover:text-indigo-900 flex items-center gap-1">
                             <i data-lucide="eye" class="w-4 h-4"></i> View
                         </a>
-                        <a href="{{ route('cables.cores', $cable) }}" class="text-blue-600 hover:text-blue-900 flex items-center gap-1">
-                            <i data-lucide="layers" class="w-4 h-4"></i> Cores
-                        </a>
+
                         <a href="{{ route('cables.edit', $cable) }}" class="text-yellow-600 hover:text-yellow-900 flex items-center gap-1">
                             <i data-lucide="edit" class="w-4 h-4"></i> Edit
                         </a>
