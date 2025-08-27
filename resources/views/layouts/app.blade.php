@@ -10,14 +10,20 @@
     <title>@yield('title', 'Fiber Core Management')</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="{{ mix('js/app.js') }}"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             lucide.createIcons();
         });
     </script>
+    
 </head>
 
 <body class="bg-gray-50">
+    <!-- Flash Container -->
+<div id="flash-container" class="fixed top-4 right-4 z-50 space-y-4"></div>
+
     <div class="min-h-screen">
         <!-- Navigation -->
         <nav class="bg-blue-800 shadow-lg fixed top-0 left-0 right-0 z-30 transition-all duration-300" id="navbar">

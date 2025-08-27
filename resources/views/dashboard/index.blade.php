@@ -128,10 +128,10 @@
 
             <div class="flex justify-between items-center">
                 <div class="flex space-x-2">
-                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $cable->status === 'ok' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                    <span class="px-2 py-1 text-xs font-semibold {{ $cable->status }}">
                         {{ ucfirst($cable->status) }}
                     </span>
-                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $cable->usage === 'active' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
+                    <span class="px-2 py-1 text-xs font-semibold {{ $cable->usage}}">
                         {{ ucfirst($cable->usage) }}
                     </span>
                 </div>
@@ -195,7 +195,7 @@
                         <div class="text-xs text-gray-500">Total: {{ $cable->total_cores }}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $cable->status === 'ok' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $cable->status}}">
                             {{ ucfirst($cable->status) }}
                         </span>
                     </td>
