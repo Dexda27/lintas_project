@@ -342,7 +342,7 @@
 </div>
 
 <!-- Join Core Modal -->
-<div id="join-core-modal" class="fixed inset-0 backdrop-blur-md hidden">
+<div id="join-core-modal" class="fixed inset-0 backdrop-blur-xs hidden">
     <div class="flex items-center justify-center min-h-screen px-4">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-lg">
             <div class="px-6 py-4 border-b">
@@ -404,7 +404,7 @@
 </div>
 
 <!-- Edit Core Modal -->
-<div id="edit-core-modal" class="fixed inset-0 backdrop-blur-md hidden">
+<div id="edit-core-modal" class="fixed inset-0 backdrop-blur-xs hidden">
     <div class="flex items-center justify-center min-h-screen px-4">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
             <div class="px-6 py-4 border-b">
