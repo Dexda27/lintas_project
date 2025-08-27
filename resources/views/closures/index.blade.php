@@ -277,7 +277,7 @@
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $closure->status === 'ok' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $closure->status === 'ok' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800' }}">
                             {{ ucfirst(str_replace('_', ' ', $closure->status)) }}
                         </span>
                     </td>
