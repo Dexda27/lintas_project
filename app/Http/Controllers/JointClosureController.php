@@ -180,7 +180,7 @@ class JointClosureController extends Controller
             'description'
         ]));
 
-        return redirect()->route('closures.show', $closure)
+        return redirect()->route('closures.connections', $closure)
             ->with('success', 'Joint closure updated successfully.');
     }
 

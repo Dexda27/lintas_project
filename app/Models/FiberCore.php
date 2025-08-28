@@ -63,4 +63,5 @@ class FiberCore extends Model
         $connection = $this->connection();
         return $connection ? $connection->closure : null;
     }
+    
 }
