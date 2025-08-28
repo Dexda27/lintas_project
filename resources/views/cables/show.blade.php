@@ -4,7 +4,11 @@
 
 @push('scripts')
 <script>
-    window.currentCableId = {{ $cable->id }};
+    window.currentCableId = {
+        {
+            $cable - > id
+        }
+    };
 </script>
 <script src="{{ asset('js/manage-cores.js') }}"></script>
 @endpush
@@ -181,134 +185,134 @@
     <div class="bg-white rounded-lg shadow mb-6 p-6">
         <div class="flex flex-wrap gap-4 items-center">
             @foreach([
-                ['tube-filter', 'Tube', 'All Tubes', range(1, $cable->total_tubes)],
-                ['status-filter', 'Status', 'All Status', [['ok', 'OK'], ['not_ok', 'Not OK']]],
-                ['usage-filter', 'Usage', 'All Usage', [['active', 'Active'], ['inactive', 'Inactive']]]
+            ['tube-filter', 'Tube', 'All Tubes', range(1, $cable->total_tubes)],
+            ['status-filter', 'Status', 'All Status', [['ok', 'OK'], ['not_ok', 'Not OK']]],
+            ['usage-filter', 'Usage', 'All Usage', [['active', 'Active'], ['inactive', 'Inactive']]]
             ] as [$id, $label, $defaultOption, $options])
-                <div>
-                    <label for="{{ $id }}" class="block text-sm font-medium text-gray-700 mb-1">{{ $label }}</label>
-                    <select id="{{ $id }}" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">{{ $defaultOption }}</option>
-                        @if($id === 'tube-filter')
-                            @foreach($options as $tube)
-                                <option value="{{ $tube }}">Tube {{ $tube }}</option>
-                            @endforeach
-                        @else
-                            @foreach($options as $option)
-                                <option value="{{ $option[0] }}">{{ $option[1] }}</option>
-                            @endforeach
-                        @endif
-                    </select>
-                </div>
+            <div>
+                <label for="{{ $id }}" class="block text-sm font-medium text-gray-700 mb-1">{{ $label }}</label>
+                <select id="{{ $id }}" class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">{{ $defaultOption }}</option>
+                    @if($id === 'tube-filter')
+                    @foreach($options as $tube)
+                    <option value="{{ $tube }}">Tube {{ $tube }}</option>
+                    @endforeach
+                    @else
+                    @foreach($options as $option)
+                    <option value="{{ $option[0] }}">{{ $option[1] }}</option>
+                    @endforeach
+                    @endif
+                </select>
+            </div>
             @endforeach
         </div>
     </div>
 
     {{-- Core Colors --}}
     @php
-        $coreColors = ['#0000ff', '#ff7f00', '#00ff00', '#964b00', '#808080', '#ffffff', '#ff0000', '#000000', '#ffff00', '#8f00ff', '#ff00ff', '#00ffff'];
-        $getCoreColor = fn($coreNumber) => $coreColors[($coreNumber - 1) % 12];
+    $coreColors = ['#0000ff', '#ff7f00', '#00ff00', '#964b00', '#808080', '#ffffff', '#ff0000', '#000000', '#ffff00', '#8f00ff', '#ff00ff', '#00ffff'];
+    $getCoreColor = fn($coreNumber) => $coreColors[($coreNumber - 1) % 12];
     @endphp
 
     {{-- Cores by Tube --}}
     @foreach($coresByTube as $tubeNumber => $cores)
-        <div class="bg-white rounded-lg shadow mb-6 tube-section" data-tube="{{ $tubeNumber }}">
-            <div class="px-6 py-4 border-b flex justify-between items-center">
-                <h3 class="text-xl font-semibold text-gray-900">Tube {{ $tubeNumber }} ({{ $cores->count() }} cores)</h3>
-                <div class="flex items-center space-x-4 text-sm">
-                    @foreach([
-                        ['Active', $cores->where('usage', 'active')->count(), 'green-500'],
-                        ['Inactive', $cores->where('usage', 'inactive')->count(), 'gray-400'],
-                        ['Problems', $cores->where('status', 'not_ok')->count(), 'red-500']
-                    ] as [$label, $count, $color])
-                        <span class="flex items-center">
-                            <span class="w-3 h-3 bg-{{ $color }} rounded-full mr-2"></span>{{ $label }}: {{ $count }}
-                        </span>
-                    @endforeach
-                </div>
+    <div class="bg-white rounded-lg shadow mb-6 tube-section" data-tube="{{ $tubeNumber }}">
+        <div class="px-6 py-4 border-b flex justify-between items-center">
+            <h3 class="text-xl font-semibold text-gray-900">Tube {{ $tubeNumber }} ({{ $cores->count() }} cores)</h3>
+            <div class="flex items-center space-x-4 text-sm">
+                @foreach([
+                ['Active', $cores->where('usage', 'active')->count(), 'green-500'],
+                ['Inactive', $cores->where('usage', 'inactive')->count(), 'gray-400'],
+                ['Problems', $cores->where('status', 'not_ok')->count(), 'red-500']
+                ] as [$label, $count, $color])
+                <span class="flex items-center">
+                    <span class="w-3 h-3 bg-{{ $color }} rounded-full mr-2"></span>{{ $label }}: {{ $count }}
+                </span>
+                @endforeach
             </div>
+        </div>
 
-            <div class="p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    @foreach($cores as $core)
-                        <div class="core-card border rounded-lg p-4 hover:shadow-md transition-shadow bg-gradient-to-b from-white to-gray-50"
-                             data-tube="{{ $core->tube_number }}"
-                             data-status="{{ $core->status }}"
-                             data-usage="{{ $core->usage }}"
-                             data-core="{{ $core->id }}"
-                             data-description="{{ $core->description }}">
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                @foreach($cores as $core)
+                <div class="core-card border rounded-lg p-4 hover:shadow-md transition-shadow bg-gradient-to-b from-white to-gray-50"
+                    data-tube="{{ $core->tube_number }}"
+                    data-status="{{ $core->status }}"
+                    data-usage="{{ $core->usage }}"
+                    data-core="{{ $core->id }}"
+                    data-description="{{ $core->description }}">
 
-                            <div class="flex justify-between items-start mb-3">
-                                <div>
-                                    <h4 class="font-semibold text-gray-900">Core {{ $core->core_number }}</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Tube {{ $core->tube_number }}</p>
-                                </div>
-                                <div class="flex space-x-1">
-                                    <div class="w-3 h-3 rounded-full border" style="background-color: {{ $getCoreColor($core->core_number) }}"></div>
-                                    <span class="w-3 h-3 rounded-full {{ $core->status === 'ok' ? 'bg-green-500' : 'bg-red-500' }}" title="Status: {{ ucfirst(str_replace('_', ' ', $core->status)) }}"></span>
-                                    <span class="w-3 h-3 rounded-full {{ $core->usage === 'active' ? 'bg-blue-500' : 'bg-gray-400' }}" title="Usage: {{ ucfirst($core->usage) }}"></span>
-                                </div>
-                            </div>
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Core {{ $core->core_number }}</h4>
+                            <p class="text-xs text-gray-500 mt-1">Tube {{ $core->tube_number }}</p>
+                        </div>
+                        <div class="flex space-x-1">
+                            <div class="w-3 h-3 rounded-full border" style="background-color: {{ $getCoreColor($core->core_number) }}"></div>
+                            <span class="w-3 h-3 rounded-full {{ $core->status === 'ok' ? 'bg-green-500' : 'bg-red-500' }}" title="Status: {{ ucfirst(str_replace('_', ' ', $core->status)) }}"></span>
+                            <span class="w-3 h-3 rounded-full {{ $core->usage === 'active' ? 'bg-blue-500' : 'bg-gray-400' }}" title="Usage: {{ ucfirst($core->usage) }}"></span>
+                        </div>
+                    </div>
 
-                            <div class="space-y-2 text-sm">
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Status:</span>
-                                    <span class="font-medium {{ $core->status === 'ok' ? 'text-green-600' : 'text-red-600' }}">
-                                        {{ ucfirst(str_replace('_', ' ', $core->status)) }}
-                                    </span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Usage:</span>
-                                    <span class="font-medium {{ $core->usage === 'active' ? 'text-blue-600' : 'text-gray-600' }}">{{ ucfirst($core->usage) }}</span>
-                                </div>
-                                @if($core->attenuation)
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Attenuation:</span>
-                                        <span class="font-medium">{{ $core->attenuation }} dB</span>
-                                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Status:</span>
+                            <span class="font-medium {{ $core->status === 'ok' ? 'text-green-600' : 'text-red-600' }}">
+                                {{ ucfirst(str_replace('_', ' ', $core->status)) }}
+                            </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Usage:</span>
+                            <span class="font-medium {{ $core->usage === 'active' ? 'text-blue-600' : 'text-gray-600' }}">{{ ucfirst($core->usage) }}</span>
+                        </div>
+                        @if($core->attenuation)
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Attenuation:</span>
+                            <span class="font-medium">{{ $core->attenuation }} dB</span>
+                        </div>
+                        @endif
+
+                        @if($core->connection)
+                        @php $connectedCore = $core->connection->coreA->id === $core->id ? $core->connection->coreB : $core->connection->coreA; @endphp
+                        <div class="mt-2 p-2 bg-blue-50 rounded text-xs border-l-4 border-blue-400">
+                            <p class="font-medium text-blue-800 border-b border-blue-300 pb-1 mb-2">Connected to:</p>
+                            <div class="space-y-1 text-blue-700">
+                                <p class="font-medium">{{ $connectedCore->cable->cable_id }} | {{ $connectedCore->cable->name }}</p>
+                                <p class="font-medium">Via: {{ $core->connection->closure->closure_id }} | {{ $core->connection->closure->name ?? $core->connection->closure->closure_id }}</p>
+                                <p>Tube {{ $connectedCore->tube_number }} Core {{ $connectedCore->core_number }}</p>
+                                @if($core->connection->connection_type)
+                                <p>Type: {{ ucfirst($core->connection->connection_type) }}</p>
                                 @endif
-
-                                @if($core->connection)
-                                    @php $connectedCore = $core->connection->coreA->id === $core->id ? $core->connection->coreB : $core->connection->coreA; @endphp
-                                    <div class="mt-2 p-2 bg-blue-50 rounded text-xs border-l-4 border-blue-400">
-                                        <p class="font-medium text-blue-800 border-b border-blue-300 pb-1 mb-2">Connected to:</p>
-                                        <div class="space-y-1 text-blue-700">
-                                            <p class="font-medium">{{ $connectedCore->cable->cable_id }} | {{ $connectedCore->cable->name }}</p>
-                                            <p class="font-medium">Via: {{ $core->connection->closure->closure_id }} | {{ $core->connection->closure->name ?? $core->connection->closure->closure_id }}</p>
-                                            <p>Tube {{ $connectedCore->tube_number }} Core {{ $connectedCore->core_number }}</p>
-                                            @if($core->connection->connection_type)
-                                                <p>Type: {{ ucfirst($core->connection->connection_type) }}</p>
-                                            @endif
-                                            @if($core->connection->loss)
-                                                <p>Loss: {{ $core->connection->loss }} dB</p>
-                                            @endif
-                                            @if($core->connection->notes)
-                                                <p class="text-gray-500 italic">{{ $core->connection->notes }}</p>
-                                            @endif
-                                        </div>
-                                    </div>
+                                @if($core->connection->loss)
+                                <p>Loss: {{ $core->connection->loss }} dB</p>
                                 @endif
-
-                                @if($core->description)
-                                    <div class="mt-2">
-                                        <p class="text-xs text-gray-600 italic">{{ $core->description }}</p>
-                                    </div>
-                                @endif
-                            </div>
-
-                            <div class="mt-4 flex space-x-2">
-                                <button onclick="openCoreEditModal({{ $core->id }})" class="flex-1 px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">Edit</button>
-                                @if($core->connection)
-                                    <button onclick="disconnectCore({{ $core->connection->id }})" class="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700">Disconnect</button>
-                                @else
-                                    <button onclick="joinCore({{ $core->id }})" class="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700">Join</button>
+                                @if($core->connection->notes)
+                                <p class="text-gray-500 italic">{{ $core->connection->notes }}</p>
                                 @endif
                             </div>
                         </div>
-                    @endforeach
+                        @endif
+
+                        @if($core->description)
+                        <div class="mt-2">
+                            <p class="text-xs text-gray-600 italic">{{ $core->description }}</p>
+                        </div>
+                        @endif
+                    </div>
+
+                    <div class="mt-4 flex space-x-2">
+                        <button onclick="openCoreEditModal({{ $core->id }})" class="flex-1 px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">Edit</button>
+                        @if($core->connection)
+                        <button onclick="disconnectCore({{ $core->connection->id }})" class="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700">Disconnect</button>
+                        @else
+                        <button onclick="joinCore({{ $core->id }})" class="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700">Join</button>
+                        @endif
+                    </div>
                 </div>
+                @endforeach
             </div>
         </div>
+    </div>
     @endforeach
 </div>
 
