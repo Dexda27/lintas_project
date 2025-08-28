@@ -18,7 +18,7 @@
         <p class="text-gray-800 font-medium mt-2">Cable ID: {{ $cable->cable_id }}</p>
     </div>
     <div class="flex space-x-2">
-        <a href="{{ route('cables.edit', $cable) }}" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Edit Cable</a>
+        <a href="{{ route('cables.edit', $cable) }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Edit Cable</a>
         <a href="{{ route('cables.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">Back to List</a>
     </div>
 </div>
