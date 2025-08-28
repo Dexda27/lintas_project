@@ -23,7 +23,7 @@
         </div>
     </div>
 
-  <!-- Active Cores -->
+    <!-- Active Cores -->
     <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-green-500">
         <div class="flex items-center space-x-4">
             <div class="bg-green-500 text-white p-3 rounded-lg">
@@ -73,13 +73,13 @@
     <div class="p-4 sm:p-6">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             @foreach($regionalData as $region)
-                <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-orange-300">
-                    <h3 class="font-semibold text-gray-900 text-sm sm:text-base truncate">{{ $region->region }}</h3>
-                    <div class="mt-2 space-y-1">
-                        <p class="text-xs sm:text-sm text-gray-600">Total Sites : {{ $region->total_cables ?? 0}}</p>
-                        <p class="text-xs sm:text-sm text-gray-600">Total JC : {{ number_format($region->total_jc ?? 0) }}</p>
-                    </div>
+            <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-orange-300">
+                <h3 class="font-semibold text-gray-900 text-sm sm:text-base truncate">{{ $region->region }}</h3>
+                <div class="mt-2 space-y-1">
+                    <p class="text-xs sm:text-sm text-gray-600">Total Sites : {{ $region->total_cables ?? 0}}</p>
+                    <p class="text-xs sm:text-sm text-gray-600">Total JC : {{ number_format($region->total_jc ?? 0) }}</p>
                 </div>
+            </div>
             @endforeach
         </div>
     </div>
@@ -139,7 +139,7 @@
 
                 <div class="flex space-x-1">
                     <a href="{{ route('cables.show', $cable) }}" class="text-indigo-600 hover:text-indigo-900 text-xs">View</a>
-                    <a href="{{ route('cables.cores', $cable) }}" class="text-blue-600 hover:text-blue-900 text-xs">Cores</a>
+
                     <a href="{{ route('cables.edit', $cable) }}" class="text-yellow-600 hover:text-yellow-900 text-xs">Edit</a>
                 </div>
             </div>

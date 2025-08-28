@@ -448,10 +448,7 @@
                     </div>
                 </div>
                 <div class="mt-6 flex justify-end space-x-4">
-                    <a href="{{ route('cables.show', $cable->id) }}"
-                        class="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
-                        Cancel
-                    </a>
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 border rounded-md hover:bg-gray-50">Cancel</button>
                     <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Update Core</button>
                 </div>
             </form>
