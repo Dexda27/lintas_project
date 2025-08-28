@@ -22,54 +22,56 @@
 </div>
 <ul class="border-t border-gray-200 my-4"></ul>
 
+
 <!-- Statistics Cards -->
-<div class="mb-6">
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition">
-            <div class="flex items-center space-x-4">
-                <div class="bg-blue-500 text-white p-3 rounded-lg">
-                    <i data-lucide="layers" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Closures</p>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-blue-500">
+        <div class="flex items-center space-x-4">
+            <div class="bg-blue-500 text-white p-3 rounded-lg">
+                <i data-lucide="layers" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Closures</p>
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{{ $statistics['total_closures'] ?? $closures->total() }}</p>
-                </div>
             </div>
         </div>
+    </div>
 
-        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition">
-            <div class="flex items-center space-x-4">
-                <div class="bg-green-500 text-white p-3 rounded-lg">
-                    <i data-lucide="check-circle" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Closures</p>
-                    <p class="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">{{ $statistics['active_closures'] ?? 0 }}</p>
-                </div>
+    <!-- Active Cores -->
+    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-green-500">
+        <div class="flex items-center space-x-4">
+            <div class="bg-green-500 text-white p-3 rounded-lg">
+                <i data-lucide="check-circle" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Closures</p>
+                <p class="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">{{ $statistics['active_closures'] ?? 0 }}</p>
             </div>
         </div>
+    </div>
 
-        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition">
-            <div class="flex items-center space-x-4">
-                <div class="bg-gray-500 text-white p-3 rounded-lg">
-                    <i data-lucide="circle-minus" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Connections</p>
+    <!-- Inactive Cores -->
+    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-gray-500">
+        <div class="flex items-center space-x-4">
+            <div class="bg-gray-500 text-white p-3 rounded-lg">
+                <i data-lucide="circle-minus" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Connections</p>
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">{{ $statistics['total_connections'] ?? 0 }}</p>
-                </div>
             </div>
         </div>
+    </div>
 
-        <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4 sm:p-6 shadow hover:shadow-lg transition">
-            <div class="flex items-center space-x-4">
-                <div class="bg-red-500 text-white p-3 rounded-lg">
-                    <i data-lucide="triangle-alert" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Problem Closures</p>
+    <!-- Problems Cores -->
+    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-red-500">
+        <div class="flex items-center space-x-4">
+            <div class="bg-red-500 text-white p-3 rounded-lg">
+                <i data-lucide="triangle-alert" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Problem Closures</p>
                 <p class="text-lg sm:text-xl lg:text-2xl font-bold text-red-600">{{ $statistics['problem_closures'] ?? 0 }}</p>
-                </div>
             </div>
         </div>
     </div>
