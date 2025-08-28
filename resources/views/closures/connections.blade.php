@@ -51,19 +51,19 @@
 
         <!-- Coordinates with Map Link -->
         @if(isset($closure->latitude) && isset($closure->longitude))
-            <div>
-                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Coordinates</dt>
-                <dd class="mt-1">
-                    <button onclick="openMaps({{ $closure->latitude }}, {{ $closure->longitude }})"
-                        class="text-blue-600 hover:text-blue-800 text-sm inline-flex items-center gap-1">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                        View Location
-                    </button>
-                </dd>
-            </div>
+        <div>
+            <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Coordinates</dt>
+            <dd class="mt-1">
+                <button onclick="openMaps({{ $closure->latitude }}, {{ $closure->longitude }})"
+                    class="text-blue-600 hover:text-blue-800 text-sm inline-flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    View Location
+                </button>
+            </dd>
+        </div>
         @endif
 
         <div>
@@ -349,50 +349,50 @@
 
 <!-- JavaScript for Google Maps Integration -->
 <script>
-/**
- * Opens Google Maps with the given coordinates
- * Works on both mobile and desktop devices
- */
-function openMaps(latitude, longitude) {
-    // Google Maps URL that works universally
-    const googleMapsUrl = `https://maps.google.com/?q=${latitude},${longitude}&z=16`;
+    /**
+     * Opens Google Maps with the given coordinates
+     * Works on both mobile and desktop devices
+     */
+    function openMaps(latitude, longitude) {
+        // Google Maps URL that works universally
+        const googleMapsUrl = `https://maps.google.com/?q=${latitude},${longitude}&z=16`;
 
-    // Check if user is on mobile device
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        // Check if user is on mobile device
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-    if (isMobile) {
-        // For mobile devices, try to open Google Maps app first
-        if (/Android/i.test(navigator.userAgent)) {
-            // Android - try Google Maps app first, fallback to web
-            const googleMapsApp = `geo:${latitude},${longitude}?q=${latitude},${longitude}&z=16`;
+        if (isMobile) {
+            // For mobile devices, try to open Google Maps app first
+            if (/Android/i.test(navigator.userAgent)) {
+                // Android - try Google Maps app first, fallback to web
+                const googleMapsApp = `geo:${latitude},${longitude}?q=${latitude},${longitude}&z=16`;
 
-            // Create a temporary link to try opening the app
-            const tempLink = document.createElement('a');
-            tempLink.href = googleMapsApp;
-            tempLink.style.display = 'none';
-            document.body.appendChild(tempLink);
+                // Create a temporary link to try opening the app
+                const tempLink = document.createElement('a');
+                tempLink.href = googleMapsApp;
+                tempLink.style.display = 'none';
+                document.body.appendChild(tempLink);
 
-            // Try to trigger the app
-            tempLink.click();
-            document.body.removeChild(tempLink);
+                // Try to trigger the app
+                tempLink.click();
+                document.body.removeChild(tempLink);
 
-            // Fallback to web version after a short delay
-            setTimeout(() => {
+                // Fallback to web version after a short delay
+                setTimeout(() => {
+                    window.open(googleMapsUrl, '_blank');
+                }, 1500);
+
+            } else if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                // iOS - open Google Maps web version (most reliable)
                 window.open(googleMapsUrl, '_blank');
-            }, 1500);
-
-        } else if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-            // iOS - open Google Maps web version (most reliable)
-            window.open(googleMapsUrl, '_blank');
+            } else {
+                // Other mobile devices
+                window.open(googleMapsUrl, '_blank');
+            }
         } else {
-            // Other mobile devices
+            // Desktop - open Google Maps in new tab
             window.open(googleMapsUrl, '_blank');
         }
-    } else {
-        // Desktop - open Google Maps in new tab
-        window.open(googleMapsUrl, '_blank');
     }
-}
 </script>
 
 @endsection
