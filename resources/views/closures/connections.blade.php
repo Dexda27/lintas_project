@@ -235,7 +235,7 @@
 </div>
 
 <!-- Connect Cores Modal -->
-<div id="connect-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+<div id="connect-modal" class="fixed inset-0 backdrop-blur-xs hidden z-50">
     <div class="flex items-center justify-center min-h-screen px-4 py-6">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
             <!-- Modal Header -->
