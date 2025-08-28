@@ -139,7 +139,6 @@
 
                 <div class="flex space-x-1">
                     <a href="{{ route('cables.show', $cable) }}" class="text-indigo-600 hover:text-indigo-900 text-xs">View</a>
-
                     <a href="{{ route('cables.edit', $cable) }}" class="text-yellow-600 hover:text-yellow-900 text-xs">Edit</a>
                 </div>
             </div>

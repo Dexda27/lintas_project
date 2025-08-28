@@ -254,7 +254,7 @@
                     data-tube="{{ $core->tube_number }}"
                     data-status="{{ $core->status }}"
                     data-usage="{{ $core->usage }}"
-                    data-core="{{ $core->core_number }}"
+                    data-core="{{ $core->id }}"
                     data-description="{{ $core->description }}">
 
                     <div class="flex justify-between items-start mb-3">
