@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Cable;
@@ -13,14 +12,13 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
-
         $query = Cable::query();
+
         if ($user->isAdminRegion()) {
             $query->where('region', $user->region);
         }
 
         $cables = $query->paginate(5); // 5 item per halaman
-
 
         $totalCores = 0;
         $activeCores = 0;
@@ -38,7 +36,7 @@ class DashboardController extends Controller
         if ($user->isSuperAdmin()) {
             $regionalData = Cable::select('region')
                 ->selectRaw('COUNT(*) as total_cables')
-                ->selectRaw('SUM(total_cores) as total_cores')
+                ->selectRaw('(SELECT COUNT(*) FROM joint_closures WHERE joint_closures.region = cables.region) as total_jc')
                 ->groupBy('region')
                 ->get();
         }
