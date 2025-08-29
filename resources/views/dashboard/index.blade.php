@@ -9,60 +9,100 @@
     <p class="text-gray-600 mt-2 text-sm sm:text-base">Overview of fiber core infrastructure</p>
 </div>
 
-<!-- Statistics Cards -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-blue-500">
-        <div class="flex items-center space-x-4">
-            <div class="bg-blue-500 text-white p-3 rounded-lg">
+<!-- Statistics Cards - Improved Responsive Version -->
+<div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
+    <!-- Total Cores Card - Compact Mobile Version -->
+    <div class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow hover:shadow-lg transition-shadow duration-200 border-t-4 border-blue-500">
+        <!-- Mobile: Vertical Layout -->
+        <div class="sm:hidden text-center">
+            <div class="bg-blue-500 text-white p-2 rounded-lg inline-flex mb-2">
+                <i data-lucide="layers" class="w-4 h-4"></i>
+            </div>
+            <p class="text-gray-600 text-xs font-medium mb-1">Total Cores</p>
+            <h3 class="text-lg font-bold text-gray-900">{{ number_format($totalCores) }}</h3>
+        </div>
+
+        <!-- Desktop/Tablet: Horizontal Layout -->
+        <div class="hidden sm:flex items-center space-x-4">
+            <div class="bg-blue-500 text-white p-3 rounded-lg shrink-0">
                 <i data-lucide="layers" class="w-6 h-6"></i>
             </div>
-            <div>
-                <p class="text-gray-600 text-sm">Total Cores</p>
-                <h3 class="text-2xl font-bold text-gray-900">{{ number_format($totalCores) }}</h3>
+            <div class="min-w-0 flex-1">
+                <p class="text-gray-600 text-sm font-medium">Total Cores</p>
+                <h3 class="text-2xl font-bold text-gray-900 truncate">{{ number_format($totalCores) }}</h3>
             </div>
         </div>
     </div>
 
-    <!-- Active Cores -->
-    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-green-500">
-        <div class="flex items-center space-x-4">
-            <div class="bg-green-500 text-white p-3 rounded-lg">
+    <!-- Active Cores Card - Compact Mobile Version -->
+    <div class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow hover:shadow-lg transition-shadow duration-200 border-t-4 border-green-500">
+        <!-- Mobile: Vertical Layout -->
+        <div class="sm:hidden text-center">
+            <div class="bg-green-500 text-white p-2 rounded-lg inline-flex mb-2">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+            </div>
+            <p class="text-gray-600 text-xs font-medium mb-1">Active Cores</p>
+            <h3 class="text-lg font-bold text-gray-900">{{ number_format($activeCores) }}</h3>
+        </div>
+
+        <!-- Desktop/Tablet: Horizontal Layout -->
+        <div class="hidden sm:flex items-center space-x-4">
+            <div class="bg-green-500 text-white p-3 rounded-lg shrink-0">
                 <i data-lucide="check-circle" class="w-6 h-6"></i>
             </div>
-            <div>
-                <p class="text-gray-600 text-sm">Active Cores</p>
-                <h3 class="text-2xl font-bold text-gray-900">{{ number_format($activeCores) }}</h3>
+            <div class="min-w-0 flex-1">
+                <p class="text-gray-600 text-sm font-medium">Active Cores</p>
+                <h3 class="text-2xl font-bold text-gray-900 truncate">{{ number_format($activeCores) }}</h3>
             </div>
         </div>
     </div>
 
-    <!-- Inactive Cores -->
-    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-gray-500">
-        <div class="flex items-center space-x-4">
-            <div class="bg-gray-500 text-white p-3 rounded-lg">
+    <!-- Inactive Cores Card - Compact Mobile Version -->
+    <div class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow hover:shadow-lg transition-shadow duration-200 border-t-4 border-gray-500">
+        <!-- Mobile: Vertical Layout -->
+        <div class="sm:hidden text-center">
+            <div class="bg-gray-500 text-white p-2 rounded-lg inline-flex mb-2">
+                <i data-lucide="circle-minus" class="w-4 h-4"></i>
+            </div>
+            <p class="text-gray-600 text-xs font-medium mb-1">Inactive Cores</p>
+            <h3 class="text-lg font-bold text-gray-900">{{ number_format($inactiveCores) }}</h3>
+        </div>
+
+        <!-- Desktop/Tablet: Horizontal Layout -->
+        <div class="hidden sm:flex items-center space-x-4">
+            <div class="bg-gray-500 text-white p-3 rounded-lg shrink-0">
                 <i data-lucide="circle-minus" class="w-6 h-6"></i>
             </div>
-            <div>
-                <p class="text-gray-600 text-sm">Inactive Cores</p>
-                <h3 class="text-2xl font-bold text-gray-900">{{ number_format($inactiveCores) }}</h3>
+            <div class="min-w-0 flex-1">
+                <p class="text-gray-600 text-sm font-medium">Inactive Cores</p>
+                <h3 class="text-2xl font-bold text-gray-900 truncate">{{ number_format($inactiveCores) }}</h3>
             </div>
         </div>
     </div>
 
-    <!-- Problems Cores -->
-    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-red-500">
-        <div class="flex items-center space-x-4">
-            <div class="bg-red-500 text-white p-3 rounded-lg">
+    <!-- Problem Cores Card - Compact Mobile Version -->
+    <div class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow hover:shadow-lg transition-shadow duration-200 border-t-4 border-red-500">
+        <!-- Mobile: Vertical Layout -->
+        <div class="sm:hidden text-center">
+            <div class="bg-red-500 text-white p-2 rounded-lg inline-flex mb-2">
+                <i data-lucide="triangle-alert" class="w-4 h-4"></i>
+            </div>
+            <p class="text-gray-600 text-xs font-medium mb-1">Problem Cores</p>
+            <h3 class="text-lg font-bold text-gray-900">{{ number_format($problemCores) }}</h3>
+        </div>
+
+        <!-- Desktop/Tablet: Horizontal Layout -->
+        <div class="hidden sm:flex items-center space-x-4">
+            <div class="bg-red-500 text-white p-3 rounded-lg shrink-0">
                 <i data-lucide="triangle-alert" class="w-6 h-6"></i>
             </div>
-            <div>
-                <p class="text-gray-600 text-sm">Problems Cores</p>
-                <h3 class="text-2xl font-bold text-gray-900">{{ number_format($problemCores) }}</h3>
+            <div class="min-w-0 flex-1">
+                <p class="text-gray-600 text-sm font-medium">Problem Cores</p>
+                <h3 class="text-2xl font-bold text-gray-900 truncate">{{ number_format($problemCores) }}</h3>
             </div>
         </div>
     </div>
 </div>
-
 
 @if(auth()->user()->isSuperAdmin() && $regionalData->count() > 0)
 <!-- Regional Overview -->
