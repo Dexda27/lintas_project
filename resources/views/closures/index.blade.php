@@ -23,60 +23,100 @@
 <ul class="border-t border-gray-200 my-4"></ul>
 
 
-<!-- Statistics Cards -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-blue-500">
-        <div class="flex items-center space-x-4">
-            <div class="bg-blue-500 text-white p-3 rounded-lg">
+<!-- Statistics Cards - Dual Layout (Mobile Vertical, Desktop Horizontal) -->
+<div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
+    <!-- Total Closures Card - Compact Mobile Version -->
+    <div class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow hover:shadow-lg transition-shadow duration-200 border-t-4 border-blue-500">
+        <!-- Mobile: Vertical Layout -->
+        <div class="sm:hidden text-center">
+            <div class="bg-blue-500 text-white p-2 rounded-lg inline-flex mb-2">
+                <i data-lucide="layers" class="w-4 h-4"></i>
+            </div>
+            <p class="text-gray-600 text-xs font-medium mb-1">Total Closures</p>
+            <h3 class="text-lg font-bold text-gray-900">{{ $statistics['total_closures'] ?? $closures->total() }}</h3>
+        </div>
+
+        <!-- Desktop/Tablet: Horizontal Layout -->
+        <div class="hidden sm:flex items-center space-x-4">
+            <div class="bg-blue-500 text-white p-3 rounded-lg shrink-0">
                 <i data-lucide="layers" class="w-6 h-6"></i>
             </div>
-            <div>
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Closures</p>
-                <p class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{{ $statistics['total_closures'] ?? $closures->total() }}</p>
+            <div class="min-w-0 flex-1">
+                <p class="text-gray-600 text-sm font-medium">Total Closures</p>
+                <h3 class="text-2xl font-bold text-gray-900 truncate">{{ $statistics['total_closures'] ?? $closures->total() }}</h3>
             </div>
         </div>
     </div>
 
-    <!-- Active Cores -->
-    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-green-500">
-        <div class="flex items-center space-x-4">
-            <div class="bg-green-500 text-white p-3 rounded-lg">
+    <!-- Active Closures Card - Compact Mobile Version -->
+    <div class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow hover:shadow-lg transition-shadow duration-200 border-t-4 border-green-500">
+        <!-- Mobile: Vertical Layout -->
+        <div class="sm:hidden text-center">
+            <div class="bg-green-500 text-white p-2 rounded-lg inline-flex mb-2">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+            </div>
+            <p class="text-gray-600 text-xs font-medium mb-1">Active Closures</p>
+            <h3 class="text-lg font-bold text-green-600">{{ $statistics['active_closures'] ?? 0 }}</h3>
+        </div>
+
+        <!-- Desktop/Tablet: Horizontal Layout -->
+        <div class="hidden sm:flex items-center space-x-4">
+            <div class="bg-green-500 text-white p-3 rounded-lg shrink-0">
                 <i data-lucide="check-circle" class="w-6 h-6"></i>
             </div>
-            <div>
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Active Closures</p>
-                <p class="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">{{ $statistics['active_closures'] ?? 0 }}</p>
+            <div class="min-w-0 flex-1">
+                <p class="text-gray-600 text-sm font-medium">Active Closures</p>
+                <h3 class="text-2xl font-bold text-green-600 truncate">{{ $statistics['active_closures'] ?? 0 }}</h3>
             </div>
         </div>
     </div>
 
-    <!-- Inactive Cores -->
-    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-gray-500">
-        <div class="flex items-center space-x-4">
-            <div class="bg-gray-500 text-white p-3 rounded-lg">
+    <!-- Total Connections Card - Compact Mobile Version -->
+    <div class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow hover:shadow-lg transition-shadow duration-200 border-t-4 border-gray-500">
+        <!-- Mobile: Vertical Layout -->
+        <div class="sm:hidden text-center">
+            <div class="bg-gray-500 text-white p-2 rounded-lg inline-flex mb-2">
+                <i data-lucide="cable" class="w-4 h-4"></i>
+            </div>
+            <p class="text-gray-600 text-xs font-medium mb-1">Total Connections</p>
+            <h3 class="text-lg font-bold text-blue-600">{{ $statistics['total_connections'] ?? 0 }}</h3>
+        </div>
+
+        <!-- Desktop/Tablet: Horizontal Layout -->
+        <div class="hidden sm:flex items-center space-x-4">
+            <div class="bg-gray-500 text-white p-3 rounded-lg shrink-0">
                 <i data-lucide="cable" class="w-6 h-6"></i>
             </div>
-            <div>
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Connections</p>
-                <p class="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">{{ $statistics['total_connections'] ?? 0 }}</p>
+            <div class="min-w-0 flex-1">
+                <p class="text-gray-600 text-sm font-medium">Total Connections</p>
+                <h3 class="text-2xl font-bold text-blue-600 truncate">{{ $statistics['total_connections'] ?? 0 }}</h3>
             </div>
         </div>
     </div>
 
-    <!-- Problems Cores -->
-    <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-red-500">
-        <div class="flex items-center space-x-4">
-            <div class="bg-red-500 text-white p-3 rounded-lg">
+    <!-- Problem Closures Card - Compact Mobile Version -->
+    <div class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-6 shadow hover:shadow-lg transition-shadow duration-200 border-t-4 border-red-500">
+        <!-- Mobile: Vertical Layout -->
+        <div class="sm:hidden text-center">
+            <div class="bg-red-500 text-white p-2 rounded-lg inline-flex mb-2">
+                <i data-lucide="triangle-alert" class="w-4 h-4"></i>
+            </div>
+            <p class="text-gray-600 text-xs font-medium mb-1">Problem Closures</p>
+            <h3 class="text-lg font-bold text-red-600">{{ $statistics['problem_closures'] ?? 0 }}</h3>
+        </div>
+
+        <!-- Desktop/Tablet: Horizontal Layout -->
+        <div class="hidden sm:flex items-center space-x-4">
+            <div class="bg-red-500 text-white p-3 rounded-lg shrink-0">
                 <i data-lucide="triangle-alert" class="w-6 h-6"></i>
             </div>
-            <div>
-                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Problem Closures</p>
-                <p class="text-lg sm:text-xl lg:text-2xl font-bold text-red-600">{{ $statistics['problem_closures'] ?? 0 }}</p>
+            <div class="min-w-0 flex-1">
+                <p class="text-gray-600 text-sm font-medium">Problem Closures</p>
+                <h3 class="text-2xl font-bold text-red-600 truncate">{{ $statistics['problem_closures'] ?? 0 }}</h3>
             </div>
         </div>
     </div>
 </div>
-
 
 
 <!-- Closures Table -->
