@@ -32,9 +32,11 @@ class ConnectionController extends Controller
             // Check region access
             $user = Auth::user();
             if ($user->isAdminRegion()) {
-                if ($sourceCore->cable->region !== $user->region ||
+                if (
+                    $sourceCore->cable->region !== $user->region ||
                     $targetCore->cable->region !== $user->region ||
-                    $closure->region !== $user->region) {
+                    $closure->region !== $user->region
+                ) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Access denied to this region.'
@@ -96,7 +98,6 @@ class ConnectionController extends Controller
                 'success' => true,
                 'message' => 'Connection created successfully.'
             ]);
-
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
@@ -137,7 +138,6 @@ class ConnectionController extends Controller
                 'success' => true,
                 'message' => 'Connection deleted successfully.'
             ]);
-
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json([

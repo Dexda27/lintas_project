@@ -445,6 +445,8 @@ class CoreManager {
     }
 
     // === UTILITY FUNCTIONS ===
+    // Perbaiki method makeRequest() di manage-cores.js (sekitar baris 400)
+
     async makeRequest(url, method, formData = null) {
         const options = {
             method: method === "PUT" || method === "DELETE" ? "POST" : method,
@@ -462,9 +464,12 @@ class CoreManager {
                 submitData.append("_method", method);
             }
 
+            // PERBAIKAN: Kirim semua field termasuk yang kosong
             Object.entries(formData).forEach(([key, value]) => {
-                if (value !== null && value !== "") {
-                    submitData.append(key, value);
+                // Kirim semua field, termasuk yang kosong (null atau "")
+                // Hanya skip jika benar-benar undefined
+                if (value !== undefined) {
+                    submitData.append(key, value || ""); // Pastikan value tidak null
                 }
             });
 
@@ -727,7 +732,7 @@ class CoreManager {
                     "jc-selection": "joint_closure_id",
                     "connection-type": "connection_type",
                     "connection-loss": "connection_loss",
-                    "connection-notes": "connection_notes",
+                    "connection-notes": "notes",
                 };
 
                 const formData = {};

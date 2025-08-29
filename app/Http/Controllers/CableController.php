@@ -221,23 +221,42 @@ class CableController extends Controller
 
     public function updateCore(Request $request, FiberCore $core)
     {
-        $this->checkRegionAccess($core->cable);
-
         $request->validate([
             'status' => 'required|in:ok,not_ok',
             'usage' => 'required|in:active,inactive',
-            'attenuation' => 'nullable|numeric|min:0',
-            'description' => 'nullable|string|max:500',
+            'attenuation' => 'nullable|numeric|min:0|max:50',
+            'description' => 'nullable|string|max:500', // Pastikan nullable
         ]);
 
-        $core->update($request->only(['status', 'usage', 'attenuation', 'description']));
+        // Check region access
+        $user = Auth::user();
+        if ($user->isAdminRegion() && $core->cable->region !== $user->region) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Access denied to this region.'
+            ], 403);
+        }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Core updated successfully.'
-        ]);
+        try {
+            $core->update([
+                'status' => $request->status,
+                'usage' => $request->usage,
+                'attenuation' => $request->attenuation,
+                'description' => $request->description, // Ini akan set ke null jika kosong
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Core updated successfully.',
+                'data' => $core->fresh()
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update core: ' . $e->getMessage()
+            ], 500);
+        }
     }
-
     /**
      * Generate fiber cores with sequential numbering across all tubes
      * Each core gets a unique sequential number from 1 to total_cores
