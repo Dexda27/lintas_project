@@ -8,16 +8,16 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <title>@yield('title', 'Fiber Core Management')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
+
 </head>
 
 <body class="bg-gray-50">
     <!-- Flash Container -->
-<div id="flash-container" class="fixed top-4 right-4 z-50 space-y-4"></div>
+    <div id="flash-container" class="fixed top-4 right-4 z-50 space-y-4"></div>
 
     <div class="min-h-screen">
         <!-- Navigation -->
-       <nav class="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 shadow-lg fixed top-0 left-0 right-0 z-30 transition-all duration-300" id="navbar">
+        <nav class="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 shadow-lg fixed top-0 left-0 right-0 z-30 transition-all duration-300" id="navbar">
 
             <div class=" mx-auto px-4">
                 <div class="flex justify-between h-16">
@@ -36,15 +36,15 @@
                         <!-- User info -->
                         <div class="text-yellow-600">
                             @if(auth()->user()->isAdminRegion())
-                                <span class="flex items-center text-xs bg-white px-2 py-1 rounded">
-                                    <i data-lucide="user" class="w-4 h-4 mr-1"></i>
-                                    {{ auth()->user()->region }}
-                                </span>
+                            <span class="flex items-center text-xs bg-white px-2 py-1 rounded">
+                                <i data-lucide="user" class="w-4 h-4 mr-1"></i>
+                                {{ auth()->user()->region }}
+                            </span>
                             @elseif(auth()->user()->isSuperAdmin())
-                                <span class="flex items-center text-xs bg-white px-2 py-1 rounded">
-                                    <i data-lucide="crown" class="w-4 h-4 mr-1 text-yellow-500"></i>
-                                    Super Admin
-                                </span>
+                            <span class="flex items-center text-xs bg-white px-2 py-1 rounded">
+                                <i data-lucide="crown" class="w-4 h-4 mr-1 text-yellow-500"></i>
+                                Super Admin
+                            </span>
                             @endif
                         </div>
                     </div>
@@ -209,16 +209,38 @@
 
             // Recreate icons after changing the icon
             lucide.createIcons();
+        }
 
-            // Handle overlay for mobile
+        function toggleSidebar() {
+            sidebarOpen = !sidebarOpen;
+
+            if (sidebarOpen) {
+                sidebar.classList.remove('-translate-x-full');
+                mainContent.classList.add('ml-64');
+                mainContent.classList.remove('ml-0');
+                hamburgerIcon.setAttribute('data-lucide', 'menu');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                mainContent.classList.remove('ml-64');
+                mainContent.classList.add('ml-0');
+                hamburgerIcon.setAttribute('data-lucide', 'x');
+            }
+
+            lucide.createIcons();
+
+            // Handle overlay untuk mobile dengan transparansi
             if (window.innerWidth < 768) {
                 if (sidebarOpen) {
+                    // Gunakan bg-opacity-0 untuk transparan
                     sidebarOverlay.classList.remove('hidden');
+                    sidebarOverlay.classList.add('bg-transparent'); // tambahkan ini
                 } else {
                     sidebarOverlay.classList.add('hidden');
+                    sidebarOverlay.classList.remove('bg-transparent'); // hapus ini
                 }
             }
         }
+
 
         // Event listeners
         sidebarToggle.addEventListener('click', toggleSidebar);

@@ -54,7 +54,7 @@
     <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-4 border-gray-500">
         <div class="flex items-center space-x-4">
             <div class="bg-gray-500 text-white p-3 rounded-lg">
-                <i data-lucide="circle-minus" class="w-6 h-6"></i>
+                <i data-lucide="cable" class="w-6 h-6"></i>
             </div>
             <div>
                 <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Connections</p>
