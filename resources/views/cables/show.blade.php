@@ -317,7 +317,7 @@
 </div>
 
 {{-- Join Core Modal --}}
-<div id="join-core-modal" class="fixed inset-0 backdrop-blur-xs hidden">
+<div id="join-core-modal" class="fixed inset-0 backdrop-blur-xs hidden z-50">
     <div class="flex items-center justify-center min-h-screen px-4">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-lg">
             <div class="px-6 py-4 border-b">
@@ -379,7 +379,7 @@
 </div>
 
 {{-- Core Edit Modal --}}
-<div id="core-edit-modal" class="fixed inset-0 backdrop-blur-xs hidden">
+<div id="core-edit-modal" class="fixed inset-0 backdrop-blur-xs hidden z-50">
     <div class="flex items-center justify-center min-h-screen px-4">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-lg">
             <div class="px-6 py-4 border-b">
