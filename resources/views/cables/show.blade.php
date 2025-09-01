@@ -131,14 +131,16 @@
                     <p class="text-lg text-gray-900">{{ number_format($cable->otdr_length, 2) }} meters</p>
                 </div>
                 @endif
-
-                @if($cable->description)
-                <div class="pt-2">
-                    <p class="text-sm font-medium text-gray-600">Description</p>
-                    <p class="text-gray-900">{{ $cable->description }}</p>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    @if($cable->description)
+                    <div class="pt-2">
+                        <p class="text-sm font-medium text-gray-600">Description</p>
+                        <p class="text-gray-900">{{ $cable->description }}</p>
+                    </div>
+                    @endif
                 </div>
-                @endif
             </div>
+
 
             <!-- Route Information Column -->
             <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition border-t-7 border-blue-900">
@@ -294,8 +296,8 @@
                         @endif
 
                         @if($core->description)
-                        <div class="mt-2">
-                            <p class="text-xs text-gray-600 italic">{{ $core->description }}</p>
+                        <div class="mt-4">
+                            <p class="text-xs text-gray-600 italic"> {{ $core->description }}</p>
                         </div>
                         @endif
                     </div>
