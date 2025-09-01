@@ -77,28 +77,9 @@
                 @endif
 
                 <!-- Capacity Card for Mobile -->
-                <div class=" rounded-lg p-3 mb-2">
-                    @if($cable->total_cores > 0)
-                    @php
-                    $percentage = ($cable->connected_cores_count / $cable->total_cores) * 100;
-                    @endphp
-                    <div class="flex items-center mb-1">
-                        <div class="flex-1 bg-gray-200 rounded-full h-2 mr-2">
-                            <div class="bg-blue-500 h-2 rounded-full transition-all"
-                                style="width: {{ $percentage }}%"></div>
-                        </div>
-                        <span class="text-sm font-medium text-gray-900">{{ $cable->connected_cores_count }}/{{ $cable->total_cores }}</span>
-                    </div>
+
+                <div class=" rounded-lg p-3 min-w-[120px]">
                     <div class="text-xs text-gray-600">{{ $cable->connected_cores_count }} connections</div>
-                    @else
-                    <div class="flex items-center mb-1">
-                        <div class="flex-1 bg-gray-200 rounded-full h-2 mr-2">
-                            <div class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
-                        </div>
-                        <span class="text-sm font-medium text-gray-900">0/0</span>
-                    </div>
-                    <div class="text-xs text-gray-600">0 connections</div>
-                    @endif
                 </div>
 
                 <p class="text-xs text-gray-600">
@@ -183,27 +164,7 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         <div class=" rounded-lg p-3 min-w-[120px]">
-                            @if($cable->total_cores > 0)
-                            @php
-                            $percentage = ($cable->connected_cores_count / $cable->total_cores) * 100;
-                            @endphp
-                            <div class="flex items-center mb-2">
-                                <div class="flex-1 bg-gray-200 rounded-full h-2 mr-2">
-                                    <div class="bg-blue-500 h-2 rounded-full transition-all"
-                                        style="width: {{ $percentage }}%"></div>
-                                </div>
-                                <span class="text-sm font-medium text-gray-900">{{ $cable->connected_cores_count }}/{{ $cable->total_cores }}</span>
-                            </div>
                             <div class="text-xs text-gray-600">{{ $cable->connected_cores_count }} connections</div>
-                            @else
-                            <div class="flex items-center mb-2">
-                                <div class="flex-1 bg-gray-200 rounded-full h-2 mr-2">
-                                    <div class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
-                                </div>
-                                <span class="text-sm font-medium text-gray-900">0/0</span>
-                            </div>
-                            <div class="text-xs text-gray-600">0 connections</div>
-                            @endif
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $cable->created_at->format('d M Y') }}</td>
