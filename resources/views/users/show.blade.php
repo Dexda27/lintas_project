@@ -47,7 +47,7 @@
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 mb-2">{{ $user->name }}</h2>
                     <p class="text-gray-600 mb-4">{{ $user->email }}</p>
-                    
+
                     <!-- Role Badge -->
                     <div class="mb-4">
                         @if($user->role == 'super_admin')
@@ -68,11 +68,11 @@
                     <!-- Status Badge -->
                     <div class="mb-4">
                         @if(isset($user->is_active) && !$user->is_active)
-                            <span class="px-3 py-1 text-sm font-semibold rounded-full bg-red-100 text-red-800">
+                            <span class="px-3 py-1 text-sm font-semibold rounded-full bg-rose-100 text-rose-800">
                                 Inactive
                             </span>
                         @else
-                            <span class="px-3 py-1 text-sm font-semibold rounded-full bg-green-100 text-green-800">
+                            <span class="px-3 py-1 text-sm font-semibold rounded-full bg-emerald-100 text-emerald-800">
                                 Active
                             </span>
                         @endif
@@ -164,7 +164,7 @@
                             </svg>
                         </div>
                     </div>
-                    
+
                     <div class="flex items-center justify-between py-2 border-b border-gray-200">
                         <div>
                             <p class="text-sm font-medium text-gray-900">Last Updated</p>
