@@ -173,31 +173,52 @@ class CableController extends Controller
     {
         $this->checkRegionAccess($cable);
 
-        // Check if any cores are connected
-        $connectedCores = $cable->fiberCores()
-            ->whereHas('connectionA')
-            ->orWhereHas('connectionB')
-            ->count();
-
-        if ($connectedCores > 0) {
-            return back()->withErrors(['error' => 'Cannot delete cable with connected cores. Please disconnect all cores first.']);
-        }
-
         DB::beginTransaction();
         try {
-            // Delete all fiber cores first
-            $cable->fiberCores()->delete();
+            // Check if any cores are connected
+            $connectedCores = $cable->fiberCores()
+                ->where(function ($query) {
+                    $query->whereHas('connectionA')
+                        ->orWhereHas('connectionB');
+                })
+                ->count();
 
-            // Delete the cable
+            if ($connectedCores > 0) {
+                DB::rollback();
+                return redirect()->back()
+                    ->with('error', 'Cannot delete cable with connected cores. Please disconnect all cores first.');
+            }
+
+            // First, delete all connections related to this cable's cores
+            $cable->fiberCores()->each(function ($core) {
+                // Delete connections where this core is coreA
+                $core->connectionA()->delete();
+                // Delete connections where this core is coreB
+                $core->connectionB()->delete();
+            });
+
+            // Then delete all fiber cores
+            $deletedCores = $cable->fiberCores()->delete();
+
+            // Finally delete the cable
             $cable->delete();
 
             DB::commit();
 
             return redirect()->route('cables.index')
-                ->with('success', 'Cable deleted successfully.');
+                ->with('success', "Cable deleted successfully. Removed {$deletedCores} fiber cores.");
         } catch (\Exception $e) {
             DB::rollback();
-            return back()->withErrors(['error' => 'Failed to delete cable: ' . $e->getMessage()]);
+
+            // Log the detailed error for debugging
+            \Log::error('Cable deletion failed', [
+                'cable_id' => $cable->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Failed to delete cable: ' . $e->getMessage());
         }
     }
 

@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <title>@yield('title', 'Fiber Core Management')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
+    
 </head>
 
 <body class="bg-gray-50">
