@@ -222,33 +222,62 @@ class CoreManager {
     // === MODAL MANAGEMENT ===
     showModal(modalId) {
         const modal = document.getElementById(modalId);
-        modal.classList.remove("hidden");
+        const content = modal.querySelector(".bg-white");
 
-        setTimeout(() => {
-            const content = modal.querySelector(".bg-white");
+        // Set initial state
+        modal.style.backgroundColor = "rgba(0, 0, 0, 0)";
+        if (content) {
+            content.style.transform = "scale(0.9) translateY(-20px)";
+            content.style.opacity = "0";
+            content.style.transition = "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)";
+        }
+
+        // Remove hidden class and start animation
+        modal.classList.remove("hidden");
+        modal.style.transition = "background-color 0.3s ease";
+
+        // Use requestAnimationFrame for smoother animation
+        requestAnimationFrame(() => {
+            modal.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+
             if (content) {
-                content.style.transform = "scale(1)";
+                content.style.transform = "scale(1) translateY(0)";
                 content.style.opacity = "1";
             }
-        }, 10);
+        });
 
-        // Focus first input
-        modal.querySelector("select, input")?.focus();
+        // Focus first input after animation
+        setTimeout(() => {
+            modal.querySelector("select, input")?.focus();
+        }, 100);
     }
 
     closeModal(modalId) {
         const modal = document.getElementById(modalId);
         const content = modal.querySelector(".bg-white");
 
+        // Start close animation
+        modal.style.backgroundColor = "rgba(0, 0, 0, 0)";
+
         if (content) {
-            content.style.transform = "scale(0.95)";
-            content.style.opacity = "0.5";
+            content.style.transform = "scale(0.9) translateY(-20px)";
+            content.style.opacity = "0";
         }
 
+        // Hide modal after animation completes
         setTimeout(() => {
             modal.classList.add("hidden");
             this.resetModal(modalId);
-        }, 150);
+
+            // Reset styles for next use
+            if (content) {
+                content.style.transform = "";
+                content.style.opacity = "";
+                content.style.transition = "";
+            }
+            modal.style.backgroundColor = "";
+            modal.style.transition = "";
+        }, 300);
     }
 
     resetModal(modalId) {
@@ -587,19 +616,43 @@ class CoreManager {
         };
 
         const notification = document.createElement("div");
-        notification.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg max-w-sm text-white transform transition-all duration-300 translate-x-full ${colors[type] || colors.info}`;
-        notification.textContent = message;
+        notification.className = `fixed top-4 right-4 z-[9999] px-6 py-4 rounded-lg shadow-xl text-white transform transition-all duration-300 ease-out ${colors[type] || colors.info}`;
 
+        // Set initial position and styling
+        notification.style.cssText = `
+            min-width: 300px;
+            max-width: 400px;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.4;
+            word-wrap: break-word;
+            transform: translateX(100%) scale(0.95);
+            opacity: 0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        `;
+
+        notification.textContent = message;
         document.body.appendChild(notification);
 
-        // Animate in
-        setTimeout(() => notification.style.transform = "translateX(0)", 10);
+        // Force reflow then animate in
+        notification.offsetHeight;
+
+        requestAnimationFrame(() => {
+            notification.style.transform = "translateX(0) scale(1)";
+            notification.style.opacity = "1";
+        });
 
         // Animate out and remove
         setTimeout(() => {
-            notification.style.transform = "translateX(100%)";
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
+            notification.style.transform = "translateX(100%) scale(0.95)";
+            notification.style.opacity = "0";
+
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 300);
+        }, 4000);
     }
 
     toggleLoading(button, isLoading) {
