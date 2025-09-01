@@ -234,18 +234,18 @@
     @endif
 </div>
 
-<!-- Connect Cores Modal -->
+<!-- Enhanced Connect Cores Modal -->
 <div id="connect-modal" class="fixed inset-0 backdrop-blur-xs hidden z-50">
     <div class="flex items-center justify-center min-h-screen px-4 py-6">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-screen overflow-y-auto">
             <!-- Modal Header -->
             <div class="px-4 md:px-6 py-4 border-b border-gray-200 sticky top-0 bg-white rounded-t-lg">
                 <div class="flex items-center justify-between">
                     <div>
                         <h3 class="text-lg font-semibold text-gray-900">Connect Cores</h3>
-                        <p class="text-sm text-gray-600 mt-1">Select two cores from different cables to create a connection</p>
+                        <p class="text-sm text-gray-600 mt-1">Follow the steps: Cable → Tube → Core for each connection</p>
                     </div>
-                    <button onclick="closeConnectModal()" class="text-gray-400 hover:text-gray-600 lg:hidden">
+                    <button onclick="closeConnectModal()" class="text-gray-400 hover:text-gray-600">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -257,76 +257,144 @@
             <form id="connect-form" method="POST" action="{{ route('closures.connect', $closure) }}" class="p-4 md:p-6">
                 @csrf
 
-                <!-- Core Selection -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+                <!-- Connection Steps Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+
                     <!-- Core A Selection -->
-                    <div class="space-y-2">
-                        <label for="core_a_id" class="block text-sm font-medium text-gray-700">Select Core A</label>
-                        <select id="core_a_id"
-                            name="core_a_id"
-                            required
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                            <option value="">Choose first core...</option>
-                            @foreach($availableCores as $cableId => $cores)
-                            @php $cable = $cores->first()->cable; @endphp
-                            <optgroup label="{{ $cable->name }} ({{ $cable->cable_id }})">
-                                @foreach($cores as $core)
-                                <option value="{{ $core->id }}" data-cable="{{ $cableId }}">
-                                    Tube {{ $core->tube_number }}, Core {{ $core->core_number }}
-                                    @if($core->attenuation) - {{ $core->attenuation }}dB @endif
+                    <div class="bg-blue-50 rounded-lg p-4 md:p-6">
+                        <h4 class="text-md font-semibold text-blue-800 mb-4 flex items-center">
+                            <span class="bg-blue-600 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center mr-2">A</span>
+                            First Core Selection
+                        </h4>
+
+                        <!-- Step 1: Select Cable A -->
+                        <div class="space-y-2 mb-4">
+                            <label for="cable_a_id" class="block text-sm font-medium text-gray-700">
+                                <span class="bg-gray-200 text-gray-700 rounded px-2 py-1 text-xs mr-2">1</span>
+                                Select Cable
+                            </label>
+                            <select id="cable_a_id" name="cable_a_id" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                                <option value="">Choose cable...</option>
+                                @foreach($availableCables as $cable)
+                                <option value="{{ $cable->id }}">
+                                    {{ $cable->name }} ({{ $cable->cable_id }})
                                 </option>
                                 @endforeach
-                            </optgroup>
-                            @endforeach
-                        </select>
+                            </select>
+                        </div>
+
+                        <!-- Step 2: Select Tube A -->
+                        <div class="space-y-2 mb-4">
+                            <label for="tube_a_id" class="block text-sm font-medium text-gray-700">
+                                <span class="bg-gray-200 text-gray-700 rounded px-2 py-1 text-xs mr-2">2</span>
+                                Select Tube
+                            </label>
+                            <select id="tube_a_id" name="tube_a_id" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                                <option value="">Select cable first...</option>
+                            </select>
+                        </div>
+
+                        <!-- Step 3: Select Core A -->
+                        <div class="space-y-2">
+                            <label for="core_a_id" class="block text-sm font-medium text-gray-700">
+                                <span class="bg-gray-200 text-gray-700 rounded px-2 py-1 text-xs mr-2">3</span>
+                                Select Core
+                            </label>
+                            <select id="core_a_id" name="core_a_id" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                                <option value="">Select tube first...</option>
+                            </select>
+                        </div>
                     </div>
 
                     <!-- Core B Selection -->
-                    <div class="space-y-2">
-                        <label for="core_b_id" class="block text-sm font-medium text-gray-700">Select Core B</label>
-                        <select id="core_b_id"
-                            name="core_b_id"
-                            required
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                            <option value="">Choose second core...</option>
-                            @foreach($availableCores as $cableId => $cores)
-                            @php $cable = $cores->first()->cable; @endphp
-                            <optgroup label="{{ $cable->name }} ({{ $cable->cable_id }})">
-                                @foreach($cores as $core)
-                                <option value="{{ $core->id }}" data-cable="{{ $cableId }}">
-                                    Tube {{ $core->tube_number }}, Core {{ $core->core_number }}
-                                    @if($core->attenuation) - {{ $core->attenuation }}dB @endif
+                    <div class="bg-green-50 rounded-lg p-4 md:p-6">
+                        <h4 class="text-md font-semibold text-green-800 mb-4 flex items-center">
+                            <span class="bg-green-600 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center mr-2">B</span>
+                            Second Core Selection
+                        </h4>
+
+                        <!-- Step 1: Select Cable B -->
+                        <div class="space-y-2 mb-4">
+                            <label for="cable_b_id" class="block text-sm font-medium text-gray-700">
+                                <span class="bg-gray-200 text-gray-700 rounded px-2 py-1 text-xs mr-2">1</span>
+                                Select Cable
+                            </label>
+                            <select id="cable_b_id" name="cable_b_id" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm">
+                                <option value="">Choose cable...</option>
+                                @foreach($availableCables as $cable)
+                                <option value="{{ $cable->id }}">
+                                    {{ $cable->name }} ({{ $cable->cable_id }})
                                 </option>
                                 @endforeach
-                            </optgroup>
-                            @endforeach
-                        </select>
+                            </select>
+                        </div>
+
+                        <!-- Step 2: Select Tube B -->
+                        <div class="space-y-2 mb-4">
+                            <label for="tube_b_id" class="block text-sm font-medium text-gray-700">
+                                <span class="bg-gray-200 text-gray-700 rounded px-2 py-1 text-xs mr-2">2</span>
+                                Select Tube
+                            </label>
+                            <select id="tube_b_id" name="tube_b_id" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm">
+                                <option value="">Select cable first...</option>
+                            </select>
+                        </div>
+
+                        <!-- Step 3: Select Core B -->
+                        <div class="space-y-2">
+                            <label for="core_b_id" class="block text-sm font-medium text-gray-700">
+                                <span class="bg-gray-200 text-gray-700 rounded px-2 py-1 text-xs mr-2">3</span>
+                                Select Core
+                            </label>
+                            <select id="core_b_id" name="core_b_id" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm">
+                                <option value="">Select tube first...</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Connection Details -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
-                    <!-- Splice Loss -->
-                    <div class="space-y-2">
-                        <label for="splice_loss" class="block text-sm font-medium text-gray-700">Splice Loss (dB)</label>
-                        <input type="number"
-                            id="splice_loss"
-                            name="splice_loss"
-                            step="0.001"
-                            min="0"
-                            max="10"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                            placeholder="e.g., 0.15">
-                    </div>
+                <div class="bg-gray-50 rounded-lg p-4 md:p-6 mt-6">
+                    <h4 class="text-md font-semibold text-gray-800 mb-4">Connection Details</h4>
 
-                    <!-- Connection Description -->
-                    <div class="space-y-2">
-                        <label for="connection_description" class="block text-sm font-medium text-gray-700">Description</label>
-                        <input type="text"
-                            id="connection_description"
-                            name="description"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                            placeholder="Connection notes...">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Splice Loss -->
+                        <div class="space-y-2">
+                            <label for="splice_loss" class="block text-sm font-medium text-gray-700">
+                                Splice Loss (dB)
+                                <span class="text-gray-400 text-xs">(Optional)</span>
+                            </label>
+                            <input type="number"
+                                id="splice_loss"
+                                name="splice_loss"
+                                step="0.001"
+                                min="0"
+                                max="10"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                placeholder="e.g., 0.15">
+                            <p class="text-xs text-gray-500">Typical splice loss: 0.05 - 0.3 dB</p>
+                        </div>
+
+                        <!-- Connection Description -->
+                        <div class="space-y-2">
+                            <label for="connection_description" class="block text-sm font-medium text-gray-700">
+                                Description
+                                <span class="text-gray-400 text-xs">(Optional)</span>
+                            </label>
+                            <input type="text"
+                                id="connection_description"
+                                name="description"
+                                maxlength="500"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                placeholder="Connection notes or comments...">
+                            <p class="text-xs text-gray-500">Max 500 characters</p>
+                        </div>
                     </div>
                 </div>
 
@@ -337,8 +405,9 @@
                         class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 text-sm">
                         Cancel
                     </button>
-                    <button type="submit"
-                        class="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm">
+                    <button type="submit" id="submit-connection"
+                        class="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled>
                         Create Connection
                     </button>
                 </div>
