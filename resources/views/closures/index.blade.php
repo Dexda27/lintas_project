@@ -15,8 +15,8 @@
             <p class="text-gray-600 mt-2 text-sm sm:text-base">Manage fiber optic joint closures</p>
         </div>
         <a href="{{ route('closures.create') }}" class="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm sm:text-base text-center">
-            <span class="hidden sm:inline">Add New Closure</span>
-            <span class="sm:hidden">Add Closure</span>
+            <span class="hidden sm:inline">+ Add New Closure</span>
+            <span class="sm:hidden">+ Add Closure</span>
         </a>
     </div>
 </div>

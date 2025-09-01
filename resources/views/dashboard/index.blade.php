@@ -131,8 +131,8 @@
     <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-2 sm:space-y-0">
         <h2 class="text-lg sm:text-xl font-semibold text-gray-900">Fiber Cables</h2>
         <a href="{{ route('cables.create') }}" class="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 text-sm sm:text-base text-center">
-            <span class="hidden sm:inline">Add New Cable</span>
-            <span class="sm:hidden">Add Cable</span>
+            <span class="hidden sm:inline">+ Add New Cable</span>
+            <span class="sm:hidden">+ Add Cable</span>
         </a>
     </div>
 
