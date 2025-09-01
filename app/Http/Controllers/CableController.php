@@ -21,6 +21,7 @@ class CableController extends Controller
         if ($user->isAdminRegion()) {
             $query->where('region', $user->region);
         }
+
         // Search filter (tambahkan cable_id)
         if ($request->filled('search')) {
             $search = $request->input('search');
@@ -33,7 +34,15 @@ class CableController extends Controller
             });
         }
 
-        $cables = $query->orderBy('created_at', 'desc')->paginate(5);
+        // Add subquery to count connected cores for each cable
+        $cables = $query->withCount([
+            'fiberCores as connected_cores_count' => function ($q) {
+                $q->where(function ($query) {
+                    $query->whereHas('connectionA')
+                        ->orWhereHas('connectionB');
+                });
+            }
+        ])->orderBy('created_at', 'desc')->paginate(5);
 
         return view('cables.index', compact('cables'));
     }
@@ -120,6 +129,9 @@ class CableController extends Controller
             'active_cores' => $cable->fiberCores->where('usage', 'active')->count(),
             'inactive_cores' => $cable->fiberCores->where('usage', 'inactive')->count(),
             'problem_cores' => $cable->fiberCores->where('status', 'not_ok')->count(),
+            'connected_cores' => $cable->fiberCores->filter(function ($core) {
+                return $core->connectionA()->exists() || $core->connectionB()->exists();
+            })->count(),
         ];
 
         return view('cables.show', compact('cable', 'coresByTube', 'statistics'));
