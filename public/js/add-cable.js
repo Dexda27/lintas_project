@@ -6,10 +6,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const numberingSummary = document.getElementById("numbering-summary");
     const form = document.getElementById("cable-form");
 
+    // Check if required elements exist
+    if (!totalTubesInput || !totalCoresInput || !coresPerTubeDisplay || !coreNumberingPreview || !numberingSummary || !form) {
+        console.error("Required DOM elements not found. Make sure all elements with proper IDs exist in the HTML.");
+        return;
+    }
+
     // Get configuration from backend (passed via window.cableConfig)
     const MAX_TUBES = window.cableConfig?.maxTubes || 8;
     const MAX_CORES = window.cableConfig?.maxCores || 96;
     const MAX_CORES_PER_TUBE = window.cableConfig?.maxCoresPerTube || 12;
+
+    // Flag to track if user has started interacting
+    let hasUserInteracted = false;
 
     // Create alert container
     function createAlertContainer() {
@@ -26,8 +35,10 @@ document.addEventListener("DOMContentLoaded", function () {
         return alertContainer;
     }
 
-    // Show alert message
+    // Show alert message - only if user has interacted
     function showAlert(message, type = "error") {
+        if (!hasUserInteracted) return; // Don't show alerts on initial load
+
         const alertContainer = createAlertContainer();
         const alertClass = type === "error" ? "bg-red-50 border-red-200 text-red-800" : "bg-yellow-50 border-yellow-200 text-yellow-800";
         const iconClass = type === "error" ? "text-red-400" : "text-yellow-400";
@@ -61,17 +72,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Validate tubes input
-    function validateTubes() {
+    function validateTubes(showAlerts = true) {
         const tubes = parseInt(totalTubesInput.value) || 0;
 
         if (tubes < 1) {
-            showAlert("Number of tubes must be at least 1.");
+            if (showAlerts) showAlert("Number of tubes must be at least 1.");
             totalTubesInput.classList.add("border-red-500");
             return false;
         }
 
         if (tubes > MAX_TUBES) {
-            showAlert(`Maximum number of tubes is ${MAX_TUBES}. Please enter a value between 1 and ${MAX_TUBES}.`);
+            if (showAlerts) showAlert(`Maximum number of tubes is ${MAX_TUBES}. Please enter a value between 1 and ${MAX_TUBES}.`);
             totalTubesInput.classList.add("border-red-500");
             totalTubesInput.value = MAX_TUBES;
             return false;
@@ -82,18 +93,18 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Validate cores input
-    function validateCores() {
+    function validateCores(showAlerts = true) {
         const totalCores = parseInt(totalCoresInput.value) || 0;
         const tubes = parseInt(totalTubesInput.value) || 1;
 
         if (totalCores < 1) {
-            showAlert("Number of cores must be at least 1.");
+            if (showAlerts) showAlert("Number of cores must be at least 1.");
             totalCoresInput.classList.add("border-red-500");
             return false;
         }
 
         if (totalCores > MAX_CORES) {
-            showAlert(`Maximum number of cores is ${MAX_CORES}. Please enter a value between 1 and ${MAX_CORES}.`);
+            if (showAlerts) showAlert(`Maximum number of cores is ${MAX_CORES}. Please enter a value between 1 and ${MAX_CORES}.`);
             totalCoresInput.classList.add("border-red-500");
             totalCoresInput.value = MAX_CORES;
             return false;
@@ -105,13 +116,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const maxCoresPerTube = baseCoresPerTube + (extraCores > 0 ? 1 : 0);
 
         if (maxCoresPerTube > MAX_CORES_PER_TUBE) {
-            showAlert(`With ${tubes} tubes and ${totalCores} cores, some tubes would have ${maxCoresPerTube} cores. Maximum cores per tube is ${MAX_CORES_PER_TUBE}. Either increase the number of tubes or decrease the total cores.`);
+            if (showAlerts) showAlert(`With ${tubes} tubes and ${totalCores} cores, some tubes would have ${maxCoresPerTube} cores. Maximum cores per tube is ${MAX_CORES_PER_TUBE}. Either increase the number of tubes or decrease the total cores.`);
             totalCoresInput.classList.add("border-red-500");
             return false;
         }
 
-        // Warning for uneven distribution
-        if (extraCores > 0) {
+        // Warning for uneven distribution - only show if user has interacted
+        if (extraCores > 0 && showAlerts && hasUserInteracted) {
             const tubesWithExtra = extraCores;
             const tubesWithoutExtra = tubes - extraCores;
             showAlert(`Uneven distribution: ${tubesWithExtra} tube(s) will have ${baseCoresPerTube + 1} cores, ${tubesWithoutExtra} tube(s) will have ${baseCoresPerTube} cores.`, "warning");
@@ -122,20 +133,27 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Enhanced core numbering preview with validation
-    function updateCoreNumberingPreview() {
+    function updateCoreNumberingPreview(showAlerts = true) {
+        // Check if elements exist before proceeding
+        if (!coresPerTubeDisplay || !coreNumberingPreview || !numberingSummary) {
+            return;
+        }
+
         // First validate inputs
-        const tubesValid = validateTubes();
-        const coresValid = validateCores();
+        const tubesValid = validateTubes(showAlerts);
+        const coresValid = validateCores(showAlerts);
 
         if (!tubesValid || !coresValid) {
-            coresPerTubeDisplay.textContent = "Please fix validation errors";
+            coresPerTubeDisplay.textContent = hasUserInteracted ? "Please fix validation errors" : "Enter tube and core counts";
             coreNumberingPreview.innerHTML = "";
             numberingSummary.innerHTML = "";
             return;
         }
 
         // Hide alerts if validation passes
-        hideAlert();
+        if (hasUserInteracted) {
+            hideAlert();
+        }
 
         const tubes = parseInt(totalTubesInput.value) || 1;
         const totalCores = parseInt(totalCoresInput.value) || 0;
@@ -236,8 +254,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Form submission validation
     function validateForm(event) {
-        const tubesValid = validateTubes();
-        const coresValid = validateCores();
+        // Always validate on form submission regardless of interaction flag
+        const tubesValid = validateTubes(true);
+        const coresValid = validateCores(true);
 
         if (!tubesValid || !coresValid) {
             event.preventDefault();
@@ -248,39 +267,66 @@ document.addEventListener("DOMContentLoaded", function () {
         return true;
     }
 
+    // Mark user interaction and enable alerts
+    function markUserInteraction() {
+        hasUserInteracted = true;
+    }
+
     // Event listeners with debouncing
     let tubesTimeout, coresTimeout;
 
-    totalTubesInput.addEventListener("input", function() {
-        clearTimeout(tubesTimeout);
-        tubesTimeout = setTimeout(updateCoreNumberingPreview, 300);
-    });
+    // Only add event listeners if elements exist
+    if (totalTubesInput) {
+        totalTubesInput.addEventListener("input", function() {
+            markUserInteraction();
+            clearTimeout(tubesTimeout);
+            tubesTimeout = setTimeout(() => updateCoreNumberingPreview(true), 300);
+        });
 
-    totalCoresInput.addEventListener("input", function() {
-        clearTimeout(coresTimeout);
-        coresTimeout = setTimeout(updateCoreNumberingPreview, 300);
-    });
+        // Real-time validation on blur (only after user interaction)
+        totalTubesInput.addEventListener("blur", function() {
+            if (hasUserInteracted) validateTubes(true);
+        });
 
-    // Real-time validation on blur
-    totalTubesInput.addEventListener("blur", validateTubes);
-    totalCoresInput.addEventListener("blur", validateCores);
+        // Mark interaction on focus
+        totalTubesInput.addEventListener("focus", markUserInteraction);
+
+        // Enforce max values on input
+        totalTubesInput.addEventListener("input", function() {
+            if (parseInt(this.value) > MAX_TUBES) {
+                this.value = MAX_TUBES;
+            }
+        });
+    }
+
+    if (totalCoresInput) {
+        totalCoresInput.addEventListener("input", function() {
+            markUserInteraction();
+            clearTimeout(coresTimeout);
+            coresTimeout = setTimeout(() => updateCoreNumberingPreview(true), 300);
+        });
+
+        // Real-time validation on blur (only after user interaction)
+        totalCoresInput.addEventListener("blur", function() {
+            if (hasUserInteracted) validateCores(true);
+        });
+
+        // Mark interaction on focus
+        totalCoresInput.addEventListener("focus", markUserInteraction);
+
+        // Enforce max values on input
+        totalCoresInput.addEventListener("input", function() {
+            if (parseInt(this.value) > MAX_CORES) {
+                this.value = MAX_CORES;
+            }
+        });
+    }
 
     // Form validation on submit
-    form.addEventListener("submit", validateForm);
+    if (form) {
+        form.addEventListener("submit", validateForm);
+    }
 
-    // Enforce max values on input
-    totalTubesInput.addEventListener("input", function() {
-        if (parseInt(this.value) > MAX_TUBES) {
-            this.value = MAX_TUBES;
-        }
-    });
-
-    totalCoresInput.addEventListener("input", function() {
-        if (parseInt(this.value) > MAX_CORES) {
-            this.value = MAX_CORES;
-        }
-    });
-
-    // Initial preview
-    updateCoreNumberingPreview();
+    // Initial preview WITHOUT showing alerts
+    updateCoreNumberingPreview(false);
 });
