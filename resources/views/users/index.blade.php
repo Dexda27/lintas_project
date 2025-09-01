@@ -114,23 +114,21 @@
                     </div>
 
                     <div class="flex justify-end space-x-3 mt-3">
-                        <a href="{{ route('users.show', $user) }}" class="inline-flex items-center justify-center w-8 h-8 text-indigo-600 hover:text-white hover:bg-indigo-600 border border-indigo-200 rounded-md transition-colors duration-150">
+                        <a href="{{ route('users.show', $user) }}" class="inline-flex items-center justify-center w-8 h-8 text-indigo-600 hover:text-indigo hover:bg-indigo-100 border border-indigo-200 rounded-full transition-colors duration-150">
                             <i data-lucide="eye" class="w-4 h-4"></i>
                         </a>
-                        <a href="{{ route('users.edit', $user) }}" class="inline-flex items-center justify-center w-8 h-8 text-yellow-600 hover:text-white hover:bg-yellow-600 border border-yellow-200 rounded-md transition-colors duration-150">
+                        <a href="{{ route('users.edit', $user) }}" class="inline-flex items-center justify-center w-8 h-8 text-yellow-600 hover:text-yellow hover:bg-yellow-100 border border-yellow-200 rounded-full transition-colors duration-150">
                             <i data-lucide="edit" class="w-4 h-4"></i>
                         </a>
 
                         @if($user->id !== auth()->id())
-                        <form method="POST" action="{{ route('users.destroy', $user) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this user?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:text-red-900" title="Delete">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                </svg>
-                            </button>
-                        </form>
+                            <form method="POST" action="{{ route('users.destroy', $user) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this user?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:text-red-900 inline-flex items-center justify-center w-8 h-8 hover:bg-red-100 border border-red-200 rounded-full transition-colors duration-150">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </form>
                         @endif
                     </div>
                 </div>
@@ -220,15 +218,13 @@
                                 <i data-lucide="edit" class="w-4 h-4"></i> Edit
                             </a>
                             @if($user->id !== auth()->id())
-                            <form method="POST" action="{{ route('users.destroy', $user) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this user?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-900">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                    </svg>
-                                </button>
-                            </form>
+                                <form method="POST" action="{{ route('users.destroy', $user) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this user?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:text-red-900 flex items-center gap-1">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i> Delete
+                                    </button>
+                                </form>
                             @endif
                         </div>
                     </td>

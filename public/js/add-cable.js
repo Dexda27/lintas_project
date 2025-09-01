@@ -1,16 +1,142 @@
 document.addEventListener("DOMContentLoaded", function () {
     const totalTubesInput = document.getElementById("total_tubes");
     const totalCoresInput = document.getElementById("total_cores");
-    const coresPerTubeDisplay = document.getElementById(
-        "cores-per-tube-display"
-    );
-    const coreNumberingPreview = document.getElementById(
-        "core-numbering-preview"
-    );
+    const coresPerTubeDisplay = document.getElementById("cores-per-tube-display");
+    const coreNumberingPreview = document.getElementById("core-numbering-preview");
     const numberingSummary = document.getElementById("numbering-summary");
     const form = document.getElementById("cable-form");
 
+    // Get configuration from backend (passed via window.cableConfig)
+    const MAX_TUBES = window.cableConfig?.maxTubes || 8;
+    const MAX_CORES = window.cableConfig?.maxCores || 96;
+    const MAX_CORES_PER_TUBE = window.cableConfig?.maxCoresPerTube || 12;
+
+    // Create alert container
+    function createAlertContainer() {
+        let alertContainer = document.getElementById("validation-alerts");
+        if (!alertContainer) {
+            alertContainer = document.createElement("div");
+            alertContainer.id = "validation-alerts";
+            alertContainer.className = "mb-4";
+
+            // Insert after the header section
+            const headerSection = document.querySelector(".mb-8");
+            headerSection.parentNode.insertBefore(alertContainer, headerSection.nextSibling);
+        }
+        return alertContainer;
+    }
+
+    // Show alert message
+    function showAlert(message, type = "error") {
+        const alertContainer = createAlertContainer();
+        const alertClass = type === "error" ? "bg-red-50 border-red-200 text-red-800" : "bg-yellow-50 border-yellow-200 text-yellow-800";
+        const iconClass = type === "error" ? "text-red-400" : "text-yellow-400";
+
+        alertContainer.innerHTML = `
+            <div class="border ${alertClass} px-4 py-3 rounded-md flex items-start space-x-3">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 ${iconClass}" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-sm font-medium">${type === "error" ? "Input Error" : "Warning"}</h3>
+                    <div class="mt-1 text-sm">${message}</div>
+                </div>
+            </div>
+        `;
+
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            alertContainer.innerHTML = "";
+        }, 5000);
+    }
+
+    // Hide alert
+    function hideAlert() {
+        const alertContainer = document.getElementById("validation-alerts");
+        if (alertContainer) {
+            alertContainer.innerHTML = "";
+        }
+    }
+
+    // Validate tubes input
+    function validateTubes() {
+        const tubes = parseInt(totalTubesInput.value) || 0;
+
+        if (tubes < 1) {
+            showAlert("Number of tubes must be at least 1.");
+            totalTubesInput.classList.add("border-red-500");
+            return false;
+        }
+
+        if (tubes > MAX_TUBES) {
+            showAlert(`Maximum number of tubes is ${MAX_TUBES}. Please enter a value between 1 and ${MAX_TUBES}.`);
+            totalTubesInput.classList.add("border-red-500");
+            totalTubesInput.value = MAX_TUBES;
+            return false;
+        }
+
+        totalTubesInput.classList.remove("border-red-500");
+        return true;
+    }
+
+    // Validate cores input
+    function validateCores() {
+        const totalCores = parseInt(totalCoresInput.value) || 0;
+        const tubes = parseInt(totalTubesInput.value) || 1;
+
+        if (totalCores < 1) {
+            showAlert("Number of cores must be at least 1.");
+            totalCoresInput.classList.add("border-red-500");
+            return false;
+        }
+
+        if (totalCores > MAX_CORES) {
+            showAlert(`Maximum number of cores is ${MAX_CORES}. Please enter a value between 1 and ${MAX_CORES}.`);
+            totalCoresInput.classList.add("border-red-500");
+            totalCoresInput.value = MAX_CORES;
+            return false;
+        }
+
+        // Calculate cores per tube
+        const baseCoresPerTube = Math.floor(totalCores / tubes);
+        const extraCores = totalCores % tubes;
+        const maxCoresPerTube = baseCoresPerTube + (extraCores > 0 ? 1 : 0);
+
+        if (maxCoresPerTube > MAX_CORES_PER_TUBE) {
+            showAlert(`With ${tubes} tubes and ${totalCores} cores, some tubes would have ${maxCoresPerTube} cores. Maximum cores per tube is ${MAX_CORES_PER_TUBE}. Either increase the number of tubes or decrease the total cores.`);
+            totalCoresInput.classList.add("border-red-500");
+            return false;
+        }
+
+        // Warning for uneven distribution
+        if (extraCores > 0) {
+            const tubesWithExtra = extraCores;
+            const tubesWithoutExtra = tubes - extraCores;
+            showAlert(`Uneven distribution: ${tubesWithExtra} tube(s) will have ${baseCoresPerTube + 1} cores, ${tubesWithoutExtra} tube(s) will have ${baseCoresPerTube} cores.`, "warning");
+        }
+
+        totalCoresInput.classList.remove("border-red-500");
+        return true;
+    }
+
+    // Enhanced core numbering preview with validation
     function updateCoreNumberingPreview() {
+        // First validate inputs
+        const tubesValid = validateTubes();
+        const coresValid = validateCores();
+
+        if (!tubesValid || !coresValid) {
+            coresPerTubeDisplay.textContent = "Please fix validation errors";
+            coreNumberingPreview.innerHTML = "";
+            numberingSummary.innerHTML = "";
+            return;
+        }
+
+        // Hide alerts if validation passes
+        hideAlert();
+
         const tubes = parseInt(totalTubesInput.value) || 1;
         const totalCores = parseInt(totalCoresInput.value) || 0;
 
@@ -28,9 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Update distribution display
         let distributionText = `${baseCoresPerTube} cores per tube`;
         if (extraCores > 0) {
-            distributionText += ` (${extraCores} tube${
-                extraCores > 1 ? "s" : ""
-            } have ${baseCoresPerTube + 1} cores)`;
+            distributionText += ` (${extraCores} tube${extraCores > 1 ? "s" : ""} have ${baseCoresPerTube + 1} cores)`;
         }
         coresPerTubeDisplay.textContent = distributionText;
 
@@ -38,11 +162,10 @@ document.addEventListener("DOMContentLoaded", function () {
         let previewHtml = "";
         let currentCoreNumber = 1;
         let tubeData = [];
-        const maxTubesToShow = 5; // Show first 5 tubes in detail
+        const maxTubesToShow = 5;
 
         for (let tube = 1; tube <= tubes; tube++) {
-            const coresInThisTube =
-                baseCoresPerTube + (tube <= extraCores ? 1 : 0);
+            const coresInThisTube = baseCoresPerTube + (tube <= extraCores ? 1 : 0);
             const startCore = currentCoreNumber;
             const endCore = currentCoreNumber + coresInThisTube - 1;
 
@@ -84,25 +207,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
         coreNumberingPreview.innerHTML = previewHtml;
 
-        // Generate summary
+        // Generate summary with validation status
         const summaryHtml = `
             <strong>Summary:</strong> Total ${totalCores} cores (numbered 1 to ${totalCores}) across ${tubes} tubes.<br>
+            <strong>Status:</strong> <span class="text-green-600">✓ Valid configuration</span><br>
             <strong>Key benefit:</strong> Each core has a unique sequential number - no duplicates within the cable.
         `;
         numberingSummary.innerHTML = summaryHtml;
 
-        // Add hidden input for core structure (for backend processing)
+        // Add hidden input for core structure
         addCoreStructureToForm(tubeData);
     }
 
     function addCoreStructureToForm(tubeData) {
-        // Remove existing core structure input
         const existingInput = document.getElementById("core_structure");
         if (existingInput) {
             existingInput.remove();
         }
 
-        // Create hidden input with core structure data
         const hiddenInput = document.createElement("input");
         hiddenInput.type = "hidden";
         hiddenInput.name = "core_structure";
@@ -112,9 +234,52 @@ document.addEventListener("DOMContentLoaded", function () {
         form.appendChild(hiddenInput);
     }
 
-    // Event listeners
-    totalTubesInput.addEventListener("input", updateCoreNumberingPreview);
-    totalCoresInput.addEventListener("input", updateCoreNumberingPreview);
+    // Form submission validation
+    function validateForm(event) {
+        const tubesValid = validateTubes();
+        const coresValid = validateCores();
+
+        if (!tubesValid || !coresValid) {
+            event.preventDefault();
+            showAlert("Please fix all validation errors before submitting the form.");
+            return false;
+        }
+
+        return true;
+    }
+
+    // Event listeners with debouncing
+    let tubesTimeout, coresTimeout;
+
+    totalTubesInput.addEventListener("input", function() {
+        clearTimeout(tubesTimeout);
+        tubesTimeout = setTimeout(updateCoreNumberingPreview, 300);
+    });
+
+    totalCoresInput.addEventListener("input", function() {
+        clearTimeout(coresTimeout);
+        coresTimeout = setTimeout(updateCoreNumberingPreview, 300);
+    });
+
+    // Real-time validation on blur
+    totalTubesInput.addEventListener("blur", validateTubes);
+    totalCoresInput.addEventListener("blur", validateCores);
+
+    // Form validation on submit
+    form.addEventListener("submit", validateForm);
+
+    // Enforce max values on input
+    totalTubesInput.addEventListener("input", function() {
+        if (parseInt(this.value) > MAX_TUBES) {
+            this.value = MAX_TUBES;
+        }
+    });
+
+    totalCoresInput.addEventListener("input", function() {
+        if (parseInt(this.value) > MAX_CORES) {
+            this.value = MAX_CORES;
+        }
+    });
 
     // Initial preview
     updateCoreNumberingPreview();
