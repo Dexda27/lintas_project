@@ -2,6 +2,7 @@
 class CoreManager {
     constructor() {
         this.currentEditingCore = null;
+        this.currentCableId = null; // Add property to track current cable
         this.init();
     }
 
@@ -9,7 +10,33 @@ class CoreManager {
         document.addEventListener("DOMContentLoaded", () => {
             this.setupEventListeners();
             this.setupKeyboardShortcuts();
+            // Get current cable ID from the page
+            this.getCurrentCableId();
         });
+    }
+
+    // Get current cable ID from the page
+    getCurrentCableId() {
+        // Try to get cable ID from URL or page data
+        const urlPath = window.location.pathname;
+        const cableMatch = urlPath.match(/\/cables\/(\d+)/);
+        if (cableMatch) {
+            this.currentCableId = cableMatch[1];
+        }
+
+        // Alternative: get from a data attribute or meta tag if available
+        const cableIdMeta = document.querySelector('meta[name="cable-id"]');
+        if (cableIdMeta) {
+            this.currentCableId = cableIdMeta.getAttribute("content");
+        }
+
+        // Alternative: get from page title or heading
+        const heading = document.querySelector("h1");
+        if (heading && heading.dataset.cableId) {
+            this.currentCableId = heading.dataset.cableId;
+        }
+
+        console.log("Current Cable ID:", this.currentCableId);
     }
 
     // === CORE EDITING ===
@@ -32,18 +59,22 @@ class CoreManager {
 
         return {
             id: coreId,
-            core_number: parseInt(card.querySelector("h4").textContent.replace("Core ", "")),
+            core_number: parseInt(
+                card.querySelector("h4").textContent.replace("Core ", "")
+            ),
             tube_number: parseInt(card.dataset.tube),
             status: card.dataset.status,
             usage: card.dataset.usage,
             attenuation: this.extractAttenuation(card),
             description: card.dataset.description || "",
-            cable: { name: document.querySelector("h1").textContent }
+            cable: { name: document.querySelector("h1").textContent },
         };
     }
 
     extractAttenuation(card) {
-        const attEl = card.querySelector(".space-y-2 .flex:nth-child(3) span:last-child");
+        const attEl = card.querySelector(
+            ".space-y-2 .flex:nth-child(3) span:last-child"
+        );
         return attEl?.textContent.includes("dB")
             ? attEl.textContent.replace(" dB", "")
             : "";
@@ -55,7 +86,7 @@ class CoreManager {
             "edit-core-status": core.status || "ok",
             "edit-core-usage": core.usage || "inactive",
             "edit-core-attenuation": core.attenuation,
-            "edit-core-description": core.description
+            "edit-core-description": core.description,
         };
 
         // Populate form fields
@@ -66,7 +97,10 @@ class CoreManager {
 
         // Update modal header
         this.setText("modal-core-title", `Core ${core.core_number}`);
-        this.setText("modal-core-location", `Tube ${core.tube_number} • Cable: ${core.cable.name}`);
+        this.setText(
+            "modal-core-location",
+            `Tube ${core.tube_number} • Cable: ${core.cable.name}`
+        );
     }
 
     async submitEdit(formData) {
@@ -75,11 +109,17 @@ class CoreManager {
             return;
         }
 
-        const submitBtn = document.querySelector('#core-edit-form button[type="submit"]');
+        const submitBtn = document.querySelector(
+            '#core-edit-form button[type="submit"]'
+        );
         this.toggleLoading(submitBtn, true);
 
         try {
-            const response = await this.apiRequest(`/cores/${this.currentEditingCore}`, "PUT", formData);
+            const response = await this.apiRequest(
+                `/cores/${this.currentEditingCore}`,
+                "PUT",
+                formData
+            );
 
             if (response.success) {
                 this.showNotification("Core updated successfully!", "success");
@@ -89,7 +129,10 @@ class CoreManager {
                 throw new Error(response.message || "Update failed");
             }
         } catch (error) {
-            this.showNotification(`Failed to update core: ${error.message}`, "error");
+            this.showNotification(
+                `Failed to update core: ${error.message}`,
+                "error"
+            );
         } finally {
             this.toggleLoading(submitBtn, false);
         }
@@ -105,7 +148,7 @@ class CoreManager {
             Object.assign(card.dataset, {
                 status: formData.status,
                 usage: formData.usage,
-                description: formData.description || ""
+                description: formData.description || "",
             });
 
             this.updateStatusIndicators(card, formData);
@@ -135,13 +178,17 @@ class CoreManager {
 
         if (indicators[1]) {
             const isOk = formData.status === "ok";
-            indicators[1].className = `w-3 h-3 rounded-full ${isOk ? "bg-green-500" : "bg-red-500"}`;
+            indicators[1].className = `w-3 h-3 rounded-full ${
+                isOk ? "bg-green-500" : "bg-red-500"
+            }`;
             indicators[1].title = `Status: ${isOk ? "OK" : "Not OK"}`;
         }
 
         if (indicators[2]) {
             const isActive = formData.usage === "active";
-            indicators[2].className = `w-3 h-3 rounded-full ${isActive ? "bg-blue-500" : "bg-gray-400"}`;
+            indicators[2].className = `w-3 h-3 rounded-full ${
+                isActive ? "bg-blue-500" : "bg-gray-400"
+            }`;
             indicators[2].title = `Usage: ${this.capitalize(formData.usage)}`;
         }
     }
@@ -150,10 +197,14 @@ class CoreManager {
         const detailSection = card.querySelector(".space-y-2");
         if (!detailSection) return;
 
-        const flexItems = detailSection.querySelectorAll(".flex.justify-between");
+        const flexItems = detailSection.querySelectorAll(
+            ".flex.justify-between"
+        );
 
-        flexItems.forEach(item => {
-            const label = item.querySelector("span:first-child")?.textContent.trim();
+        flexItems.forEach((item) => {
+            const label = item
+                .querySelector("span:first-child")
+                ?.textContent.trim();
             const valueSpan = item.querySelector("span:last-child");
 
             if (!valueSpan) return;
@@ -162,13 +213,17 @@ class CoreManager {
                 case "Status:":
                     const isOk = formData.status === "ok";
                     valueSpan.textContent = isOk ? "OK" : "Not OK";
-                    valueSpan.className = `font-medium ${isOk ? "text-green-600" : "text-red-600"}`;
+                    valueSpan.className = `font-medium ${
+                        isOk ? "text-green-600" : "text-red-600"
+                    }`;
                     break;
 
                 case "Usage:":
                     const isActive = formData.usage === "active";
                     valueSpan.textContent = this.capitalize(formData.usage);
-                    valueSpan.className = `font-medium ${isActive ? "text-blue-600" : "text-gray-600"}`;
+                    valueSpan.className = `font-medium ${
+                        isActive ? "text-blue-600" : "text-gray-600"
+                    }`;
                     break;
 
                 case "Attenuation:":
@@ -194,8 +249,11 @@ class CoreManager {
             const select = document.getElementById("jc-selection");
 
             select.innerHTML = '<option value="">Select JC...</option>';
-            jcs.forEach(jc => {
-                const available = jc.capacity - jc.used_capacity || jc.available_capacity || 0;
+            jcs.forEach((jc) => {
+                const available =
+                    jc.capacity - jc.used_capacity ||
+                    jc.available_capacity ||
+                    0;
                 select.innerHTML += `<option value="${jc.id}">${jc.name} (${jc.location}) - ${available}/${jc.capacity} available</option>`;
             });
         } catch (error) {
@@ -207,7 +265,10 @@ class CoreManager {
         if (!confirm("Are you sure you want to disconnect this core?")) return;
 
         try {
-            const result = await this.apiRequest(`/connections/${connectionId}`, "DELETE");
+            const result = await this.apiRequest(
+                `/connections/${connectionId}`,
+                "DELETE"
+            );
 
             if (result.success) {
                 location.reload();
@@ -229,7 +290,8 @@ class CoreManager {
         if (content) {
             content.style.transform = "scale(0.9) translateY(-20px)";
             content.style.opacity = "0";
-            content.style.transition = "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)";
+            content.style.transition =
+                "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)";
         }
 
         // Remove hidden class and start animation
@@ -286,7 +348,7 @@ class CoreManager {
             document.getElementById("core-edit-form")?.reset();
         } else if (modalId === "join-core-modal") {
             document.getElementById("join-core-form")?.reset();
-            ["target-cable", "target-tube", "target-core"].forEach(id => {
+            ["target-cable", "target-tube", "target-core"].forEach((id) => {
                 const el = document.getElementById(id);
                 if (el) el.disabled = true;
             });
@@ -300,12 +362,12 @@ class CoreManager {
         const visibleTubes = new Set();
 
         // Hide all tube sections first
-        document.querySelectorAll(".tube-section").forEach(section => {
+        document.querySelectorAll(".tube-section").forEach((section) => {
             section.style.display = "none";
         });
 
         // Show/hide cards based on filters
-        cards.forEach(card => {
+        cards.forEach((card) => {
             const shouldShow = this.shouldShowCard(card, filters);
             card.style.display = shouldShow ? "block" : "none";
 
@@ -315,7 +377,7 @@ class CoreManager {
         });
 
         // Show tube sections with visible cards
-        document.querySelectorAll(".tube-section").forEach(section => {
+        document.querySelectorAll(".tube-section").forEach((section) => {
             if (visibleTubes.has(section.dataset.tube)) {
                 section.style.display = "block";
             }
@@ -326,21 +388,28 @@ class CoreManager {
         return {
             tube: document.getElementById("tube-filter")?.value || "",
             status: document.getElementById("status-filter")?.value || "",
-            usage: document.getElementById("usage-filter")?.value || ""
+            usage: document.getElementById("usage-filter")?.value || "",
         };
     }
 
     shouldShowCard(card, filters) {
-        return (!filters.tube || card.dataset.tube === filters.tube) &&
-               (!filters.status || card.dataset.status === filters.status) &&
-               (!filters.usage || card.dataset.usage === filters.usage);
+        return (
+            (!filters.tube || card.dataset.tube === filters.tube) &&
+            (!filters.status || card.dataset.status === filters.status) &&
+            (!filters.usage || card.dataset.usage === filters.usage)
+        );
     }
 
     updateStatistics() {
         const cards = document.querySelectorAll(".core-card");
-        const stats = { total: cards.length, active: 0, inactive: 0, problems: 0 };
+        const stats = {
+            total: cards.length,
+            active: 0,
+            inactive: 0,
+            problems: 0,
+        };
 
-        cards.forEach(card => {
+        cards.forEach((card) => {
             if (card.dataset.usage === "active") stats.active++;
             if (card.dataset.usage === "inactive") stats.inactive++;
             if (card.dataset.status === "not_ok") stats.problems++;
@@ -351,30 +420,55 @@ class CoreManager {
     }
 
     updateMainStats(stats) {
-        const statsCards = document.querySelectorAll(".grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 .bg-white.rounded-lg.shadow");
+        const statsCards = document.querySelectorAll(
+            ".grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 .bg-white.rounded-lg.shadow"
+        );
         if (statsCards.length >= 4) {
-            this.setText(statsCards[1].querySelector(".text-2xl.font-bold"), stats.active);
-            this.setText(statsCards[2].querySelector(".text-2xl.font-bold"), stats.inactive);
-            this.setText(statsCards[3].querySelector(".text-2xl.font-bold"), stats.problems);
+            this.setText(
+                statsCards[1].querySelector(".text-2xl.font-bold"),
+                stats.active
+            );
+            this.setText(
+                statsCards[2].querySelector(".text-2xl.font-bold"),
+                stats.inactive
+            );
+            this.setText(
+                statsCards[3].querySelector(".text-2xl.font-bold"),
+                stats.problems
+            );
         }
     }
 
     updateTubeStats() {
-        document.querySelectorAll(".tube-section").forEach(section => {
+        document.querySelectorAll(".tube-section").forEach((section) => {
             const cards = section.querySelectorAll(".core-card");
             const stats = { active: 0, inactive: 0, problems: 0 };
 
-            cards.forEach(card => {
+            cards.forEach((card) => {
                 if (card.dataset.usage === "active") stats.active++;
                 if (card.dataset.usage === "inactive") stats.inactive++;
                 if (card.dataset.status === "not_ok") stats.problems++;
             });
 
-            const tubeStats = section.querySelectorAll(".flex.items-center.space-x-4 span");
+            const tubeStats = section.querySelectorAll(
+                ".flex.items-center.space-x-4 span"
+            );
             if (tubeStats.length >= 3) {
-                tubeStats[0].innerHTML = this.createStatHTML("green", "Active", stats.active);
-                tubeStats[1].innerHTML = this.createStatHTML("gray", "Inactive", stats.inactive);
-                tubeStats[2].innerHTML = this.createStatHTML("red", "Problems", stats.problems);
+                tubeStats[0].innerHTML = this.createStatHTML(
+                    "green",
+                    "Active",
+                    stats.active
+                );
+                tubeStats[1].innerHTML = this.createStatHTML(
+                    "gray",
+                    "Inactive",
+                    stats.inactive
+                );
+                tubeStats[2].innerHTML = this.createStatHTML(
+                    "red",
+                    "Problems",
+                    stats.problems
+                );
             }
         });
     }
@@ -389,7 +483,7 @@ class CoreManager {
             jc: document.getElementById("jc-selection"),
             cable: document.getElementById("target-cable"),
             tube: document.getElementById("target-tube"),
-            core: document.getElementById("target-core")
+            core: document.getElementById("target-core"),
         };
 
         if (selectors.jc) {
@@ -408,26 +502,42 @@ class CoreManager {
 
         if (selectors.tube) {
             selectors.tube.addEventListener("change", async () => {
-                await this.loadCores(selectors.cable.value, selectors.tube.value, selectors.core);
+                await this.loadCores(
+                    selectors.cable.value,
+                    selectors.tube.value,
+                    selectors.core
+                );
             });
         }
     }
 
+    // UPDATED: Modified to exclude current cable
     async loadCables(jcId, cableSelect) {
         if (!jcId) return;
 
         try {
-            const cables = await this.apiRequest(`/connections/joint-closures/${jcId}/cables`);
+            const cables = await this.apiRequest(
+                `/connections/joint-closures/${jcId}/cables`
+            );
             cableSelect.innerHTML = '<option value="">Select Cable...</option>';
 
-            cables.forEach(cable => {
-                if (cable.id !== window.currentCableId) {
+            cables.forEach((cable) => {
+                // Exclude current cable from dropdown
+                if (cable.id != this.currentCableId) {
                     cableSelect.innerHTML += `<option value="${cable.id}">${cable.name} (${cable.cable_id})</option>`;
                 }
             });
+
             cableSelect.disabled = false;
+
+            // Show message if no cables available
+            if (cableSelect.options.length === 1) {
+                cableSelect.innerHTML +=
+                    '<option value="" disabled>No other cables available</option>';
+            }
         } catch (error) {
             console.error("Error loading cables:", error);
+            this.showNotification("Error loading cables", "error");
         }
     }
 
@@ -435,7 +545,9 @@ class CoreManager {
         if (!cableId) return;
 
         try {
-            const data = await this.apiRequest(`/connections/cables/${cableId}/tubes`);
+            const data = await this.apiRequest(
+                `/connections/cables/${cableId}/tubes`
+            );
             tubeSelect.innerHTML = '<option value="">Select Tube...</option>';
 
             for (let i = 1; i <= data.total_tubes; i++) {
@@ -451,12 +563,16 @@ class CoreManager {
         if (!cableId || !tubeId) return;
 
         try {
-            const cores = await this.apiRequest(`/connections/cables/${cableId}/tubes/${tubeId}/cores`);
+            const cores = await this.apiRequest(
+                `/connections/cables/${cableId}/tubes/${tubeId}/cores`
+            );
             coreSelect.innerHTML = '<option value="">Select Core...</option>';
 
-            cores.forEach(core => {
+            cores.forEach((core) => {
                 const isOk = core.status === "ok";
-                coreSelect.innerHTML += `<option value="${core.id}" ${!isOk ? 'style="color: #ef4444"' : ""}>
+                coreSelect.innerHTML += `<option value="${core.id}" ${
+                    !isOk ? 'style="color: #ef4444"' : ""
+                }>
                     Core ${core.core_number}${!isOk ? " (!)" : ""}
                 </option>`;
             });
@@ -476,7 +592,7 @@ class CoreManager {
     setupFilters() {
         const filterIds = ["tube-filter", "status-filter", "usage-filter"];
 
-        filterIds.forEach(id => {
+        filterIds.forEach((id) => {
             const filter = document.getElementById(id);
             if (filter) {
                 filter.addEventListener("change", () => this.applyFilters());
@@ -486,7 +602,7 @@ class CoreManager {
         const clearBtn = document.getElementById("clear-filters");
         if (clearBtn) {
             clearBtn.addEventListener("click", () => {
-                filterIds.forEach(id => {
+                filterIds.forEach((id) => {
                     const el = document.getElementById(id);
                     if (el) el.value = "";
                 });
@@ -521,7 +637,7 @@ class CoreManager {
             status: this.getValue("edit-core-status"),
             usage: this.getValue("edit-core-usage"),
             attenuation: this.getValue("edit-core-attenuation") || null,
-            description: this.getValue("edit-core-description") || null
+            description: this.getValue("edit-core-description") || null,
         };
     }
 
@@ -532,14 +648,21 @@ class CoreManager {
             joint_closure_id: this.getValue("jc-selection"),
             connection_type: this.getValue("connection-type"),
             connection_loss: this.getValue("connection-loss"),
-            notes: this.getValue("connection-notes")
+            notes: this.getValue("connection-notes"),
         };
 
         try {
-            const result = await this.apiRequest("/connections", "POST", formData);
+            const result = await this.apiRequest(
+                "/connections",
+                "POST",
+                formData
+            );
 
             if (result.success) {
-                this.showNotification("Connection created successfully!", "success");
+                this.showNotification(
+                    "Connection created successfully!",
+                    "success"
+                );
                 setTimeout(() => location.reload(), 1000);
             } else {
                 this.showNotification(`Error: ${result.message}`, "error");
@@ -574,9 +697,9 @@ class CoreManager {
         const options = {
             method: method === "PUT" || method === "DELETE" ? "POST" : method,
             headers: {
-                "Accept": "application/json",
-                "X-CSRF-TOKEN": this.getCSRFToken()
-            }
+                Accept: "application/json",
+                "X-CSRF-TOKEN": this.getCSRFToken(),
+            },
         };
 
         if (data) {
@@ -604,7 +727,11 @@ class CoreManager {
     }
 
     getCSRFToken() {
-        return document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "";
+        return (
+            document
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute("content") || ""
+        );
     }
 
     showNotification(message, type = "info") {
@@ -612,11 +739,13 @@ class CoreManager {
             success: "bg-green-500",
             error: "bg-red-500",
             warning: "bg-yellow-500",
-            info: "bg-blue-500"
+            info: "bg-blue-500",
         };
 
         const notification = document.createElement("div");
-        notification.className = `fixed top-4 right-4 z-[9999] px-6 py-4 rounded-lg shadow-xl text-white transform transition-all duration-300 ease-out ${colors[type] || colors.info}`;
+        notification.className = `fixed top-4 right-4 z-[9999] px-6 py-4 rounded-lg shadow-xl text-white transform transition-all duration-300 ease-out ${
+            colors[type] || colors.info
+        }`;
 
         // Set initial position and styling
         notification.style.cssText = `
@@ -675,7 +804,10 @@ class CoreManager {
 
     // Helper methods
     setText(elementOrId, text) {
-        const el = typeof elementOrId === "string" ? document.getElementById(elementOrId) : elementOrId;
+        const el =
+            typeof elementOrId === "string"
+                ? document.getElementById(elementOrId)
+                : elementOrId;
         if (el) el.textContent = text;
     }
 
@@ -688,13 +820,13 @@ class CoreManager {
     }
 
     disableElements(elements) {
-        elements.forEach(el => {
+        elements.forEach((el) => {
             if (el) el.disabled = true;
         });
     }
 
     findAttenuationRow(flexItems) {
-        return Array.from(flexItems).some(item => {
+        return Array.from(flexItems).some((item) => {
             const label = item.querySelector("span:first-child");
             return label && label.textContent.trim() === "Attenuation:";
         });
@@ -711,7 +843,9 @@ class CoreManager {
     }
 
     updateDescription(card, description) {
-        const existingDesc = card.querySelector(".text-xs.text-gray-600.italic");
+        const existingDesc = card.querySelector(
+            ".text-xs.text-gray-600.italic"
+        );
         const detailSection = card.querySelector(".space-y-2");
 
         if (description?.trim()) {
@@ -741,4 +875,5 @@ window.joinCore = (coreId) => {
     coreManager.showModal("join-core-modal");
 };
 window.closeJoinModal = () => coreManager.closeModal("join-core-modal");
-window.disconnectCore = (connectionId) => coreManager.disconnectCore(connectionId);
+window.disconnectCore = (connectionId) =>
+    coreManager.disconnectCore(connectionId);
