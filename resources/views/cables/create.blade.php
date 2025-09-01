@@ -3,6 +3,14 @@
 @section('title', 'Add New Cable')
 
 @push('scripts')
+<script>
+    // Pass configuration from backend to frontend
+    window.cableConfig = {
+        maxTubes: {{ $config['max_tubes'] ?? 8 }},
+        maxCores: {{ $config['max_cores'] ?? 96 }},
+        maxCoresPerTube: {{ $config['max_cores_per_tube'] ?? 12 }}
+    };
+</script>
 <script src="{{ asset('js/add-cable.js') }}"></script>
 @endpush
 
@@ -13,11 +21,14 @@
             <h1 class="text-3xl font-bold text-gray-900">Add New Cable</h1>
             <p class="text-gray-600 mt-2">Create a new fiber optic cable</p>
         </div>
-        <a href="{{ route('cables.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
-            Back to Cables
+        <a href="{{ route('cables.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 flex items-center gap-1">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Cables
         </a>
     </div>
 </div>
+
+<!-- Dynamic Alert Container (will be populated by JavaScript) -->
+<div id="validation-alerts" class="mb-4"></div>
 
 <div class="bg-white rounded-lg shadow">
     <form id="cable-form" method="POST" action="{{ route('cables.store') }}" class="p-6">
@@ -111,26 +122,40 @@
 
             <!-- Total Tubes -->
             <div>
-                <label for="total_tubes" class="block text-sm font-medium text-gray-700 mb-2">Total Tubes *</label>
+                <label for="total_tubes" class="block text-sm font-medium text-gray-700 mb-2">
+                    Total Tubes *
+                    <span class="text-gray-500 font-normal">(Max: {{ $config['max_tubes'] ?? 8 }})</span>
+                </label>
                 <input type="number"
                        id="total_tubes"
                        name="total_tubes"
                        value="{{ old('total_tubes') }}"
                        min="1"
+                       max="{{ $config['max_tubes'] ?? 8 }}"
                        required
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('total_tubes') border-red-500 @enderror">
+                @error('total_tubes')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Total Cores -->
             <div>
-                <label for="total_cores" class="block text-sm font-medium text-gray-700 mb-2">Total Cores *</label>
+                <label for="total_cores" class="block text-sm font-medium text-gray-700 mb-2">
+                    Total Cores *
+                    <span class="text-gray-500 font-normal">(Max: {{ $config['max_cores'] ?? 96 }})</span>
+                </label>
                 <input type="number"
                        id="total_cores"
                        name="total_cores"
                        value="{{ old('total_cores') }}"
                        min="1"
+                       max="{{ $config['max_cores'] ?? 96 }}"
                        required
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('total_cores') border-red-500 @enderror">
+                @error('total_cores')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- OTDR Length -->
@@ -180,25 +205,6 @@
             </div>
         </div>
 
-        <!-- Enhanced Core Distribution Preview -->
-        <div class="col-span-2 mt-6">
-            <div class="bg-blue-50 rounded-lg p-4">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Sequential Core Numbering Preview</h3>
-
-                <div id="distribution-summary" class="mb-4 text-sm text-gray-700">
-                    <strong>Distribution:</strong> <span id="cores-per-tube-display">-</span>
-                </div>
-
-                <div id="core-numbering-preview" class="space-y-2 max-h-60 overflow-y-auto">
-                    <!-- Core numbering preview will be populated by JavaScript -->
-                </div>
-
-                <div id="numbering-summary" class="mt-3 p-3 bg-blue-100 rounded text-sm text-blue-800">
-                    <!-- Summary will be populated by JavaScript -->
-                </div>
-            </div>
-        </div>
-
         <!-- Description -->
         <div class="mt-6">
             <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
@@ -214,13 +220,23 @@
 
         <!-- Submit Button -->
         <div class="mt-8 flex justify-end space-x-4">
-            <a href="{{ route('cables.index') }}" class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
-                Cancel
+            <a href="{{ route('cables.index') }}" class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 flex items-center gap-1">
+                <i data-lucide="x" class="w-4 h-4"></i> Cancel
             </a>
-            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                Create Cable
+            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center gap-1">
+                <i data-lucide="plus" class="w-4 h-4"></i> Create Cable
             </button>
         </div>
     </form>
 </div>
+
+@if(session('warning'))
+    <div class="fixed bottom-4 right-4 bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-md shadow-lg max-w-md">
+        <div class="flex items-center space-x-2">
+            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            <span class="text-sm">{{ session('warning') }}</span>
+        </div>
+    </div>
+@endif
+
 @endsection
