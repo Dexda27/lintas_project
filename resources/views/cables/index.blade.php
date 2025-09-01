@@ -77,8 +77,7 @@
                 @endif
 
                 <!-- Capacity Card for Mobile -->
-                <div class="bg-gray-50 rounded-lg p-3 mb-2">
-                    <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">CAPACITY</div>
+                <div class=" rounded-lg p-3 mb-2">
                     @if($cable->total_cores > 0)
                     @php
                     $percentage = ($cable->connected_cores_count / $cable->total_cores) * 100;
