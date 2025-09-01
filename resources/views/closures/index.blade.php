@@ -43,7 +43,7 @@
             </div>
             <div class="min-w-0 flex-1">
                 <p class="text-gray-600 text-sm font-medium">Total Closures</p>
-                <h3 class="text-2xl font-bold text-gray-900 truncate">{{ $statistics['total_closures'] ?? $closures->total() }}</h3>
+                <h3 class="text-2xl font-bold text-blue-500 truncate">{{ $statistics['total_closures'] ?? $closures->total() }}</h3>
             </div>
         </div>
     </div>
@@ -89,7 +89,7 @@
             </div>
             <div class="min-w-0 flex-1">
                 <p class="text-gray-600 text-sm font-medium">Total Connections</p>
-                <h3 class="text-2xl font-bold text-blue-600 truncate">{{ $statistics['total_connections'] ?? 0 }}</h3>
+                <h3 class="text-2xl font-bold text-gray-600 truncate">{{ $statistics['total_connections'] ?? 0 }}</h3>
             </div>
         </div>
     </div>
