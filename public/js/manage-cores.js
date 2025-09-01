@@ -1,415 +1,201 @@
-// Core Management - Simplified Version
+// Simplified Core Management System
 class CoreManager {
     constructor() {
         this.currentEditingCore = null;
-        this.coreColorMap = [
-            "#0000ff",
-            "#ff7f00",
-            "#00ff00",
-            "#964b00",
-            "#808080",
-            "#ffffff",
-            "#ff0000",
-            "#000000",
-            "#ffff00",
-            "#8f00ff",
-            "#ff00ff",
-            "#00ffff",
-        ];
         this.init();
+    }
+
+    init() {
+        document.addEventListener("DOMContentLoaded", () => {
+            this.setupEventListeners();
+            this.setupKeyboardShortcuts();
+        });
     }
 
     // === CORE EDITING ===
     openEditModal(coreId) {
         this.currentEditingCore = coreId;
-        const coreData = this.getCoreDataFromDOM(coreId);
+        const coreData = this.getCoreData(coreId);
 
         if (!coreData) {
-            this.showNotification("Core not found on page", "error");
+            this.showNotification("Core not found", "error");
             return;
         }
 
-        this.populateEditModal(coreData);
+        this.populateModal(coreData);
         this.showModal("core-edit-modal");
     }
 
-    getCoreDataFromDOM(coreId) {
-        const coreCard = document.querySelector(`[data-core="${coreId}"]`);
-        if (!coreCard) return null;
-
-        const coreNumber = coreCard
-            .querySelector("h4")
-            .textContent.replace("Core ", "");
-        const attenuationEl = coreCard.querySelector(
-            ".space-y-2 .flex:nth-child(3) span:last-child"
-        );
-        const attenuation = attenuationEl?.textContent.includes("dB")
-            ? attenuationEl.textContent.replace(" dB", "")
-            : "";
+    getCoreData(coreId) {
+        const card = document.querySelector(`[data-core="${coreId}"]`);
+        if (!card) return null;
 
         return {
             id: coreId,
-            core_number: parseInt(coreNumber),
-            tube_number: parseInt(coreCard.dataset.tube),
-            status: coreCard.dataset.status,
-            usage: coreCard.dataset.usage,
-            attenuation,
-            description: coreCard.dataset.description || "",
-            cable: { name: document.querySelector("h1").textContent },
+            core_number: parseInt(card.querySelector("h4").textContent.replace("Core ", "")),
+            tube_number: parseInt(card.dataset.tube),
+            status: card.dataset.status,
+            usage: card.dataset.usage,
+            attenuation: this.extractAttenuation(card),
+            description: card.dataset.description || "",
+            cable: { name: document.querySelector("h1").textContent }
         };
     }
 
-    populateEditModal(core) {
-        const elements = {
+    extractAttenuation(card) {
+        const attEl = card.querySelector(".space-y-2 .flex:nth-child(3) span:last-child");
+        return attEl?.textContent.includes("dB")
+            ? attEl.textContent.replace(" dB", "")
+            : "";
+    }
+
+    populateModal(core) {
+        const fields = {
             "edit-core-id": core.id,
             "edit-core-status": core.status || "ok",
             "edit-core-usage": core.usage || "inactive",
-            "edit-core-attenuation": core.attenuation || "",
-            "edit-core-description": core.description || "",
+            "edit-core-attenuation": core.attenuation,
+            "edit-core-description": core.description
         };
 
-        Object.entries(elements).forEach(([id, value]) => {
+        // Populate form fields
+        Object.entries(fields).forEach(([id, value]) => {
             const el = document.getElementById(id);
-            if (el) el.value = value;
+            if (el) el.value = value || "";
         });
 
         // Update modal header
-        this.updateElement(
-            document.getElementById("modal-core-title"),
-            `Core ${core.core_number}`
-        );
-        this.updateElement(
-            document.getElementById("modal-core-location"),
-            `Tube ${core.tube_number} • Cable: ${core.cable.name}`
-        );
+        this.setText("modal-core-title", `Core ${core.core_number}`);
+        this.setText("modal-core-location", `Tube ${core.tube_number} • Cable: ${core.cable.name}`);
     }
 
     async submitEdit(formData) {
         if (!this.currentEditingCore) {
-            this.showNotification("No core selected for editing", "error");
+            this.showNotification("No core selected", "error");
             return;
         }
 
-        const submitBtn = document.querySelector(
-            '#core-edit-form button[type="submit"]'
-        );
-        this.setButtonLoading(submitBtn, true);
+        const submitBtn = document.querySelector('#core-edit-form button[type="submit"]');
+        this.toggleLoading(submitBtn, true);
 
         try {
-            const response = await this.makeRequest(
-                `/cores/${this.currentEditingCore}`,
-                "PUT",
-                formData
-            );
+            const response = await this.apiRequest(`/cores/${this.currentEditingCore}`, "PUT", formData);
 
             if (response.success) {
                 this.showNotification("Core updated successfully!", "success");
-                this.updateCoreCardInDOM(this.currentEditingCore, formData);
+                this.updateCoreCard(this.currentEditingCore, formData);
                 setTimeout(() => this.closeModal("core-edit-modal"), 500);
             } else {
                 throw new Error(response.message || "Update failed");
             }
         } catch (error) {
-            console.error("Error updating core:", error);
-            this.showNotification(
-                "Failed to update core: " + error.message,
-                "error"
-            );
+            this.showNotification(`Failed to update core: ${error.message}`, "error");
         } finally {
-            this.setButtonLoading(submitBtn, false);
+            this.toggleLoading(submitBtn, false);
         }
     }
 
-    updateCoreCardInDOM(coreId, formData) {
-        const coreCard = document.querySelector(`[data-core="${coreId}"]`);
-        if (!coreCard) return;
+    updateCoreCard(coreId, formData) {
+        const card = document.querySelector(`[data-core="${coreId}"]`);
+        if (!card) return;
 
-        // Animation
-        coreCard.style.transform = "scale(0.98)";
-        coreCard.style.transition = "all 0.2s ease";
-
-        setTimeout(() => {
-            // Update attributes
-            Object.assign(coreCard.dataset, {
+        // Animate update
+        this.animateUpdate(card, () => {
+            // Update data attributes
+            Object.assign(card.dataset, {
                 status: formData.status,
                 usage: formData.usage,
-                description: formData.description || "",
+                description: formData.description || ""
             });
 
-            this.updateStatusIndicators(coreCard, formData);
-            this.updateDetailSection(coreCard, formData);
-            this.updateDescription(coreCard, formData.description);
+            this.updateStatusIndicators(card, formData);
+            this.updateDetails(card, formData);
+            this.updateDescription(card, formData.description);
             this.updateStatistics();
-            this.applyFiltersToCard(coreCard);
+            this.applyFilters();
+        });
+    }
 
-            // Reset animation
-            coreCard.style.transform = "scale(1)";
-            coreCard.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1)";
+    animateUpdate(element, callback) {
+        element.style.transform = "scale(0.98)";
+        element.style.transition = "all 0.2s ease";
+
+        setTimeout(() => {
+            callback();
+            element.style.transform = "scale(1)";
             setTimeout(() => {
-                coreCard.style.boxShadow = "";
-                coreCard.style.transition = "";
-            }, 1000);
+                element.style.transform = "";
+                element.style.transition = "";
+            }, 200);
         }, 100);
     }
 
-    updateStatusIndicators(coreCard, formData) {
-        const indicators = coreCard.querySelectorAll(".flex.space-x-1 span");
-        if (indicators.length < 2) return;
+    updateStatusIndicators(card, formData) {
+        const indicators = card.querySelectorAll(".flex.space-x-1 span");
 
-        // Status indicator - check if exists
         if (indicators[1]) {
-            indicators[1].className = `w-3 h-3 rounded-full ${
-                formData.status === "ok" ? "bg-green-500" : "bg-red-500"
-            }`;
-            indicators[1].title = `Status: ${
-                formData.status === "ok" ? "OK" : "Not OK"
-            }`;
+            const isOk = formData.status === "ok";
+            indicators[1].className = `w-3 h-3 rounded-full ${isOk ? "bg-green-500" : "bg-red-500"}`;
+            indicators[1].title = `Status: ${isOk ? "OK" : "Not OK"}`;
         }
 
-        // Usage indicator - check if exists
         if (indicators[2]) {
-            indicators[2].className = `w-3 h-3 rounded-full ${
-                formData.usage === "active" ? "bg-blue-500" : "bg-gray-400"
-            }`;
-            indicators[2].title = `Usage: ${
-                formData.usage.charAt(0).toUpperCase() + formData.usage.slice(1)
-            }`;
+            const isActive = formData.usage === "active";
+            indicators[2].className = `w-3 h-3 rounded-full ${isActive ? "bg-blue-500" : "bg-gray-400"}`;
+            indicators[2].title = `Usage: ${this.capitalize(formData.usage)}`;
         }
     }
 
-    updateDetailSection(coreCard, formData) {
-        const detailSection = coreCard.querySelector(".space-y-2");
+    updateDetails(card, formData) {
+        const detailSection = card.querySelector(".space-y-2");
         if (!detailSection) return;
 
-        const flexItems = detailSection.querySelectorAll(
-            ".flex.justify-between"
-        );
-        const updates = {
-            "Status:": {
-                text: formData.status === "ok" ? "OK" : "Not OK",
-                class: `font-medium ${
-                    formData.status === "ok" ? "text-green-600" : "text-red-600"
-                }`,
-            },
-            "Usage:": {
-                text:
-                    formData.usage.charAt(0).toUpperCase() +
-                    formData.usage.slice(1),
-                class: `font-medium ${
-                    formData.usage === "active"
-                        ? "text-blue-600"
-                        : "text-gray-600"
-                }`,
-            },
-            "Attenuation:": formData.attenuation
-                ? {
-                      text: `${formData.attenuation} dB`,
-                      class: "font-medium",
-                  }
-                : null,
-        };
+        const flexItems = detailSection.querySelectorAll(".flex.justify-between");
 
-        flexItems.forEach((item) => {
-            const label = item.querySelector("span:first-child");
-            const value = item.querySelector("span:last-child");
+        flexItems.forEach(item => {
+            const label = item.querySelector("span:first-child")?.textContent.trim();
+            const valueSpan = item.querySelector("span:last-child");
 
-            if (label && value && updates[label.textContent.trim()]) {
-                const update = updates[label.textContent.trim()];
-                if (update) {
-                    value.textContent = update.text;
-                    value.className = update.class;
-                } else {
-                    item.remove();
-                }
+            if (!valueSpan) return;
+
+            switch (label) {
+                case "Status:":
+                    const isOk = formData.status === "ok";
+                    valueSpan.textContent = isOk ? "OK" : "Not OK";
+                    valueSpan.className = `font-medium ${isOk ? "text-green-600" : "text-red-600"}`;
+                    break;
+
+                case "Usage:":
+                    const isActive = formData.usage === "active";
+                    valueSpan.textContent = this.capitalize(formData.usage);
+                    valueSpan.className = `font-medium ${isActive ? "text-blue-600" : "text-gray-600"}`;
+                    break;
+
+                case "Attenuation:":
+                    if (formData.attenuation) {
+                        valueSpan.textContent = `${formData.attenuation} dB`;
+                    } else {
+                        item.remove();
+                    }
+                    break;
             }
         });
 
-        // Add attenuation if needed
-        if (formData.attenuation && !this.hasAttenuationRow(flexItems)) {
+        // Add attenuation row if needed
+        if (formData.attenuation && !this.findAttenuationRow(flexItems)) {
             this.addAttenuationRow(detailSection, formData.attenuation);
-        }
-    }
-
-    // === MODAL MANAGEMENT ===
-    showModal(modalId) {
-        const modal = document.getElementById(modalId);
-        modal.classList.remove("hidden");
-
-        setTimeout(() => {
-            const content = modal.querySelector(".bg-white");
-            if (content) {
-                content.style.transform = "scale(1)";
-                content.style.opacity = "1";
-            }
-        }, 10);
-
-        // Focus first input
-        const firstInput = modal.querySelector("select, input");
-        if (firstInput) firstInput.focus();
-    }
-
-    closeModal(modalId) {
-        const modal = document.getElementById(modalId);
-        const content = modal.querySelector(".bg-white");
-
-        if (content) {
-            content.style.transform = "scale(0.95)";
-            content.style.opacity = "0.5";
-        }
-
-        setTimeout(() => {
-            modal.classList.add("hidden");
-            if (modalId === "core-edit-modal") this.resetEditModal();
-            if (modalId === "join-core-modal") this.resetJoinModal();
-        }, 150);
-    }
-
-    resetEditModal() {
-        this.currentEditingCore = null;
-        document.getElementById("core-edit-form")?.reset();
-        document.getElementById("edit-core-id").value = "";
-    }
-
-    resetJoinModal() {
-        document.getElementById("join-core-form")?.reset();
-        ["target-cable", "target-tube", "target-core"].forEach((id) => {
-            const el = document.getElementById(id);
-            if (el) el.disabled = true;
-        });
-    }
-
-    // === STATISTICS & FILTERING ===
-    updateStatistics() {
-        const allCards = document.querySelectorAll(".core-card");
-        const stats = {
-            total: allCards.length,
-            active: 0,
-            inactive: 0,
-            problems: 0,
-        };
-
-        allCards.forEach((card) => {
-            if (card.dataset.usage === "active") stats.active++;
-            if (card.dataset.usage === "inactive") stats.inactive++;
-            if (card.dataset.status === "not_ok") stats.problems++;
-        });
-
-        // Update main statistics
-        const statsCards = document.querySelectorAll(
-            ".grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 .bg-white.rounded-lg.shadow"
-        );
-        if (statsCards.length >= 4) {
-            this.updateElement(
-                statsCards[1].querySelector(".text-2xl.font-bold"),
-                stats.active
-            );
-            this.updateElement(
-                statsCards[2].querySelector(".text-2xl.font-bold"),
-                stats.inactive
-            );
-            this.updateElement(
-                statsCards[3].querySelector(".text-2xl.font-bold"),
-                stats.problems
-            );
-        }
-
-        // Update tube statistics
-        this.updateTubeStatistics();
-    }
-
-    updateTubeStatistics() {
-        document.querySelectorAll(".tube-section").forEach((section) => {
-            const cards = section.querySelectorAll(".core-card");
-            const stats = { active: 0, inactive: 0, problems: 0 };
-
-            cards.forEach((card) => {
-                if (card.dataset.usage === "active") stats.active++;
-                if (card.dataset.usage === "inactive") stats.inactive++;
-                if (card.dataset.status === "not_ok") stats.problems++;
-            });
-
-            const tubeStats = section.querySelectorAll(
-                ".flex.items-center.space-x-4 span"
-            );
-            if (tubeStats.length >= 3) {
-                tubeStats[0].innerHTML = `<span class="w-3 h-3 bg-green-500 rounded-full mr-2"></span>Active: ${stats.active}`;
-                tubeStats[1].innerHTML = `<span class="w-3 h-3 bg-gray-400 rounded-full mr-2"></span>Inactive: ${stats.inactive}`;
-                tubeStats[2].innerHTML = `<span class="w-3 h-3 bg-red-500 rounded-full mr-2"></span>Problems: ${stats.problems}`;
-            }
-        });
-    }
-
-    applyFilters() {
-        const filters = {
-            tube: document.getElementById("tube-filter")?.value || "",
-            status: document.getElementById("status-filter")?.value || "",
-            usage: document.getElementById("usage-filter")?.value || "",
-        };
-
-        const coreCards = document.querySelectorAll(".core-card");
-        const tubeSections = document.querySelectorAll(".tube-section");
-        const visibleTubes = new Set();
-
-        // Hide all tube sections initially
-        tubeSections.forEach((section) => (section.style.display = "none"));
-
-        coreCards.forEach((card) => {
-            const shouldShow =
-                (!filters.tube || card.dataset.tube === filters.tube) &&
-                (!filters.status || card.dataset.status === filters.status) &&
-                (!filters.usage || card.dataset.usage === filters.usage);
-
-            card.style.display = shouldShow ? "block" : "none";
-            if (shouldShow) visibleTubes.add(card.dataset.tube);
-        });
-
-        // Show tube sections with visible cards
-        tubeSections.forEach((section) => {
-            if (visibleTubes.has(section.dataset.tube)) {
-                section.style.display = "block";
-            }
-        });
-    }
-
-    applyFiltersToCard(coreCard) {
-        const filters = {
-            tube: document.getElementById("tube-filter")?.value || "",
-            status: document.getElementById("status-filter")?.value || "",
-            usage: document.getElementById("usage-filter")?.value || "",
-        };
-
-        const shouldShow =
-            (!filters.tube || coreCard.dataset.tube === filters.tube) &&
-            (!filters.status || coreCard.dataset.status === filters.status) &&
-            (!filters.usage || coreCard.dataset.usage === filters.usage);
-
-        coreCard.style.display = shouldShow ? "block" : "none";
-
-        const tubeSection = coreCard.closest(".tube-section");
-        if (tubeSection) {
-            const visibleCards = tubeSection.querySelectorAll(
-                '.core-card[style="display: block"], .core-card:not([style*="display: none"])'
-            );
-            tubeSection.style.display =
-                visibleCards.length > 0 ? "block" : "none";
         }
     }
 
     // === CONNECTION MANAGEMENT ===
     async loadJointClosures() {
         try {
-            const data = await this.makeRequest(
-                "/connections/joint-closures",
-                "GET"
-            );
+            const jcs = await this.apiRequest("/connections/joint-closures");
             const select = document.getElementById("jc-selection");
-            select.innerHTML = '<option value="">Select JC...</option>';
 
-            data.forEach((jc) => {
-                const available =
-                    jc.capacity - jc.used_capacity ||
-                    jc.available_capacity ||
-                    0;
+            select.innerHTML = '<option value="">Select JC...</option>';
+            jcs.forEach(jc => {
+                const available = jc.capacity - jc.used_capacity || jc.available_capacity || 0;
                 select.innerHTML += `<option value="${jc.id}">${jc.name} (${jc.location}) - ${available}/${jc.capacity} available</option>`;
             });
         } catch (error) {
@@ -418,79 +204,458 @@ class CoreManager {
     }
 
     async disconnectCore(connectionId) {
-        if (
-            !confirm(
-                "Are you sure you want to disconnect this core connection?"
-            )
-        )
-            return;
+        if (!confirm("Are you sure you want to disconnect this core?")) return;
 
         try {
-            const data = await this.makeRequest(
-                `/connections/${connectionId}`,
-                "DELETE"
-            );
-            if (data.success) {
+            const result = await this.apiRequest(`/connections/${connectionId}`, "DELETE");
+
+            if (result.success) {
                 location.reload();
             } else {
-                this.showNotification(
-                    "Error: " + (data.message || "Unknown error"),
-                    "error"
-                );
+                this.showNotification(`Error: ${result.message}`, "error");
             }
         } catch (error) {
-            console.error("Error:", error);
             this.showNotification("Error disconnecting core", "error");
         }
     }
 
-    // === UTILITY FUNCTIONS ===
-    // Perbaiki method makeRequest() di manage-cores.js (sekitar baris 400)
+    // === MODAL MANAGEMENT ===
+    showModal(modalId) {
+        const modal = document.getElementById(modalId);
+        const content = modal.querySelector(".bg-white");
 
-    async makeRequest(url, method, formData = null) {
+        // Set initial state
+        modal.style.backgroundColor = "rgba(0, 0, 0, 0)";
+        if (content) {
+            content.style.transform = "scale(0.9) translateY(-20px)";
+            content.style.opacity = "0";
+            content.style.transition = "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)";
+        }
+
+        // Remove hidden class and start animation
+        modal.classList.remove("hidden");
+        modal.style.transition = "background-color 0.3s ease";
+
+        // Use requestAnimationFrame for smoother animation
+        requestAnimationFrame(() => {
+            modal.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+
+            if (content) {
+                content.style.transform = "scale(1) translateY(0)";
+                content.style.opacity = "1";
+            }
+        });
+
+        // Focus first input after animation
+        setTimeout(() => {
+            modal.querySelector("select, input")?.focus();
+        }, 100);
+    }
+
+    closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        const content = modal.querySelector(".bg-white");
+
+        // Start close animation
+        modal.style.backgroundColor = "rgba(0, 0, 0, 0)";
+
+        if (content) {
+            content.style.transform = "scale(0.9) translateY(-20px)";
+            content.style.opacity = "0";
+        }
+
+        // Hide modal after animation completes
+        setTimeout(() => {
+            modal.classList.add("hidden");
+            this.resetModal(modalId);
+
+            // Reset styles for next use
+            if (content) {
+                content.style.transform = "";
+                content.style.opacity = "";
+                content.style.transition = "";
+            }
+            modal.style.backgroundColor = "";
+            modal.style.transition = "";
+        }, 300);
+    }
+
+    resetModal(modalId) {
+        if (modalId === "core-edit-modal") {
+            this.currentEditingCore = null;
+            document.getElementById("core-edit-form")?.reset();
+        } else if (modalId === "join-core-modal") {
+            document.getElementById("join-core-form")?.reset();
+            ["target-cable", "target-tube", "target-core"].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.disabled = true;
+            });
+        }
+    }
+
+    // === FILTERING & STATISTICS ===
+    applyFilters() {
+        const filters = this.getActiveFilters();
+        const cards = document.querySelectorAll(".core-card");
+        const visibleTubes = new Set();
+
+        // Hide all tube sections first
+        document.querySelectorAll(".tube-section").forEach(section => {
+            section.style.display = "none";
+        });
+
+        // Show/hide cards based on filters
+        cards.forEach(card => {
+            const shouldShow = this.shouldShowCard(card, filters);
+            card.style.display = shouldShow ? "block" : "none";
+
+            if (shouldShow) {
+                visibleTubes.add(card.dataset.tube);
+            }
+        });
+
+        // Show tube sections with visible cards
+        document.querySelectorAll(".tube-section").forEach(section => {
+            if (visibleTubes.has(section.dataset.tube)) {
+                section.style.display = "block";
+            }
+        });
+    }
+
+    getActiveFilters() {
+        return {
+            tube: document.getElementById("tube-filter")?.value || "",
+            status: document.getElementById("status-filter")?.value || "",
+            usage: document.getElementById("usage-filter")?.value || ""
+        };
+    }
+
+    shouldShowCard(card, filters) {
+        return (!filters.tube || card.dataset.tube === filters.tube) &&
+               (!filters.status || card.dataset.status === filters.status) &&
+               (!filters.usage || card.dataset.usage === filters.usage);
+    }
+
+    updateStatistics() {
+        const cards = document.querySelectorAll(".core-card");
+        const stats = { total: cards.length, active: 0, inactive: 0, problems: 0 };
+
+        cards.forEach(card => {
+            if (card.dataset.usage === "active") stats.active++;
+            if (card.dataset.usage === "inactive") stats.inactive++;
+            if (card.dataset.status === "not_ok") stats.problems++;
+        });
+
+        this.updateMainStats(stats);
+        this.updateTubeStats();
+    }
+
+    updateMainStats(stats) {
+        const statsCards = document.querySelectorAll(".grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 .bg-white.rounded-lg.shadow");
+        if (statsCards.length >= 4) {
+            this.setText(statsCards[1].querySelector(".text-2xl.font-bold"), stats.active);
+            this.setText(statsCards[2].querySelector(".text-2xl.font-bold"), stats.inactive);
+            this.setText(statsCards[3].querySelector(".text-2xl.font-bold"), stats.problems);
+        }
+    }
+
+    updateTubeStats() {
+        document.querySelectorAll(".tube-section").forEach(section => {
+            const cards = section.querySelectorAll(".core-card");
+            const stats = { active: 0, inactive: 0, problems: 0 };
+
+            cards.forEach(card => {
+                if (card.dataset.usage === "active") stats.active++;
+                if (card.dataset.usage === "inactive") stats.inactive++;
+                if (card.dataset.status === "not_ok") stats.problems++;
+            });
+
+            const tubeStats = section.querySelectorAll(".flex.items-center.space-x-4 span");
+            if (tubeStats.length >= 3) {
+                tubeStats[0].innerHTML = this.createStatHTML("green", "Active", stats.active);
+                tubeStats[1].innerHTML = this.createStatHTML("gray", "Inactive", stats.inactive);
+                tubeStats[2].innerHTML = this.createStatHTML("red", "Problems", stats.problems);
+            }
+        });
+    }
+
+    createStatHTML(color, label, count) {
+        return `<span class="w-3 h-3 bg-${color}-500 rounded-full mr-2"></span>${label}: ${count}`;
+    }
+
+    // === CASCADE DROPDOWNS ===
+    setupCascadeDropdowns() {
+        const selectors = {
+            jc: document.getElementById("jc-selection"),
+            cable: document.getElementById("target-cable"),
+            tube: document.getElementById("target-tube"),
+            core: document.getElementById("target-core")
+        };
+
+        if (selectors.jc) {
+            selectors.jc.addEventListener("change", async () => {
+                await this.loadCables(selectors.jc.value, selectors.cable);
+                this.disableElements([selectors.tube, selectors.core]);
+            });
+        }
+
+        if (selectors.cable) {
+            selectors.cable.addEventListener("change", async () => {
+                await this.loadTubes(selectors.cable.value, selectors.tube);
+                this.disableElements([selectors.core]);
+            });
+        }
+
+        if (selectors.tube) {
+            selectors.tube.addEventListener("change", async () => {
+                await this.loadCores(selectors.cable.value, selectors.tube.value, selectors.core);
+            });
+        }
+    }
+
+    async loadCables(jcId, cableSelect) {
+        if (!jcId) return;
+
+        try {
+            const cables = await this.apiRequest(`/connections/joint-closures/${jcId}/cables`);
+            cableSelect.innerHTML = '<option value="">Select Cable...</option>';
+
+            cables.forEach(cable => {
+                if (cable.id !== window.currentCableId) {
+                    cableSelect.innerHTML += `<option value="${cable.id}">${cable.name} (${cable.cable_id})</option>`;
+                }
+            });
+            cableSelect.disabled = false;
+        } catch (error) {
+            console.error("Error loading cables:", error);
+        }
+    }
+
+    async loadTubes(cableId, tubeSelect) {
+        if (!cableId) return;
+
+        try {
+            const data = await this.apiRequest(`/connections/cables/${cableId}/tubes`);
+            tubeSelect.innerHTML = '<option value="">Select Tube...</option>';
+
+            for (let i = 1; i <= data.total_tubes; i++) {
+                tubeSelect.innerHTML += `<option value="${i}">Tube ${i}</option>`;
+            }
+            tubeSelect.disabled = false;
+        } catch (error) {
+            console.error("Error loading tubes:", error);
+        }
+    }
+
+    async loadCores(cableId, tubeId, coreSelect) {
+        if (!cableId || !tubeId) return;
+
+        try {
+            const cores = await this.apiRequest(`/connections/cables/${cableId}/tubes/${tubeId}/cores`);
+            coreSelect.innerHTML = '<option value="">Select Core...</option>';
+
+            cores.forEach(core => {
+                const isOk = core.status === "ok";
+                coreSelect.innerHTML += `<option value="${core.id}" ${!isOk ? 'style="color: #ef4444"' : ""}>
+                    Core ${core.core_number}${!isOk ? " (!)" : ""}
+                </option>`;
+            });
+            coreSelect.disabled = false;
+        } catch (error) {
+            console.error("Error loading cores:", error);
+        }
+    }
+
+    // === EVENT LISTENERS ===
+    setupEventListeners() {
+        this.setupFilters();
+        this.setupForms();
+        this.setupCascadeDropdowns();
+    }
+
+    setupFilters() {
+        const filterIds = ["tube-filter", "status-filter", "usage-filter"];
+
+        filterIds.forEach(id => {
+            const filter = document.getElementById(id);
+            if (filter) {
+                filter.addEventListener("change", () => this.applyFilters());
+            }
+        });
+
+        const clearBtn = document.getElementById("clear-filters");
+        if (clearBtn) {
+            clearBtn.addEventListener("click", () => {
+                filterIds.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = "";
+                });
+                this.applyFilters();
+            });
+        }
+    }
+
+    setupForms() {
+        // Core Edit Form
+        const editForm = document.getElementById("core-edit-form");
+        if (editForm) {
+            editForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const formData = this.getEditFormData();
+                this.submitEdit(formData);
+            });
+        }
+
+        // Join Core Form
+        const joinForm = document.getElementById("join-core-form");
+        if (joinForm) {
+            joinForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+                this.submitJoinForm();
+            });
+        }
+    }
+
+    getEditFormData() {
+        return {
+            status: this.getValue("edit-core-status"),
+            usage: this.getValue("edit-core-usage"),
+            attenuation: this.getValue("edit-core-attenuation") || null,
+            description: this.getValue("edit-core-description") || null
+        };
+    }
+
+    async submitJoinForm() {
+        const formData = {
+            source_core_id: this.getValue("join-core-id"),
+            target_core_id: this.getValue("target-core"),
+            joint_closure_id: this.getValue("jc-selection"),
+            connection_type: this.getValue("connection-type"),
+            connection_loss: this.getValue("connection-loss"),
+            notes: this.getValue("connection-notes")
+        };
+
+        try {
+            const result = await this.apiRequest("/connections", "POST", formData);
+
+            if (result.success) {
+                this.showNotification("Connection created successfully!", "success");
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                this.showNotification(`Error: ${result.message}`, "error");
+            }
+        } catch (error) {
+            this.showNotification("Error creating connection", "error");
+        }
+    }
+
+    setupKeyboardShortcuts() {
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                this.closeVisibleModal();
+            }
+        });
+    }
+
+    closeVisibleModal() {
+        const modals = ["core-edit-modal", "join-core-modal"];
+
+        for (const modalId of modals) {
+            const modal = document.getElementById(modalId);
+            if (modal && !modal.classList.contains("hidden")) {
+                this.closeModal(modalId);
+                break;
+            }
+        }
+    }
+
+    // === UTILITY METHODS ===
+    async apiRequest(url, method = "GET", data = null) {
         const options = {
             method: method === "PUT" || method === "DELETE" ? "POST" : method,
             headers: {
-                Accept: "application/json",
-                "X-CSRF-TOKEN": this.getCSRFToken(),
-            },
+                "Accept": "application/json",
+                "X-CSRF-TOKEN": this.getCSRFToken()
+            }
         };
 
-        if (formData) {
-            const submitData = new FormData();
-            submitData.append("_token", this.getCSRFToken());
+        if (data) {
+            const formData = new FormData();
+            formData.append("_token", this.getCSRFToken());
 
             if (method === "PUT" || method === "DELETE") {
-                submitData.append("_method", method);
+                formData.append("_method", method);
             }
 
-            // PERBAIKAN: Kirim semua field termasuk yang kosong
-            Object.entries(formData).forEach(([key, value]) => {
-                // Kirim semua field, termasuk yang kosong (null atau "")
-                // Hanya skip jika benar-benar undefined
+            Object.entries(data).forEach(([key, value]) => {
                 if (value !== undefined) {
-                    submitData.append(key, value || ""); // Pastikan value tidak null
+                    formData.append(key, value || "");
                 }
             });
 
-            options.body = submitData;
+            options.body = formData;
         }
 
         const response = await fetch(url, options);
-        if (!response.ok)
+        if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
+        }
         return response.json();
     }
 
     getCSRFToken() {
-        return (
-            document
-                .querySelector('meta[name="csrf-token"]')
-                ?.getAttribute("content") || ""
-        );
+        return document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "";
     }
 
-    setButtonLoading(button, isLoading) {
+    showNotification(message, type = "info") {
+        const colors = {
+            success: "bg-green-500",
+            error: "bg-red-500",
+            warning: "bg-yellow-500",
+            info: "bg-blue-500"
+        };
+
+        const notification = document.createElement("div");
+        notification.className = `fixed top-4 right-4 z-[9999] px-6 py-4 rounded-lg shadow-xl text-white transform transition-all duration-300 ease-out ${colors[type] || colors.info}`;
+
+        // Set initial position and styling
+        notification.style.cssText = `
+            min-width: 300px;
+            max-width: 400px;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.4;
+            word-wrap: break-word;
+            transform: translateX(100%) scale(0.95);
+            opacity: 0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        `;
+
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        // Force reflow then animate in
+        notification.offsetHeight;
+
+        requestAnimationFrame(() => {
+            notification.style.transform = "translateX(0) scale(1)";
+            notification.style.opacity = "1";
+        });
+
+        // Animate out and remove
+        setTimeout(() => {
+            notification.style.transform = "translateX(100%) scale(0.95)";
+            notification.style.opacity = "0";
+
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 300);
+        }, 4000);
+    }
+
+    toggleLoading(button, isLoading) {
         if (!button) return;
 
         if (isLoading) {
@@ -508,57 +673,46 @@ class CoreManager {
         }
     }
 
-    updateElement(element, content, styles = null) {
-        if (!element) return;
-        if (content !== undefined) element.textContent = content;
-        if (styles) Object.assign(element.style, styles);
+    // Helper methods
+    setText(elementOrId, text) {
+        const el = typeof elementOrId === "string" ? document.getElementById(elementOrId) : elementOrId;
+        if (el) el.textContent = text;
     }
 
-    showNotification(message, type = "info") {
-        const colors = {
-            success: "bg-green-500 text-white",
-            error: "bg-red-500 text-white",
-            warning: "bg-yellow-500 text-white",
-            info: "bg-blue-500 text-white",
-        };
-
-        const notification = document.createElement("div");
-        notification.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg max-w-sm transform transition-all duration-300 translate-x-full ${
-            colors[type] || colors.info
-        }`;
-        notification.textContent = message;
-
-        document.body.appendChild(notification);
-
-        setTimeout(() => (notification.style.transform = "translateX(0)"), 10);
-        setTimeout(() => {
-            notification.style.transform = "translateX(full)";
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
+    getValue(elementId) {
+        return document.getElementById(elementId)?.value || "";
     }
 
-    hasAttenuationRow(flexItems) {
-        return Array.from(flexItems).some((item) => {
+    capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    disableElements(elements) {
+        elements.forEach(el => {
+            if (el) el.disabled = true;
+        });
+    }
+
+    findAttenuationRow(flexItems) {
+        return Array.from(flexItems).some(item => {
             const label = item.querySelector("span:first-child");
             return label && label.textContent.trim() === "Attenuation:";
         });
     }
 
     addAttenuationRow(detailSection, attenuation) {
-        const newRow = document.createElement("div");
-        newRow.className = "flex justify-between";
-        newRow.innerHTML = `
+        const row = document.createElement("div");
+        row.className = "flex justify-between";
+        row.innerHTML = `
             <span class="text-gray-600">Attenuation:</span>
             <span class="font-medium">${attenuation} dB</span>
         `;
-        detailSection.appendChild(newRow);
+        detailSection.appendChild(row);
     }
 
-    updateDescription(coreCard, description) {
-        const existingDesc = coreCard.querySelector(
-            ".text-xs.text-gray-600.italic"
-        );
-        const detailSection = coreCard.querySelector(".space-y-2");
+    updateDescription(card, description) {
+        const existingDesc = card.querySelector(".text-xs.text-gray-600.italic");
+        const detailSection = card.querySelector(".space-y-2");
 
         if (description?.trim()) {
             if (existingDesc) {
@@ -573,236 +727,18 @@ class CoreManager {
             existingDesc.closest(".mt-2")?.remove();
         }
     }
-
-    // === CASCADE DROPDOWN HANDLERS ===
-    setupCascadeDropdowns() {
-        const jcSelect = document.getElementById("jc-selection");
-        const cableSelect = document.getElementById("target-cable");
-        const tubeSelect = document.getElementById("target-tube");
-        const coreSelect = document.getElementById("target-core");
-
-        if (jcSelect) {
-            jcSelect.addEventListener("change", async () => {
-                if (jcSelect.value) {
-                    try {
-                        const data = await this.makeRequest(
-                            `/connections/joint-closures/${jcSelect.value}/cables`
-                        );
-                        cableSelect.innerHTML =
-                            '<option value="">Select Cable...</option>';
-                        data.forEach((cable) => {
-                            if (cable.id !== window.currentCableId) {
-                                cableSelect.innerHTML += `<option value="${cable.id}">${cable.name} (${cable.cable_id})</option>`;
-                            }
-                        });
-                        cableSelect.disabled = false;
-                    } catch (error) {
-                        console.error("Error loading cables:", error);
-                    }
-                }
-                [tubeSelect, coreSelect].forEach((el) => (el.disabled = true));
-            });
-        }
-
-        if (cableSelect) {
-            cableSelect.addEventListener("change", async () => {
-                if (cableSelect.value) {
-                    try {
-                        const data = await this.makeRequest(
-                            `/connections/cables/${cableSelect.value}/tubes`
-                        );
-                        tubeSelect.innerHTML =
-                            '<option value="">Select Tube...</option>';
-                        for (let i = 1; i <= data.total_tubes; i++) {
-                            tubeSelect.innerHTML += `<option value="${i}">Tube ${i}</option>`;
-                        }
-                        tubeSelect.disabled = false;
-                    } catch (error) {
-                        console.error("Error loading tubes:", error);
-                    }
-                }
-                coreSelect.disabled = true;
-            });
-        }
-
-        if (tubeSelect) {
-            tubeSelect.addEventListener("change", async () => {
-                if (cableSelect.value && tubeSelect.value) {
-                    try {
-                        const data = await this.makeRequest(
-                            `/connections/cables/${cableSelect.value}/tubes/${tubeSelect.value}/cores`
-                        );
-                        coreSelect.innerHTML =
-                            '<option value="">Select Core...</option>';
-                        data.forEach((core) => {
-                            coreSelect.innerHTML += `<option value="${
-                                core.id
-                            }" ${
-                                core.status !== "ok"
-                                    ? 'style="color: #ef4444"'
-                                    : ""
-                            }>Core ${core.core_number}${
-                                core.status !== "ok" ? " (!)" : ""
-                            }</option>`;
-                        });
-                        coreSelect.disabled = false;
-                    } catch (error) {
-                        console.error("Error loading cores:", error);
-                    }
-                }
-            });
-        }
-    }
-
-    // === INITIALIZATION ===
-    init() {
-        document.addEventListener("DOMContentLoaded", () => {
-            this.initializeModals();
-            this.setupFilters();
-            this.setupForms();
-            this.setupCascadeDropdowns();
-            this.setupKeyboardHandlers();
-        });
-    }
-
-    initializeModals() {
-        const modalContent = document.querySelector(
-            "#core-edit-modal .bg-white"
-        );
-        if (modalContent) {
-            modalContent.style.transform = "scale(0.95)";
-            modalContent.style.opacity = "0.5";
-            modalContent.style.transition = "all 0.15s ease-out";
-        }
-    }
-
-    setupFilters() {
-        const filterIds = ["tube-filter", "status-filter", "usage-filter"];
-        const filters = {};
-
-        filterIds.forEach((id) => {
-            filters[id] = document.getElementById(id);
-            if (filters[id]) {
-                filters[id].addEventListener("change", () =>
-                    this.applyFilters()
-                );
-            }
-        });
-
-        const clearButton = document.getElementById("clear-filters");
-        if (clearButton) {
-            clearButton.addEventListener("click", () => {
-                Object.values(filters).forEach((filter) => {
-                    if (filter) filter.value = "";
-                });
-                this.applyFilters();
-            });
-        }
-    }
-
-    setupForms() {
-        // Core Edit Form
-        const coreEditForm = document.getElementById("core-edit-form");
-        if (coreEditForm) {
-            coreEditForm.addEventListener("submit", (e) => {
-                e.preventDefault();
-                const formData = {
-                    status: document.getElementById("edit-core-status").value,
-                    usage: document.getElementById("edit-core-usage").value,
-                    attenuation:
-                        document.getElementById("edit-core-attenuation")
-                            .value || null,
-                    description:
-                        document.getElementById("edit-core-description")
-                            .value || null,
-                };
-                this.submitEdit(formData);
-            });
-        }
-
-        // Join Form
-        const joinForm = document.getElementById("join-core-form");
-        if (joinForm) {
-            joinForm.addEventListener("submit", async (e) => {
-                e.preventDefault();
-
-                const fieldMappings = {
-                    "join-core-id": "source_core_id",
-                    "target-core": "target_core_id",
-                    "jc-selection": "joint_closure_id",
-                    "connection-type": "connection_type",
-                    "connection-loss": "connection_loss",
-                    "connection-notes": "notes",
-                };
-
-                const formData = {};
-                Object.entries(fieldMappings).forEach(
-                    ([elementId, fieldName]) => {
-                        const element = document.getElementById(elementId);
-                        if (element) formData[fieldName] = element.value;
-                    }
-                );
-
-                try {
-                    const data = await this.makeRequest(
-                        "/connections",
-                        "POST",
-                        formData
-                    );
-                    if (data.success) {
-                        this.showNotification(
-                            "Connection created successfully!",
-                            "success"
-                        );
-                        setTimeout(() => location.reload(), 1000);
-                    } else {
-                        this.showNotification(
-                            "Error: " + (data.message || "Unknown error"),
-                            "error"
-                        );
-                    }
-                } catch (error) {
-                    console.error("Error:", error);
-                    this.showNotification("Error creating connection", "error");
-                }
-            });
-        }
-    }
-
-    setupKeyboardHandlers() {
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") {
-                const editModal = document.getElementById("core-edit-modal");
-                const joinModal = document.getElementById("join-core-modal");
-
-                if (!editModal.classList.contains("hidden")) {
-                    this.closeModal("core-edit-modal");
-                } else if (!joinModal.classList.contains("hidden")) {
-                    this.closeModal("join-core-modal");
-                }
-            }
-        });
-    }
 }
 
-// Initialize Core Manager
+// Initialize and expose global functions
 const coreManager = new CoreManager();
 
 // Global functions for backward compatibility
-function openCoreEditModal(coreId) {
-    coreManager.openEditModal(coreId);
-}
-function closeCoreEditModal() {
-    coreManager.closeModal("core-edit-modal");
-}
-function joinCore(coreId) {
+window.openCoreEditModal = (coreId) => coreManager.openEditModal(coreId);
+window.closeCoreEditModal = () => coreManager.closeModal("core-edit-modal");
+window.joinCore = (coreId) => {
     document.getElementById("join-core-id").value = coreId;
     coreManager.loadJointClosures();
     coreManager.showModal("join-core-modal");
-}
-function closeJoinModal() {
-    coreManager.closeModal("join-core-modal");
-}
-function disconnectCore(connectionId) {
-    coreManager.disconnectCore(connectionId);
-}
+};
+window.closeJoinModal = () => coreManager.closeModal("join-core-modal");
+window.disconnectCore = (connectionId) => coreManager.disconnectCore(connectionId);

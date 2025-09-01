@@ -22,7 +22,7 @@
         <p class="text-gray-800 font-medium mt-2">Cable ID: {{ $cable->cable_id }}</p>
     </div>
     <div class="flex space-x-2">
-        <a href="{{ route('cables.edit', $cable) }}" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Edit Cable</a>
+        <a href="{{ route('cables.edit', $cable) }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Edit Cable</a>
         <a href="{{ route('cables.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">Back to List</a>
     </div>
 </div>
@@ -318,10 +318,114 @@
     @endforeach
 </div>
 
-{{-- Join Core Modal --}}
-<div id="join-core-modal" class="fixed inset-0 backdrop-blur-xs hidden z-50">
+{{-- Disconnect Confirmation Modal --}}
+<div id="disconnect-modal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm hidden z-50">
     <div class="flex items-center justify-center min-h-screen px-4">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md transform transition-all">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-red-100 p-2 rounded-full">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Confirm Disconnect</h3>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <div class="mb-4">
+                    <p class="text-gray-700 mb-2">Are you sure you want to disconnect this core connection?</p>
+                    <div class="bg-gray-50 rounded-lg p-3 border">
+                        <p class="text-sm font-medium text-gray-900" id="disconnect-core-info">Core information will be displayed here</p>
+                        <p class="text-xs text-gray-600 mt-1">This action cannot be undone.</p>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                    <div class="flex items-start space-x-2">
+                        <svg class="w-5 h-5 text-yellow-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        <div>
+                            <p class="text-sm font-medium text-yellow-800">Warning</p>
+                            <p class="text-xs text-yellow-700">Disconnecting will remove the connection between cores and may affect network connectivity.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 bg-gray-50 rounded-b-lg flex justify-end space-x-3">
+                <button type="button" onclick="closeDisconnectModal()" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">
+                    Cancel
+                </button>
+                <button type="button" onclick="confirmDisconnect()" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    Disconnect
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Disconnect Confirmation Modal --}}
+<div id="disconnect-modal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm hidden z-50">
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md transform transition-all">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-red-100 p-2 rounded-full">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Confirm Disconnect</h3>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <div class="mb-4">
+                    <p class="text-gray-700 mb-2">Are you sure you want to disconnect this core connection?</p>
+                    <div class="bg-gray-50 rounded-lg p-3 border">
+                        <p class="text-sm font-medium text-gray-900" id="disconnect-core-info">Core information will be displayed here</p>
+                        <p class="text-xs text-gray-600 mt-1">This action cannot be undone.</p>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                    <div class="flex items-start space-x-2">
+                        <svg class="w-5 h-5 text-yellow-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        <div>
+                            <p class="text-sm font-medium text-yellow-800">Warning</p>
+                            <p class="text-xs text-yellow-700">Disconnecting will remove the connection between cores and may affect network connectivity.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 bg-gray-50 rounded-b-lg flex justify-end space-x-3">
+                <button type="button" onclick="closeDisconnectModal()" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">
+                    Cancel
+                </button>
+                <button type="button" onclick="confirmDisconnect()" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    Disconnect
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Join Core Modal --}}
+<div id="join-core-modal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm hidden z-50">
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg transform transition-all">
             <div class="px-6 py-4 border-b">
                 <h3 class="text-lg font-semibold">Join Core to Connection</h3>
             </div>
@@ -381,17 +485,21 @@
 </div>
 
 {{-- Core Edit Modal --}}
-<div id="core-edit-modal" class="fixed inset-0 backdrop-blur-xs hidden z-50">
+<div id="core-edit-modal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm hidden z-50">
     <div class="flex items-center justify-center min-h-screen px-4">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg transform transition-all">
             <div class="px-6 py-4 border-b">
                 <div class="flex justify-between items-center">
                     <h3 class="text-lg font-semibold">Edit Core Information</h3>
+                    <div class="text-sm text-gray-600">
+                        <span id="modal-core-title">Core #</span>
+                        <br>
+                        <span id="modal-core-location" class="text-xs">Location info</span>
+                    </div>
                 </div>
             </div>
 
             <div class="p-6">
-
                 <form id="core-edit-form" class="space-y-4">
                     <input type="hidden" id="edit-core-id">
 
