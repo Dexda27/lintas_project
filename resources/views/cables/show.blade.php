@@ -35,7 +35,7 @@
                 <i data-lucide="layers" class="w-6 h-6"></i>
             </div>
             <div>
-                <p class="text-sm font-medium text-gray-600">Total Cores</p>
+                <p class="text-md font-semibold text-gray-600">Total Cores</p>
                 <p class="text-2xl font-bold text-gray-900">{{ $statistics['total_cores'] }}</p>
             </div>
         </div>
@@ -48,8 +48,8 @@
                 <i data-lucide="check-circle" class="w-6 h-6"></i>
             </div>
             <div>
-                <p class="text-sm font-medium text-gray-600">Active Cores</p>
-                <p class="text-2xl font-bold text-emerald-600">{{ $statistics['active_cores'] }}</p>
+                <p class="text-md font-semibold text-gray-600">Active Cores</p>
+                <p class="text-2xl font-bold text-gray-900">{{ $statistics['active_cores'] }}</p>
             </div>
         </div>
     </div>
@@ -61,8 +61,8 @@
                 <i data-lucide="circle-minus" class="w-6 h-6"></i>
             </div>
             <div>
-                <p class="text-sm font-medium text-gray-600">Inactive Cores</p>
-                <p class="text-2xl font-bold text-gray-600">{{ $statistics['inactive_cores'] }}</p>
+                <p class="text-md font-semibold text-gray-600">Inactive Cores</p>
+                <p class="text-2xl font-bold text-gray-900">{{ $statistics['inactive_cores'] }}</p>
             </div>
         </div>
     </div>
@@ -74,8 +74,8 @@
                 <i data-lucide="triangle-alert" class="w-6 h-6"></i>
             </div>
             <div>
-                <p class="text-sm font-medium text-gray-600">Problem Cores</p>
-                <p class="text-2xl font-bold text-black-600">{{ $statistics['problem_cores'] }}</p>
+                <p class="text-md font-semibold text-gray-600">Problem Cores</p>
+                <p class="text-2xl font-bold text-gray-900">{{ $statistics['problem_cores'] }}</p>
             </div>
         </div>
     </div>
@@ -152,24 +152,16 @@
                         </div>
                     </div>
 
-                    <div class="flex justify-center">
+                   <div class="flex justify-center">
                         <div class="flex flex-col items-center space-y-2">
-                            <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                            </svg>
-                            <div class="h-8 w-0.5 bg-gray-500"></div>
-                            <svg class="w-6 h-6 text-gray-500   " fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                            </svg>
+                            <i data-lucide="arrow-up-down" class="w-15 h-15 text-gray-600"></i>
+                           
                         </div>
                     </div>
-
                     <div class="text-center">
                         <div class=" space-x-4">
                             <p class="text-sm font-medium text-gray-600 mb-1">Destination Site</p>
-                            <p class="text-lg font-semibold text-green-900">{{ $cable->destination_site }}</p>
+                            <p class="text-lg font-semibold text-green-700">{{ $cable->destination_site }}</p>
                         </div>
                     </div>
                 </div>
@@ -274,6 +266,14 @@
                         </div>
                         @endif
 
+                         @if($core->description)
+                         <div class="flex justify-between">
+                            <span class="text-gray-600">Description:</span>
+                            <span class="font-medium">{{ $core->description }}</span>
+                        </div>
+                        @endif
+                        
+
                         @if($core->connection)
                         @php $connectedCore = $core->connection->coreA->id === $core->id ? $core->connection->coreB : $core->connection->coreA; @endphp
                         <div class="mt-2 p-2 bg-blue-50 rounded text-xs border-l-4 border-blue-400">
@@ -289,15 +289,9 @@
                                 <p>Loss: {{ $core->connection->loss }} dB</p>
                                 @endif
                                 @if($core->connection->notes)
-                                <p class="text-gray-500 italic">{{ $core->connection->notes }}</p>
+                                <p class="text-md text-gray-600">{{ $core->connection->notes }}</p>
                                 @endif
                             </div>
-                        </div>
-                        @endif
-
-                        @if($core->description)
-                        <div class="mt-4">
-                            <p class="text-xs text-gray-600 italic"> {{ $core->description }}</p>
                         </div>
                         @endif
                     </div>
