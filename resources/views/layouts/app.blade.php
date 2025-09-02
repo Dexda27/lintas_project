@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <title>@yield('title', 'Fiber Core Management')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
+
 </head>
 
 <body class="bg-gray-50">
@@ -180,8 +180,6 @@
         // Sidebar state management
         let sidebarOpen = window.innerWidth >= 1024; // desktop terbuka, mobile/tablet tertutup
 
-
-
         // DOM elements
         const sidebarToggle = document.getElementById('sidebar-toggle');
         const sidebar = document.getElementById('sidebar');
@@ -196,78 +194,84 @@
             if (sidebarOpen) {
                 // Open sidebar
                 sidebar.classList.remove('-translate-x-full');
-                mainContent.classList.add('ml-64');
-                mainContent.classList.remove('ml-0');
-                hamburgerIcon.setAttribute('data-lucide', 'menu');
+                if (window.innerWidth >= 768) {
+                    mainContent.classList.add('ml-64');
+                    mainContent.classList.remove('ml-0');
+                }
+                hamburgerIcon.setAttribute('data-lucide', 'x');
+
+                // Show overlay on mobile
+                if (window.innerWidth < 768) {
+                    sidebarOverlay.classList.remove('hidden');
+                }
             } else {
                 // Close sidebar
                 sidebar.classList.add('-translate-x-full');
                 mainContent.classList.remove('ml-64');
                 mainContent.classList.add('ml-0');
-                hamburgerIcon.setAttribute('data-lucide', 'x');
+                hamburgerIcon.setAttribute('data-lucide', 'menu');
+
+                // Hide overlay
+                sidebarOverlay.classList.add('hidden');
             }
 
             // Recreate icons after changing the icon
             lucide.createIcons();
         }
 
-        function toggleSidebar() {
-            sidebarOpen = !sidebarOpen;
-
-            if (sidebarOpen) {
-                sidebar.classList.remove('-translate-x-full');
-                mainContent.classList.add('ml-64');
-                mainContent.classList.remove('ml-0');
-                hamburgerIcon.setAttribute('data-lucide', 'menu');
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                mainContent.classList.remove('ml-64');
-                mainContent.classList.add('ml-0');
-                hamburgerIcon.setAttribute('data-lucide', 'x');
-            }
-
-            lucide.createIcons();
-
-            // Handle overlay untuk mobile dengan transparansi
-            if (window.innerWidth < 768) {
-                if (sidebarOpen) {
-                    // Gunakan bg-opacity-0 untuk transparan
-                    sidebarOverlay.classList.remove('hidden');
-                    sidebarOverlay.classList.add('bg-transparent'); // tambahkan ini
-                } else {
-                    sidebarOverlay.classList.add('hidden');
-                    sidebarOverlay.classList.remove('bg-transparent'); // hapus ini
-                }
-            }
-        }
-
-
         // Event listeners
         sidebarToggle.addEventListener('click', toggleSidebar);
 
         // Close sidebar when clicking overlay (mobile)
         sidebarOverlay.addEventListener('click', function() {
-            if (window.innerWidth < 768) {
+            if (window.innerWidth < 768 && sidebarOpen) {
                 toggleSidebar();
             }
         });
 
+        // Close sidebar when clicking menu links on mobile
+        function setupMobileSidebarClose() {
+            const sidebarLinks = document.querySelectorAll('#sidebar a');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Only auto-close on mobile when sidebar is open
+                    if (window.innerWidth < 768 && sidebarOpen) {
+                        // Small delay to allow navigation to start
+                        setTimeout(() => {
+                            toggleSidebar();
+                        }, 100);
+                    }
+                });
+            });
+        }
+
         // Handle window resize
         window.addEventListener('resize', function() {
             if (window.innerWidth >= 768) {
-                // Desktop view
+                // Desktop/tablet view
                 sidebarOverlay.classList.add('hidden');
                 if (sidebarOpen) {
                     sidebar.classList.remove('-translate-x-full');
                     mainContent.classList.add('ml-64');
                     mainContent.classList.remove('ml-0');
+                } else {
+                    // If closed, open it for desktop
+                    sidebarOpen = true;
+                    sidebar.classList.remove('-translate-x-full');
+                    mainContent.classList.add('ml-64');
+                    mainContent.classList.remove('ml-0');
+                    hamburgerIcon.setAttribute('data-lucide', 'menu');
+                    lucide.createIcons();
                 }
             } else {
                 // Mobile view
-                if (!sidebarOpen) {
+                if (sidebarOpen) {
+                    sidebarOverlay.classList.remove('hidden');
+                } else {
                     sidebar.classList.add('-translate-x-full');
                     mainContent.classList.remove('ml-64');
                     mainContent.classList.add('ml-0');
+                    sidebarOverlay.classList.add('hidden');
                 }
             }
         });
@@ -298,18 +302,30 @@
                 closeLogoutModal();
             }
         });
-        // Tutup sidebar otomatis saat klik link (khusus mobile)
-        document.querySelectorAll('#sidebar a').forEach(link => {
-            link.addEventListener('click', function() {
-                if (window.innerWidth < 768 && sidebarOpen) {
-                    toggleSidebar();
-                }
-            });
-        });
 
-
-        // Initialize icons
+        // Initialize when DOM is loaded
         document.addEventListener("DOMContentLoaded", function() {
+            // Set initial state based on screen size
+            if (window.innerWidth < 768) {
+                // Mobile: sidebar closed by default
+                sidebarOpen = false;
+                sidebar.classList.add('-translate-x-full');
+                mainContent.classList.remove('ml-64');
+                mainContent.classList.add('ml-0');
+                hamburgerIcon.setAttribute('data-lucide', 'menu');
+            } else {
+                // Desktop: sidebar open by default
+                sidebarOpen = true;
+                sidebar.classList.remove('-translate-x-full');
+                mainContent.classList.add('ml-64');
+                mainContent.classList.remove('ml-0');
+                hamburgerIcon.setAttribute('data-lucide', 'menu');
+            }
+
+            // Setup mobile sidebar auto-close
+            setupMobileSidebarClose();
+
+            // Initialize icons
             lucide.createIcons();
         });
     </script>
