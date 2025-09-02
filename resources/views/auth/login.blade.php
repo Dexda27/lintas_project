@@ -92,6 +92,10 @@
                             class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('password') border-red-500 @enderror"
                             placeholder="••••••••"
                         />
+                        <button type="button" data-toggle="password" data-target="password"
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                            <i data-lucide="eye" class="w-5 h-5"></i>
+                        </button>
                     </div>
                     @error('password')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -130,6 +134,7 @@
         </div>
     </div>
 
+    <script src="{{ asset('js/toggle-password.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof lucide !== 'undefined') {
