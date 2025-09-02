@@ -231,6 +231,34 @@ class ConnectionController extends Controller
         }
     }
 
+    public function getCablesByRegion($regionId)
+    {
+        try {
+            $user = Auth::user();
+
+            // Check region access
+            if ($user->isAdminRegion() && $regionId !== $user->region) {
+                return response()->json(['error' => 'Access denied'], 403);
+            }
+
+            $cables = Cable::select('id', 'name', 'cable_id', 'source_site', 'destination_site')
+                ->where('region', $regionId)
+                ->where('status', 'ok')
+                ->whereHas('fiberCores', function($query) {
+                    $query->where('status', 'ok')
+                        ->whereDoesntHave('connectionA')
+                        ->whereDoesntHave('connectionB');
+                })
+                ->orderBy('name')
+                ->get();
+
+            return response()->json($cables);
+        } catch (\Exception $e) {
+            \Log::error('Error loading cables: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to load cables'], 500);
+        }
+    }
+
     public function getTubesByCable($cableId)
     {
         try {
@@ -242,13 +270,52 @@ class ConnectionController extends Controller
                 return response()->json(['error' => 'Access denied'], 403);
             }
 
+            // Get tubes that have available cores
+            $availableTubes = FiberCore::where('cable_id', $cableId)
+                ->where('status', 'ok')
+                ->whereDoesntHave('connectionA')
+                ->whereDoesntHave('connectionB')
+                ->distinct()
+                ->pluck('tube_number')
+                ->sort()
+                ->values();
+
             return response()->json([
                 'total_tubes' => $cable->total_tubes,
-                'cable_name' => $cable->name
+                'available_tubes' => $availableTubes,
+                'cable_name' => $cable->name,
+                'cable_id' => $cable->cable_id
             ]);
         } catch (\Exception $e) {
             \Log::error('Error loading cable tubes: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to load tubes'], 500);
+        }
+    }
+
+    public function getCoresByTube($cableId, $tubeNumber)
+    {
+        try {
+            $user = Auth::user();
+            $cable = Cable::findOrFail($cableId);
+
+            // Check region access
+            if ($user->isAdminRegion() && $cable->region !== $user->region) {
+                return response()->json(['error' => 'Access denied'], 403);
+            }
+
+            $cores = FiberCore::select('id', 'core_number', 'tube_number', 'status', 'attenuation')
+                ->where('cable_id', $cableId)
+                ->where('tube_number', $tubeNumber)
+                ->where('status', 'ok')
+                ->whereDoesntHave('connectionA')
+                ->whereDoesntHave('connectionB')
+                ->orderBy('core_number')
+                ->get();
+
+            return response()->json($cores);
+        } catch (\Exception $e) {
+            \Log::error('Error loading cores: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to load cores'], 500);
         }
     }
 }

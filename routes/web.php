@@ -44,6 +44,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/connections/cables/{cable}/tubes', [ConnectionController::class, 'getTubesByCable'])->name('connections.cables.tubes');
     Route::get('/connections/cables/{cable}/tubes/{tube}/cores', [ConnectionController::class, 'getAvailableCores'])->name('connections.cables.cores');
 
+    // New routes for enhanced connection form (Cable -> Tube -> Core flow)
+    Route::get('/cables/{cable}/tubes-data', [ConnectionController::class, 'getTubesByCable'])->name('cables.tubes.data');
+    Route::get('/cables/{cable}/tubes/{tube}/cores-data', [ConnectionController::class, 'getCoresByTube'])->name('cables.cores.data');
+
     // User management routes (only accessible by super admin)
     Route::resource('users', UserController::class);
     Route::patch('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');

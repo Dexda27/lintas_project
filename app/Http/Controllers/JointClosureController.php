@@ -204,26 +204,23 @@ class JointClosureController extends Controller
 
         $closure->load([
             'coreConnections.coreA.cable',
-            'coreConnections.coreA.cable',
-            'coreConnections.coreB.cable',
             'coreConnections.coreB.cable'
         ]);
 
-        // Get available cores for connection (inactive cores from different cables)
+        // Get available cables in the same region as closure
         $user = Auth::user();
-        $availableCoresQuery = FiberCore::with(['cable'])
-            ->whereHas('cable', function ($query) use ($user) {
-                if ($user->isAdminRegion()) {
-                    $query->where('region', $user->region);
-                }
-            })
+        $availableCables = Cable::select('id', 'name', 'cable_id')
+            ->where('region', $closure->region)
             ->where('status', 'ok')
-            ->whereDoesntHave('connectionA')
-            ->whereDoesntHave('connectionB');
+            ->whereHas('fiberCores', function($query) {
+                $query->where('status', 'ok')
+                    ->whereDoesntHave('connectionA')
+                    ->whereDoesntHave('connectionB');
+            })
+            ->orderBy('name')
+            ->get();
 
-        $availableCores = $availableCoresQuery->get()->groupBy('cable_id');
-
-        return view('closures.connections', compact('closure', 'availableCores'));
+        return view('closures.connections', compact('closure', 'availableCables'));
     }
 
     public function connectCores(Request $request, JointClosure $closure)
