@@ -21,6 +21,7 @@ class CableController extends Controller
         if ($user->isAdminRegion()) {
             $query->where('region', $user->region);
         }
+
         // Search filter (tambahkan cable_id)
         if ($request->filled('search')) {
             $search = $request->input('search');
@@ -33,7 +34,15 @@ class CableController extends Controller
             });
         }
 
-        $cables = $query->orderBy('created_at', 'desc')->paginate(5);
+        // Add subquery to count connected cores for each cable
+        $cables = $query->withCount([
+            'fiberCores as connected_cores_count' => function ($q) {
+                $q->where(function ($query) {
+                    $query->whereHas('connectionA')
+                        ->orWhereHas('connectionB');
+                });
+            }
+        ])->orderBy('created_at', 'desc')->paginate(5);
 
         return view('cables.index', compact('cables'));
     }
@@ -120,6 +129,9 @@ class CableController extends Controller
             'active_cores' => $cable->fiberCores->where('usage', 'active')->count(),
             'inactive_cores' => $cable->fiberCores->where('usage', 'inactive')->count(),
             'problem_cores' => $cable->fiberCores->where('status', 'not_ok')->count(),
+            'connected_cores' => $cable->fiberCores->filter(function ($core) {
+                return $core->connectionA()->exists() || $core->connectionB()->exists();
+            })->count(),
         ];
 
         return view('cables.show', compact('cable', 'coresByTube', 'statistics'));
@@ -173,31 +185,52 @@ class CableController extends Controller
     {
         $this->checkRegionAccess($cable);
 
-        // Check if any cores are connected
-        $connectedCores = $cable->fiberCores()
-            ->whereHas('connectionA')
-            ->orWhereHas('connectionB')
-            ->count();
-
-        if ($connectedCores > 0) {
-            return back()->withErrors(['error' => 'Cannot delete cable with connected cores. Please disconnect all cores first.']);
-        }
-
         DB::beginTransaction();
         try {
-            // Delete all fiber cores first
-            $cable->fiberCores()->delete();
+            // Check if any cores are connected
+            $connectedCores = $cable->fiberCores()
+                ->where(function ($query) {
+                    $query->whereHas('connectionA')
+                        ->orWhereHas('connectionB');
+                })
+                ->count();
 
-            // Delete the cable
+            if ($connectedCores > 0) {
+                DB::rollback();
+                return redirect()->back()
+                    ->with('error', 'Cannot delete cable with connected cores. Please disconnect all cores first.');
+            }
+
+            // First, delete all connections related to this cable's cores
+            $cable->fiberCores()->each(function ($core) {
+                // Delete connections where this core is coreA
+                $core->connectionA()->delete();
+                // Delete connections where this core is coreB
+                $core->connectionB()->delete();
+            });
+
+            // Then delete all fiber cores
+            $deletedCores = $cable->fiberCores()->delete();
+
+            // Finally delete the cable
             $cable->delete();
 
             DB::commit();
 
             return redirect()->route('cables.index')
-                ->with('success', 'Cable deleted successfully.');
+                ->with('success', "Cable deleted successfully. Removed {$deletedCores} fiber cores.");
         } catch (\Exception $e) {
             DB::rollback();
-            return back()->withErrors(['error' => 'Failed to delete cable: ' . $e->getMessage()]);
+
+            // Log the detailed error for debugging
+            \Log::error('Cable deletion failed', [
+                'cable_id' => $cable->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Failed to delete cable: ' . $e->getMessage());
         }
     }
 

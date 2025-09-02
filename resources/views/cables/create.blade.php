@@ -218,6 +218,30 @@
             @enderror
         </div>
 
+        <!-- Core Distribution Preview Section -->
+        <div class="mt-8 bg-gray-50 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Core Distribution Preview</h3>
+
+            <!-- Cores per tube display -->
+            <div class="mb-4">
+                <p class="text-sm font-medium text-gray-700 mb-2">Distribution:</p>
+                <p id="cores-per-tube-display" class="text-gray-600">Enter tube and core counts</p>
+            </div>
+
+            <!-- Core numbering preview -->
+            <div class="mb-4">
+                <p class="text-sm font-medium text-gray-700 mb-2">Core Numbering Preview:</p>
+                <div id="core-numbering-preview" class="bg-gray-100 rounded-md p-3 space-y-1 min-h-[60px]">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Numbering summary -->
+            <div id="numbering-summary" class="text-sm text-gray-600">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+
         <!-- Submit Button -->
         <div class="mt-8 flex justify-end space-x-4">
             <a href="{{ route('cables.index') }}" class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 flex items-center gap-1">

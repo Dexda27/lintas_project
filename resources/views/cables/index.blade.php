@@ -13,7 +13,7 @@
         <div>
             <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">List Cable</h1>
             <p class="text-gray-600 mt-2 text-sm sm:text-base">Manage cable data easily
-</p>
+            </p>
         </div>
         <a href="{{ route('cables.create') }}"
             class="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm sm:text-base text-center">
@@ -67,7 +67,7 @@
 
             <div class="mb-2">
                 @if($cable->source_site || $cable->destination_site)
-                <div class="flex items-center text-sm text-gray-600 mb-1">
+                <div class="flex items-center text-sm text-gray-600 mb-2">
                     <svg class="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -75,6 +75,13 @@
                     <span>{{ $cable->source_site ?? '-' }} → {{ $cable->destination_site ?? '-' }}</span>
                 </div>
                 @endif
+
+                <!-- Capacity Card for Mobile -->
+
+                <div class=" rounded-lg p-3 min-w-[120px]">
+                    <div class="text-xs text-gray-600">{{ $cable->connected_cores_count }} connections</div>
+                </div>
+
                 <p class="text-xs text-gray-600">
                     <span class="font-medium">Dibuat:</span> {{ $cable->created_at->format('d M Y') }}
                 </p>
@@ -134,6 +141,7 @@
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source Site</th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Destination Site</th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Region</th>
+                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Connected Cores</th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created Date</th>
                     <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                 </tr>
@@ -153,6 +161,11 @@
                         @else
                         -
                         @endif
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <div class=" rounded-lg p-3 min-w-[120px]">
+                            <div class="text-xs text-gray-600">{{ $cable->connected_cores_count }} connections</div>
+                        </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $cable->created_at->format('d M Y') }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -186,7 +199,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="px-6 py-12 whitespace-nowrap text-sm text-gray-500 text-center">
+                    <td colspan="8" class="px-6 py-12 whitespace-nowrap text-sm text-gray-500 text-center">
                         <div class="flex flex-col items-center">
                             <svg class="w-12 h-12 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>

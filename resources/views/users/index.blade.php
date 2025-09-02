@@ -122,13 +122,13 @@
                         </a>
 
                         @if($user->id !== auth()->id())
-                            <form method="POST" action="{{ route('users.destroy', $user) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this user?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-900 inline-flex items-center justify-center w-8 h-8 hover:bg-red-100 border border-red-200 rounded-full transition-colors duration-150">
-                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                </button>
-                            </form>
+                        <form method="POST" action="{{ route('users.destroy', $user) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this user?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-600 hover:text-red-900 inline-flex items-center justify-center w-8 h-8 hover:bg-red-100 border border-red-200 rounded-full transition-colors duration-150">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </form>
                         @endif
                     </div>
                 </div>
@@ -155,7 +155,7 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Region</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <!-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th> -->
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
@@ -194,7 +194,7 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {{ $user->region ?? '-' }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <!-- <td class="px-6 py-4 whitespace-nowrap">
                         @if(isset($user->is_active) && !$user->is_active)
                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-rose-100 text-rose-800">
                             Inactive
@@ -204,7 +204,7 @@
                             Active
                         </span>
                         @endif
-                    </td>
+                    </td> -->
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {{ $user->created_at->format('M d, Y') }}
                     </td>
@@ -218,13 +218,13 @@
                                 <i data-lucide="edit" class="w-4 h-4"></i> Edit
                             </a>
                             @if($user->id !== auth()->id())
-                                <form method="POST" action="{{ route('users.destroy', $user) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this user?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900 flex items-center gap-1">
-                                        <i data-lucide="trash-2" class="w-4 h-4"></i> Delete
-                                    </button>
-                                </form>
+                            <form method="POST" action="{{ route('users.destroy', $user) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this user?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:text-red-900 flex items-center gap-1">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i> Delete
+                                </button>
+                            </form>
                             @endif
                         </div>
                     </td>
