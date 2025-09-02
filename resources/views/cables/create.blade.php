@@ -27,9 +27,6 @@
     </div>
 </div>
 
-<!-- Dynamic Alert Container (will be populated by JavaScript) -->
-<div id="validation-alerts" class="mb-4"></div>
-
 <div class="bg-white rounded-lg shadow">
     <form id="cable-form" method="POST" action="{{ route('cables.store') }}" class="p-6">
         @csrf
@@ -216,30 +213,6 @@
             @error('description')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
-        </div>
-
-        <!-- Core Distribution Preview Section -->
-        <div class="mt-8 bg-gray-50 rounded-lg p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Core Distribution Preview</h3>
-
-            <!-- Cores per tube display -->
-            <div class="mb-4">
-                <p class="text-sm font-medium text-gray-700 mb-2">Distribution:</p>
-                <p id="cores-per-tube-display" class="text-gray-600">Enter tube and core counts</p>
-            </div>
-
-            <!-- Core numbering preview -->
-            <div class="mb-4">
-                <p class="text-sm font-medium text-gray-700 mb-2">Core Numbering Preview:</p>
-                <div id="core-numbering-preview" class="bg-gray-100 rounded-md p-3 space-y-1 min-h-[60px]">
-                    <!-- Will be populated by JavaScript -->
-                </div>
-            </div>
-
-            <!-- Numbering summary -->
-            <div id="numbering-summary" class="text-sm text-gray-600">
-                <!-- Will be populated by JavaScript -->
-            </div>
         </div>
 
         <!-- Submit Button -->
