@@ -76,7 +76,7 @@ class CableController extends Controller
             'source_site' => 'required|string|max:255',
             'destination_site' => 'required|string|max:255|different:source_site',
             'description' => 'nullable|string|max:1000',
-            'core_structure' => 'nullable|string', // Added for core structure data
+         
         ]);
 
         // Check region access for admin
