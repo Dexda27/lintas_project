@@ -26,6 +26,12 @@ function initializeConnectionForm() {
     if (elements.tubeB) {
         elements.tubeB.addEventListener("change", () => handleTubeChange('B'));
     }
+    if (elements.coreA) {
+        elements.coreA.addEventListener("change", updateConnectionPreview);
+    }
+    if (elements.coreB) {
+        elements.coreB.addEventListener("change", updateConnectionPreview);
+    }
 
     // Initialize form state
     resetForm();
@@ -43,6 +49,7 @@ function handleCableChange(side) {
     const cableId = cableSelect.value;
     if (!cableId) {
         updateCableAvailability();
+        updateSubmitButton();
         return;
     }
 
@@ -51,6 +58,7 @@ function handleCableChange(side) {
 
     // Update cable availability (prevent selecting same cable)
     updateCableAvailability();
+    updateSubmitButton();
 }
 
 function handleTubeChange(side) {
@@ -65,6 +73,7 @@ function handleTubeChange(side) {
     const cableId = cableSelect.value;
 
     if (!tubeNumber || !cableId) {
+        updateSubmitButton();
         return;
     }
 
@@ -136,11 +145,9 @@ function loadCores(cableId, tubeNumber, side) {
                 coreSelect.appendChild(option);
             });
 
-            // Add event listener for core selection
-            coreSelect.addEventListener('change', updateConnectionPreview);
-
             // Update core availability
             updateCoreAvailability();
+            updateSubmitButton();
         })
         .catch(error => {
             console.error('Error loading cores:', error);
@@ -149,59 +156,26 @@ function loadCores(cableId, tubeNumber, side) {
 }
 
 function updateConnectionPreview() {
-    const preview = document.getElementById('connection-preview');
-    const submitBtn = document.getElementById('submit-connection');
+    updateSubmitButton();
+    updateCoreAvailability();
+}
 
+function updateSubmitButton() {
+    const submitBtn = document.getElementById('submit-connection');
     const coreA = document.getElementById('core_a_id');
     const coreB = document.getElementById('core_b_id');
-    const cableA = document.getElementById('cable_a_id');
-    const cableB = document.getElementById('cable_b_id');
-    const tubeA = document.getElementById('tube_a_id');
-    const tubeB = document.getElementById('tube_b_id');
 
-    const previewCoreA = document.getElementById('preview-core-a');
-    const previewCoreB = document.getElementById('preview-core-b');
+    if (!submitBtn || !coreA || !coreB) return;
 
-    // Check if both cores are selected
-    const bothSelected = coreA.value && coreB.value;
+    // Check if both cores are selected and they are different
+    const bothSelected = coreA.value && coreB.value && coreA.value !== coreB.value;
+
+    submitBtn.disabled = !bothSelected;
 
     if (bothSelected) {
-        preview.classList.remove('hidden');
-        submitBtn.disabled = false;
-
-        // Update preview content
-        const cableAText = cableA.options[cableA.selectedIndex].textContent;
-        const cableBText = cableB.options[cableB.selectedIndex].textContent;
-        const tubeAText = tubeA.options[tubeA.selectedIndex].textContent;
-        const tubeBText = tubeB.options[tubeB.selectedIndex].textContent;
-        const coreAText = coreA.options[coreA.selectedIndex].textContent;
-        const coreBText = coreB.options[coreB.selectedIndex].textContent;
-
-        previewCoreA.innerHTML = `
-            <p class="font-medium text-blue-700">Core A Selected</p>
-            <p class="text-gray-800 font-medium">${cableAText}</p>
-            <p class="text-gray-600">${tubeAText}, ${coreAText}</p>
-        `;
-
-        previewCoreB.innerHTML = `
-            <p class="font-medium text-green-700">Core B Selected</p>
-            <p class="text-gray-800 font-medium">${cableBText}</p>
-            <p class="text-gray-600">${tubeBText}, ${coreBText}</p>
-        `;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
     } else {
-        preview.classList.add('hidden');
-        submitBtn.disabled = true;
-
-        // Reset preview
-        previewCoreA.innerHTML = `
-            <p class="font-medium text-blue-700">Core A</p>
-            <p class="text-gray-600">Not selected</p>
-        `;
-
-        previewCoreB.innerHTML = `
-            <p class="font-medium text-green-700">Core B</p>
-            <p class="text-gray-600">Not selected</p>
-        `;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
     }
 }
 
@@ -322,6 +296,8 @@ function resetForm() {
     if (tubeB) resetDropdown(tubeB, "Select cable first...");
     if (coreA) resetDropdown(coreA, "Select tube first...");
     if (coreB) resetDropdown(coreB, "Select tube first...");
+
+    updateSubmitButton();
 }
 
 function showConnectModal() {
