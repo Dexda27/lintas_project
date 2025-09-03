@@ -226,7 +226,7 @@
         <div class="border-t border-gray-200 pt-4 sm:pt-6">
             <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end">
                 <a
-                    href="{{ route('closures.index') }}"
+                    href="{{ route('closures.connections',$closure) }}"
                     class="w-full sm:w-auto px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-center text-sm sm:text-base">
                     Cancel
                 </a>
