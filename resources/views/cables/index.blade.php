@@ -52,81 +52,63 @@
     </form>
 
     <!-- Mobile Card View (visible on screens smaller than lg) -->
-    <div class="lg:hidden">
-        @forelse ($cables as $cable)
+     <div class="lg:hidden">
+        @forelse($cables as $cable)
         <div class="border-b border-gray-200 p-4 last:border-b-0">
             <div class="flex justify-between items-start mb-2">
-                <div class="flex-1 min-w-0">
-                    <h3 class="font-semibold text-gray-900 text-sm truncate">{{ $cable->cable_id }}</h3>
-                    <p class="text-xs text-gray-600 mt-1 truncate">{{ $cable->name }}</p>
+                <div>
+                    <h3 class="font-semibold text-gray-900 text-sm">{{ $cable->cable_id }}</h3>
+                    <p class="text-xs text-gray-600 mt-1">{{ $cable->name }}</p>
                 </div>
-                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 ml-2 flex-shrink-0">
-                    {{ $cable->region ?? '-' }}
+                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                    {{ $cable->region }}
                 </span>
             </div>
 
             <div class="mb-2">
-                @if($cable->source_site || $cable->destination_site)
-                <div class="flex items-center text-sm text-gray-600 mb-2">
-                    <svg class="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                    <span>{{ $cable->source_site ?? '-' }} → {{ $cable->destination_site ?? '-' }}</span>
-                </div>
-                @endif
-
-                <!-- Capacity Card for Mobile -->
-
-                <div class=" rounded-lg p-3 min-w-[120px]">
-                    <div class="text-xs text-gray-600">{{ $cable->connected_cores_count }} connections</div>
-                </div>
-
                 <p class="text-xs text-gray-600">
-                    <span class="font-medium">Dibuat:</span> {{ $cable->created_at->format('d M Y') }}
+                    <span class="font-medium">Route:</span> {{ $cable->source_site }} → {{ $cable->destination_site }}
                 </p>
             </div>
 
-            <!-- Actions with Icons -->
-            <div class="flex space-x-3 pt-3 border-gray-200 justify-center">
-                <a href="{{ route('cables.show', $cable->id) }}"
-                    class="flex items-center justify-center w-8 h-8 text-blue-600 hover:text-blue-900 hover:bg-blue-50 border border-blue-300 rounded-full transition-colors"
-                    title="Detail">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                    </svg>
-                </a>
-                <a href="{{ route('cables.edit', $cable->id) }}"
-                    class="flex items-center justify-center w-8 h-8 text-yellow-600 hover:text-yellow-900 hover:bg-yellow-50 border border-yellow-300 rounded-full transition-colors"
-                    title="Edit">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                    </svg>
-                </a>
-                <button
-                    type="button"
-                    onclick="showDeleteModal('{{ $cable->id }}', '{{ addslashes($cable->name) }}', '{{ $cable->cable_id }}')"
-                    class="flex items-center justify-center w-8 h-8 text-red-600 hover:text-red-900 hover:bg-red-50 border border-red-300 rounded-full transition-colors"
-                    title="Hapus">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                    </svg>
-                </button>
+            <div class="mb-3">
+                <div class="flex flex-wrap gap-1 mb-1">
+                    <span class="text-green-600 text-xs">{{ $cable->active_cores_count }} Active</span>
+                    <span class="text-gray-500 text-xs">{{ $cable->inactive_cores_count }} Inactive</span>
+                    @if($cable->problem_cores_count > 0)
+                    <span class="text-red-600 text-xs">{{ $cable->problem_cores_count }} Problems</span>
+                    @endif
+                </div>
+                <div class="text-xs text-gray-500">Total: {{ $cable->total_cores }}</div>
+            </div>
+
+            <div class="flex flex-wrap gap-1 mb-1 text-xs text-gray-500">{{ $cable->connected_cores_count }} connections</div>
+
+            <div class="flex justify-between items-center">
+                <div class="flex space-x-2">
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $cable->status === 'ok' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">
+                        {{ ucfirst($cable->status) }}
+                    </span>
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $cable->usage === 'active' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}}">
+                        {{ ucfirst($cable->usage) }}
+                    </span>
+                </div>
+
+                <div class="flex space-x-2">
+                    <a href="{{ route('cables.show', $cable) }}" class="inline-flex items-center justify-center w-8 h-8 text-indigo-600 hover:text-white hover:bg-indigo-600 border border-indigo-200 rounded-full transition-colors duration-150">
+                        <i data-lucide="eye" class="w-4 h-4"></i>
+                    </a>
+                    <a href="{{ route('cables.edit', $cable) }}" class="inline-flex items-center justify-center w-8 h-8 text-yellow-600 hover:text-white hover:bg-yellow-600 border border-yellow-200 rounded-full transition-colors duration-150">
+                        <i data-lucide="edit" class="w-4 h-4"></i>
+                    </a>
+                </div>
             </div>
         </div>
         @empty
-        <div class="p-6 sm:p-12 text-center">
-            <div class="flex flex-col items-center">
-                <svg class="w-8 h-8 sm:w-12 sm:h-12 text-gray-300 mb-3 sm:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-                <p class="text-gray-500 mb-2 text-sm">No cable data.</p>
-                <a href="{{ route('cables.create') }}"
-                    class="text-blue-600 hover:text-blue-900 font-medium text-sm">
-                    Add first cable...
-                </a>
-            </div>
+        <div class="p-4 text-center">
+            <p class="text-sm text-gray-500">
+                No cables found. <a href="{{ route('cables.create') }}" class="text-blue-600 hover:text-blue-900">Create your first cable</a>
+            </p>
         </div>
         @endforelse
     </div>
@@ -136,38 +118,58 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cable ID</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source Site</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Destination Site</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Region</th>
-                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Connected Cores</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created Date</th>
-                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cable ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Region</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Route</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cores</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usage</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">connection</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                @forelse ($cables as $cable)
-                <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $cable->cable_id }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $cable->name }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $cable->source_site ?? '-' }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $cable->destination_site ?? '-' }}</td>
+                @forelse($cables as $cable)
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {{ $cable->cable_id }}
+                    </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        @if($cable->region)
+                        {{ $cable->name }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
                             {{ $cable->region }}
                         </span>
-                        @else
-                        -
-                        @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        <div class=" rounded-lg p-3 min-w-[120px]">
-                            <div class="text-xs text-gray-600">{{ $cable->connected_cores_count }} connections</div>
-                        </div>
+                        {{ $cable->source_site }} → {{ $cable->destination_site }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $cable->created_at->format('d M Y') }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <div class="flex space-x-2">
+                            <span class="text-green-600">{{ $cable->active_cores_count }} Active</span>
+                            <span class="text-gray-500">{{ $cable->inactive_cores_count }} Inactive</span>
+                            @if($cable->problem_cores_count > 0)
+                            <span class="text-red-600">{{ $cable->problem_cores_count }} Problems</span>
+                            @endif
+                        </div>
+                        <div class="text-xs text-gray-500">Total: {{ $cable->total_cores }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $cable->status === 'ok' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">
+                            {{ ucfirst($cable->status) }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $cable->usage === 'active' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
+                            {{ ucfirst($cable->usage) }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <div class="text-md text-gray-500">{{ $cable->connected_cores_count }} connections</div>
+                    </td>
+                    {{-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $cable->created_at->format('d M Y') }}</td> --}}
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div class="flex justify-center space-x-2">
                             <a href="{{ route('cables.show', $cable->id) }}"
