@@ -146,7 +146,7 @@
     <div id="modal-container"></div>
 
     <!-- Logout Confirmation Modal -->
-    <div id="logout-modal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+    <div id="logout-modal" class="fixed inset-0 flex items-center justify-center backdrop-blur-xs z-50 hidden">
         <div class="bg-white bg-opacity-95 backdrop-blur-sm rounded-lg p-6 w-96 max-w-md mx-4 shadow-xl border border-white border-opacity-20">
             <div class="flex items-center mb-4">
                 <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 bg-opacity-80 flex items-center justify-center mr-3">
