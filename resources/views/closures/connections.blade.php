@@ -21,13 +21,13 @@
             </button>
             <a  href="{{ route('closures.edit', $closure) }}"
                 class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 text-center text-sm">
-                edit
+                Edit Closure
             </a>
             <a href="{{ route('closures.index') }}"
                 class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 text-center text-sm">
                 Back to List
             </a>
-            
+
         </div>
     </div>
 </div>
