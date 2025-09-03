@@ -102,7 +102,6 @@
                 </div>
             </div>
         </div>
-
         <!-- User Details -->
         <div class="lg:col-span-2">
             <div class="bg-white shadow-md rounded-lg p-6 mb-6">
@@ -148,7 +147,6 @@
                 </div>
                 <br>
                 <hr>
-
                 <!-- Account Activity -->
                 <div class="space-y-4">
                     <div class="flex items-center justify-between py-2 border-b border-gray-200">
@@ -192,12 +190,8 @@
                     </div>
                     @endif
                 </div>
-
             </div>
         </div>
-
-        <!-- Account Activity -->
-
     </div>
 </div>
 </div>
