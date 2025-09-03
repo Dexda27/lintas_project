@@ -122,10 +122,12 @@
                         </a>
 
                         @if($user->id !== auth()->id())
-                        <form method="POST" action="{{ route('users.destroy', $user) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this user?')">
+                        <form method="POST" action="{{ route('users.destroy', $user) }}" class="inline delete-form">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:text-red-900 inline-flex items-center justify-center w-8 h-8 hover:bg-red-100 border border-red-200 rounded-full transition-colors duration-150">
+                            <button type="button" class="delete-btn text-red-600 hover:text-red-900 inline-flex items-center justify-center w-8 h-8 hover:bg-red-100 border border-red-200 rounded-full transition-colors duration-150"
+                                data-user-name="{{ $user->name }}"
+                                data-user-email="{{ $user->email }}">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </form>
@@ -155,7 +157,6 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Region</th>
-                    <!-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th> -->
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
@@ -194,17 +195,6 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {{ $user->region ?? '-' }}
                     </td>
-                    <!-- <td class="px-6 py-4 whitespace-nowrap">
-                        @if(isset($user->is_active) && !$user->is_active)
-                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-rose-100 text-rose-800">
-                            Inactive
-                        </span>
-                        @else
-                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800">
-                            Active
-                        </span>
-                        @endif
-                    </td> -->
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {{ $user->created_at->format('M d, Y') }}
                     </td>
@@ -218,10 +208,12 @@
                                 <i data-lucide="edit" class="w-4 h-4"></i> Edit
                             </a>
                             @if($user->id !== auth()->id())
-                            <form method="POST" action="{{ route('users.destroy', $user) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this user?')">
+                            <form method="POST" action="{{ route('users.destroy', $user) }}" class="inline delete-form">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-900 flex items-center gap-1">
+                                <button type="button" class="delete-btn text-red-600 hover:text-red-900 flex items-center gap-1"
+                                    data-user-name="{{ $user->name }}"
+                                    data-user-email="{{ $user->email }}">
                                     <i data-lucide="trash-2" class="w-4 h-4"></i> Delete
                                 </button>
                             </form>
@@ -231,7 +223,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-6 py-12 text-center">
+                    <td colspan="5" class="px-6 py-12 text-center">
                         <div class="text-gray-500">
                             <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
@@ -246,7 +238,7 @@
         </table>
     </div>
 
-    <!-- Responsive Pagination Section -->
+    <!-- Pagination Section -->
     @if($users->hasPages())
     <div class="px-3 sm:px-6 py-3 border-t border-gray-200">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
@@ -335,15 +327,11 @@
                     {{-- Next Page Link --}}
                     @if ($users->hasMorePages())
                     <a href="{{ $users->appends(request()->query())->nextPageUrl() }}" class="relative inline-flex items-center px-2 py-1 sm:py-2 text-xs sm:text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">
-                        <svg class="w-3 h-3 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                        </svg>
+                        <i data-lucide="chevron-right" class="w-3 h-3 sm:w-5 sm:h-5"></i>
                     </a>
                     @else
                     <span class="relative inline-flex items-center px-2 py-1 sm:py-2 text-xs sm:text-sm font-medium text-gray-300 bg-white border border-gray-300 cursor-default rounded-r-md">
-                        <svg class="w-3 h-3 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                        </svg>
+                        <i data-lucide="chevron-right" class="w-3 h-3 sm:w-5 sm:h-5"></i>
                     </span>
                     @endif
                 </div>
@@ -353,90 +341,63 @@
     @endif
 </div>
 
-@push('styles')
-<style>
-    /* Responsive touch targets */
-    @media (max-width: 640px) {
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 backdrop-blur-xs z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
 
-        button,
-        a,
-        select,
-        input {
-            min-height: 44px;
-        }
+        <!-- Center modal -->
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-        /* Better spacing for mobile cards */
-        .space-x-3>*+* {
-            margin-left: 0.75rem;
-        }
+        <!-- Modal panel -->
+        <div class="relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <!-- Warning icon -->
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-rose-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-rose-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                        </svg>
+                    </div>
 
-        /* Ensure truncation works properly */
-        .truncate {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-    }
+                    <!-- Modal content -->
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                            Delete User Confirmation
+                        </h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">
+                                Are you sure you want to delete this user? This action cannot be undone.
+                            </p>
+                            <div class="mt-4 p-4 bg-gray-50 rounded-md">
+                                <div class="text-sm">
+                                    <div class="font-medium text-gray-900">User Details:</div>
+                                    <div class="mt-1">
+                                        <div class="text-gray-700"><span class="font-medium">Name:</span> <span id="modal-user-name"></span></div>
+                                        <div class="text-gray-700"><span class="font-medium">Email:</span> <span id="modal-user-email"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    /* Hover effects only on desktop */
-    @media (min-width: 1024px) {
-        .hover\:bg-gray-50:hover {
-            background-color: #f9fafb;
-        }
+            <!-- Modal footer -->
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button type="button" id="confirmDelete" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                    Delete User
+                </button>
+                <button type="button" id="cancelDelete" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
-        .hover\:text-indigo-900:hover {
-            color: #312e81;
-        }
-
-        .hover\:text-yellow-900:hover {
-            color: #78350f;
-        }
-
-        .hover\:text-red-900:hover {
-            color: #7f1d1d;
-        }
-
-        .hover\:bg-blue-700:hover {
-            background-color: #1d4ed8;
-        }
-
-        .hover\:bg-gray-700:hover {
-            background-color: #374151;
-        }
-
-        .hover\:bg-gray-500:hover {
-            background-color: #6b7280;
-        }
-    }
-
-    /* Focus styles for accessibility */
-    input:focus,
-    select:focus {
-        outline: 2px solid transparent;
-        outline-offset: 2px;
-    }
-
-    /* Smooth transitions */
-    .transition-colors {
-        transition-property: color, background-color, border-color;
-        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-        transition-duration: 150ms;
-    }
-
-    /* Better visual hierarchy for mobile */
-    @media (max-width: 640px) {
-        .text-xl {
-            font-size: 1.25rem;
-            line-height: 1.75rem;
-        }
-    }
-
-    /* Tablet optimizations */
-    @media (min-width: 641px) and (max-width: 1023px) {
-        .grid-cols-2 {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-    }
-</style>
-@endpush
 @endsection
+
+<script src="{{ asset('js/user-management.js') }}"></script>
