@@ -252,10 +252,10 @@
                         <a href="{{ route('cables.show', $cable) }}" class="text-indigo-600 hover:text-indigo-900 flex items-center gap-1">
                             <i data-lucide="eye" class="w-5 h-5"></i> View
                         </a>
-
+                        <!--
                         <a href="{{ route('cables.edit', $cable) }}" class="text-yellow-600 hover:text-yellow-900 flex items-center gap-1">
                             <i data-lucide="edit" class="w-5 h-5"></i> Edit
-                        </a>
+                        </a> -->
                     </td>
                 </tr>
                 @empty
