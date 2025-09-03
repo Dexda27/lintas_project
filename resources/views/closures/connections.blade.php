@@ -19,7 +19,7 @@
                 {{ $closure->available_capacity <= 0 ? 'disabled' : '' }}>
                 Connect Cores
             </button>
-            <a  href="{{ route('closures.edit', $closure) }}"
+            <a href="{{ route('closures.edit', $closure) }}"
                 class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 text-center text-sm">
                 Edit Closure
             </a>
@@ -54,6 +54,7 @@
             <dd class="text-gray-900 break-words">{{ $closure->region }}</dd>
         </div>
 
+
         <!-- Coordinates with Map Link -->
         @if(isset($closure->latitude) && isset($closure->longitude))
         <div>
@@ -83,6 +84,10 @@
                     {{ ucfirst(str_replace('_', ' ', $closure->status)) }}
                 </span>
             </dd>
+        </div>
+        <div>
+            <dt class="text-gray-500 font-medium">Description</dt>
+            <dd class="text-gray-900">{{ $closure->description }}</dd>
         </div>
     </dl>
 
