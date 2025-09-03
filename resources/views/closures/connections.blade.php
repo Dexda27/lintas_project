@@ -53,6 +53,10 @@
             <dt class="text-gray-500 font-medium">Region</dt>
             <dd class="text-gray-900 break-words">{{ $closure->region }}</dd>
         </div>
+        <div>
+            <dt class="text-gray-500 font-medium">Description</dt>
+            <dd class="text-gray-900 break-words">{{ $closure->description }}</dd>
+        </div>
 
         <!-- Coordinates with Map Link -->
         @if(isset($closure->latitude) && isset($closure->longitude))
