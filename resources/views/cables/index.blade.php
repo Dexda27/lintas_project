@@ -52,7 +52,7 @@
     </form>
 
     <!-- Mobile Card View (visible on screens smaller than lg) -->
-     <div class="lg:hidden">
+    <div class="lg:hidden">
         @forelse($cables as $cable)
         <div class="border-b border-gray-200 p-4 last:border-b-0">
             <div class="flex justify-between items-start mb-2">
