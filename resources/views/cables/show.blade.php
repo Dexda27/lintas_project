@@ -128,7 +128,7 @@
                 @if($cable->otdr_length)
                 <div class="pt-2">
                     <p class="text-sm font-medium text-gray-600">OTDR Length</p>
-                    <p class="text-lg text-gray-900">{{ number_format($cable->otdr_length, 2) }} meters</p>
+                    <p class="text-lg text-gray-900">{{ number_format($cable->otdr_length) }} meters</p>
                 </div>
                 @endif
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
