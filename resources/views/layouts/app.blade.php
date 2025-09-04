@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/png" href="{{ asset('assets/images/logo2.png') }}">
     <title>@yield('title', 'Fiber Core Management')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -100,7 +101,7 @@
                                     </a>
                                 </li>
                             @endif
-                            
+
 
                             @if(auth()->user()->isSuperAdmin())
                             <!-- Divider for admin sections -->
@@ -117,11 +118,11 @@
                                 </a>
                             </li>
                             @endif
-                           
+
                         </ul>
                     </div>
 
-                    
+
 
                     <!-- Logout button at bottom -->
                     <div class="p-4 mt-auto border-t border-gray-200">

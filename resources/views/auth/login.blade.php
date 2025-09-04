@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{{ asset('assets/images/logo2.png') }}">
     <title>Login - Fiber Core Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -10,10 +11,10 @@
 <body class="h-screen flex">
     <!-- Left Side -->
     <div class="hidden lg:flex w-1/2 bg-gray-900 relative">
-        <img src="{{ asset('assets/images/login.jpg') }}" 
-             alt="Login Background" 
+        <img src="{{ asset('assets/images/login.jpg') }}"
+             alt="Login Background"
              class="object-cover w-full h-full opacity-80">
-        
+
         <!-- Overlay Content -->
         <div class="absolute bottom-10 left-10 text-white">
             <p class="text-sm"></p>
@@ -26,20 +27,20 @@
         <div class="max-w-md w-full p-8">
             <!-- Header -->
             <div class="text-center mb-8">
-                <img src="{{ asset('assets/images/logo.png') }}" 
-                    alt="Logo" 
+                <img src="{{ asset('assets/images/logo.png') }}"
+                    alt="Logo"
                     class="mx-auto w-50 h-30">
-               
+
             </div>
              <div class="text-center mb-8">
-                
+
                 <span class="text-2xl font-bold text-gray-900 mt-0">Fiber Core Management</span>
                 <p class="text-gray-600 mt-2">Silakan login untuk melanjutkan</p>
             </div>
 
             <!-- Flash Messages -->
             @if(session('success'))
-            
+
                 <div id="flash-success"
                 class="  bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
                     {{ session('success') }}
@@ -56,7 +57,7 @@
             <!-- Login Form -->
             <form method="POST" action="{{ route('login') }}" class="space-y-6">
                 @csrf
-                
+
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
                         Email Address
@@ -102,7 +103,7 @@
                     @enderror
                 </div>
 
-               
+
 
                 <button
                     type="submit"
@@ -144,7 +145,7 @@
         setTimeout(() => {
         const success = document.getElementById('flash-success');
         const error = document.getElementById('flash-error');
-        
+
         if (success) {
             success.classList.add('opacity-0'); // fade out
             setTimeout(() => success.remove(), 500); // hapus dari DOM
