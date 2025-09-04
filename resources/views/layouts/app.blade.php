@@ -65,6 +65,9 @@
                         <ul class="border-t border-gray-200 my-4"></ul>
                         <ul class="space-y-2">
                             <li>
+                                <div class="px-2 py-1 mb-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        FO Management
+                                    </div>
                                 <a href="{{ route('dashboard') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-700' : '' }}">
                                     <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
                                     Dashboard
@@ -86,6 +89,20 @@
                             </li>
 
                             @if(auth()->user()->isSuperAdmin())
+                             <li class="border-t border-gray-200 my-4"></li>
+                                <li>
+                                    <div class="px-2 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        vlan Management
+                                    </div>
+                                    <a href="#" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 ">
+                                        <i data-lucide="network" class="w-5 h-5 mr-3"></i>
+                                        Vlan Management
+                                    </a>
+                                </li>
+                            @endif
+                            
+
+                            @if(auth()->user()->isSuperAdmin())
                             <!-- Divider for admin sections -->
                             <li class="border-t border-gray-200 my-4"></li>
                             <li>
@@ -100,8 +117,11 @@
                                 </a>
                             </li>
                             @endif
+                           
                         </ul>
                     </div>
+
+                    
 
                     <!-- Logout button at bottom -->
                     <div class="p-4 mt-auto border-t border-gray-200">
@@ -146,7 +166,7 @@
     <div id="modal-container"></div>
 
     <!-- Logout Confirmation Modal -->
-    <div id="logout-modal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+    <div id="logout-modal" class="fixed inset-0 flex items-center justify-center backdrop-blur-xs z-50 hidden">
         <div class="bg-white bg-opacity-95 backdrop-blur-sm rounded-lg p-6 w-96 max-w-md mx-4 shadow-xl border border-white border-opacity-20">
             <div class="flex items-center mb-4">
                 <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 bg-opacity-80 flex items-center justify-center mr-3">

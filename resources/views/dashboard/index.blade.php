@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="mb-6 sm:mb-8">
-    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard</h1>
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard FO Mangement</h1>
     <p class="text-gray-600 mt-2 text-sm sm:text-base">Overview of fiber core infrastructure</p>
 </div>
 

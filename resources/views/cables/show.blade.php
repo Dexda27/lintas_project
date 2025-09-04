@@ -128,7 +128,7 @@
                 @if($cable->otdr_length)
                 <div class="pt-2">
                     <p class="text-sm font-medium text-gray-600">OTDR Length</p>
-                    <p class="text-lg text-gray-900">{{ number_format($cable->otdr_length, 2) }} meters</p>
+                    <p class="text-lg text-gray-900">{{ number_format($cable->otdr_length) }} meters</p>
                 </div>
                 @endif
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -299,7 +299,7 @@
                     <div class="mt-4 flex space-x-2">
                         <button onclick="openCoreEditModal({{ $core->id }})" class="flex-1 px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">Edit</button>
                         @if($core->connection)
-                        <button onclick="disconnectCore({{ $core->connection->id }})" class="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700">Disconnect</button>
+                        <button onclick="showDisconnectModal({{ $core->connection->id }}, '{{ $core->core_number }}', '{{ $core->tube_number }}', '{{ $connectedCore->cable->name }}', '{{ $connectedCore->core_number }}', '{{ $connectedCore->tube_number }}')" class="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700">Disconnect</button>
                         @else
                         <button onclick="joinCore({{ $core->id }})" class="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700">Join</button>
                         @endif
@@ -310,6 +310,74 @@
         </div>
     </div>
     @endforeach
+</div>
+
+{{-- Disconnect Confirmation Modal --}}
+<div id="disconnect-confirmation-modal" class="fixed inset-0 backdrop-blur-xs hidden z-50">
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div class="px-6 py-4 border-b border-red-200 bg-red-50">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-lg font-semibold text-red-900">Disconnect Core Connection</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <div class="mb-4">
+                    <p class="text-sm text-gray-600 mb-4">You are about to disconnect the following connection:</p>
+
+                    <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="font-medium text-gray-700">Source:</span>
+                            <span id="disconnect-source-info" class="text-gray-900"></span>
+                        </div>
+                        <div class="flex items-center justify-center">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                            </svg>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="font-medium text-gray-700">Target:</span>
+                            <span id="disconnect-target-info" class="text-gray-900"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-yellow-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        <div>
+                            <p class="text-sm font-medium text-yellow-800">Warning</p>
+                            <p class="text-sm text-yellow-700 mt-1">This action will permanently remove the connection between these cores. This operation cannot be undone.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="connection-to-disconnect">
+
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeDisconnectModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="button" onclick="confirmDisconnect()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Disconnect
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 {{-- Join Core Modal --}}
@@ -428,6 +496,5 @@
             </div>
         </div>
     </div>
-</div>
-
+</div
 @endsection
