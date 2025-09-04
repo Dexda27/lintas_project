@@ -1,4 +1,4 @@
-// Simplified Core Management System
+// Simplified Core Management System - FIXED VERSION
 class CoreManager {
     constructor() {
         this.currentEditingCore = null;
@@ -58,6 +58,19 @@ class CoreManager {
         const card = document.querySelector(`[data-core="${coreId}"]`);
         if (!card) return null;
 
+        // FIXED: Better description extraction
+        let description = card.dataset.description || "";
+
+        // Try to get description from the card's description element if data attribute is empty
+        if (!description) {
+            const descElement = card.querySelector(
+                ".text-xs.text-gray-600.italic"
+            );
+            if (descElement) {
+                description = descElement.textContent.trim();
+            }
+        }
+
         return {
             id: coreId,
             core_number: parseInt(
@@ -67,7 +80,7 @@ class CoreManager {
             status: card.dataset.status,
             usage: card.dataset.usage,
             attenuation: this.extractAttenuation(card),
-            description: card.dataset.description || "",
+            description: description,
             cable: { name: document.querySelector("h1").textContent },
         };
     }
@@ -154,6 +167,7 @@ class CoreManager {
 
             this.updateStatusIndicators(card, formData);
             this.updateDetails(card, formData);
+            // FIXED: Call updateDescription with proper parameters
             this.updateDescription(card, formData.description);
             this.updateStatistics();
             this.applyFilters();
@@ -946,23 +960,56 @@ class CoreManager {
         detailSection.appendChild(row);
     }
 
+    // FIXED: Complete rewrite of updateDescription method to match HTML structure
     updateDescription(card, description) {
-        const existingDesc = card.querySelector(
-            ".text-xs.text-gray-600.italic"
-        );
-        const detailSection = card.querySelector(".space-y-2");
+        console.log("Updating description:", description); // Debug log
 
-        if (description?.trim()) {
-            if (existingDesc) {
-                existingDesc.textContent = description;
-            } else {
-                const descDiv = document.createElement("div");
-                descDiv.className = "mt-2";
-                descDiv.innerHTML = `<p class="text-xs text-gray-600 italic">${description}</p>`;
-                detailSection.appendChild(descDiv);
+        // Find the detail section where description should be
+        const detailSection = card.querySelector(".space-y-2");
+        if (!detailSection) {
+            console.log("Detail section not found");
+            return;
+        }
+
+        // Look for existing description row with the structure from template
+        let existingDescRow = null;
+        const flexItems = detailSection.querySelectorAll(
+            ".flex.justify-between"
+        );
+
+        flexItems.forEach((item) => {
+            const label = item.querySelector("span:first-child");
+            if (label && label.textContent.trim() === "Description:") {
+                existingDescRow = item;
             }
-        } else if (existingDesc) {
-            existingDesc.closest(".mt-2")?.remove();
+        });
+
+        if (description && description.trim()) {
+            if (existingDescRow) {
+                // Update existing description
+                console.log("Updating existing description row");
+                const valueSpan =
+                    existingDescRow.querySelector("span:last-child");
+                if (valueSpan) {
+                    valueSpan.textContent = description.trim();
+                }
+            } else {
+                // Create new description row matching template structure
+                console.log("Creating new description row");
+                const descRow = document.createElement("div");
+                descRow.className = "flex justify-between";
+                descRow.innerHTML = `
+                    <span class="text-gray-600">Description:</span>
+                    <span class="font-medium">${description.trim()}</span>
+                `;
+                detailSection.appendChild(descRow);
+            }
+        } else {
+            // Remove description row if empty
+            if (existingDescRow) {
+                console.log("Removing description row");
+                existingDescRow.remove();
+            }
         }
     }
 }
