@@ -152,10 +152,10 @@
                         </div>
                     </div>
 
-                   <div class="flex justify-center">
+                    <div class="flex justify-center">
                         <div class="flex flex-col items-center space-y-2">
                             <i data-lucide="arrow-up-down" class="w-15 h-15 text-gray-600"></i>
-                           
+
                         </div>
                     </div>
                     <div class="text-center">
@@ -266,13 +266,13 @@
                         </div>
                         @endif
 
-                         @if($core->description)
-                         <div class="flex justify-between">
+                        @if($core->description)
+                        <div class="flex justify-between">
                             <span class="text-gray-600">Description:</span>
                             <span class="font-medium">{{ $core->description }}</span>
                         </div>
                         @endif
-                        
+
 
                         @if($core->connection)
                         @php $connectedCore = $core->connection->coreA->id === $core->id ? $core->connection->coreB : $core->connection->coreA; @endphp
