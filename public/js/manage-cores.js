@@ -3,6 +3,7 @@ class CoreManager {
     constructor() {
         this.currentEditingCore = null;
         this.currentCableId = null; // Add property to track current cable
+        this.currentConnectionToDisconnect = null; // Track connection to disconnect
         this.init();
     }
 
@@ -261,8 +262,106 @@ class CoreManager {
         }
     }
 
+    // NEW: Show disconnect confirmation modal
+    showDisconnectModal(connectionId, sourceCoreNum, sourceTubeNum, targetCableName, targetCoreNum, targetTubeNum) {
+        // Store connection ID for later use
+        this.currentConnectionToDisconnect = connectionId;
+        document.getElementById('connection-to-disconnect').value = connectionId;
+
+        // Get current cable name from page
+        const currentCableName = document.querySelector('h1').textContent;
+
+        // Populate modal with connection info
+        document.getElementById('disconnect-source-info').textContent =
+            `${currentCableName} - Tube ${sourceTubeNum}, Core ${sourceCoreNum}`;
+        document.getElementById('disconnect-target-info').textContent =
+            `${targetCableName} - Tube ${targetTubeNum}, Core ${targetCoreNum}`;
+
+        // Show modal
+        this.showModal('disconnect-confirmation-modal');
+    }
+
+    // NEW: Close disconnect modal
+    closeDisconnectModal() {
+        this.closeModal('disconnect-confirmation-modal');
+        this.currentConnectionToDisconnect = null;
+    }
+
+    // NEW: Confirm disconnect action
+    async confirmDisconnect() {
+        if (!this.currentConnectionToDisconnect) {
+            this.showNotification("No connection selected for disconnection", "error");
+            return;
+        }
+
+        const disconnectBtn = document.querySelector('#disconnect-confirmation-modal button[onclick="confirmDisconnect()"]');
+        this.toggleLoading(disconnectBtn, true);
+
+        try {
+            // Try DELETE method first
+            let result;
+            try {
+                result = await this.apiRequest(
+                    `/connections/${this.currentConnectionToDisconnect}`,
+                    "DELETE"
+                );
+            } catch (error) {
+                // If DELETE fails with 405, try with POST method explicitly
+                if (error.message.includes('405')) {
+                    console.log("DELETE method failed, trying POST with _method override");
+
+                    result = await fetch(`/connections/${this.currentConnectionToDisconnect}`, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRF-TOKEN': this.getCSRFToken(),
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: new URLSearchParams({
+                            '_token': this.getCSRFToken(),
+                            '_method': 'DELETE'
+                        })
+                    });
+
+                    if (!result.ok) {
+                        throw new Error(`HTTP ${result.status}: ${result.statusText}`);
+                    }
+
+                    result = await result.json();
+                } else {
+                    throw error;
+                }
+            }
+
+            if (result.success || result.status === 'success') {
+                this.showNotification("Connection disconnected successfully!", "success");
+                this.closeDisconnectModal();
+                // Reload page to reflect changes
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                throw new Error(result.message || result.error || "Disconnection failed");
+            }
+        } catch (error) {
+            console.error("Disconnect error:", error);
+            this.showNotification(`Failed to disconnect: ${error.message}`, "error");
+        } finally {
+            this.toggleLoading(disconnectBtn, false);
+        }
+    }
+
+    // UPDATED: Fixed disconnect function (no longer used directly, replaced by modal)
     async disconnectCore(connectionId) {
-        if (!confirm("Are you sure you want to disconnect this core?")) return;
+        // This function is now deprecated in favor of the modal approach
+        // Keeping it for backward compatibility but it should not be called directly
+        console.warn("disconnectCore called directly - use showDisconnectModal instead");
+
+        if (!connectionId) {
+            this.showNotification("Invalid connection ID", "error");
+            return;
+        }
 
         try {
             const result = await this.apiRequest(
@@ -271,12 +370,14 @@ class CoreManager {
             );
 
             if (result.success) {
+                this.showNotification("Connection disconnected successfully!", "success");
                 location.reload();
             } else {
                 this.showNotification(`Error: ${result.message}`, "error");
             }
         } catch (error) {
             this.showNotification("Error disconnecting core", "error");
+            console.error("Disconnect error:", error);
         }
     }
 
@@ -310,7 +411,7 @@ class CoreManager {
 
         // Focus first input after animation
         setTimeout(() => {
-            modal.querySelector("select, input")?.focus();
+            modal.querySelector("select, input, button")?.focus();
         }, 100);
     }
 
@@ -352,6 +453,9 @@ class CoreManager {
                 const el = document.getElementById(id);
                 if (el) el.disabled = true;
             });
+        } else if (modalId === "disconnect-confirmation-modal") {
+            this.currentConnectionToDisconnect = null;
+            document.getElementById('connection-to-disconnect').value = '';
         }
     }
 
@@ -681,7 +785,7 @@ class CoreManager {
     }
 
     closeVisibleModal() {
-        const modals = ["core-edit-modal", "join-core-modal"];
+        const modals = ["core-edit-modal", "join-core-modal", "disconnect-confirmation-modal"];
 
         for (const modalId of modals) {
             const modal = document.getElementById(modalId);
@@ -793,7 +897,7 @@ class CoreManager {
                 <svg class="w-4 h-4 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                 </svg>
-                Updating...
+                ${button.textContent.includes('Disconnect') ? 'Disconnecting...' : 'Processing...'}
             `;
             button.disabled = true;
         } else {
@@ -875,5 +979,15 @@ window.joinCore = (coreId) => {
     coreManager.showModal("join-core-modal");
 };
 window.closeJoinModal = () => coreManager.closeModal("join-core-modal");
-window.disconnectCore = (connectionId) =>
+
+// NEW: Global functions for disconnect modal
+window.showDisconnectModal = (connectionId, sourceCoreNum, sourceTubeNum, targetCableName, targetCoreNum, targetTubeNum) =>
+    coreManager.showDisconnectModal(connectionId, sourceCoreNum, sourceTubeNum, targetCableName, targetCoreNum, targetTubeNum);
+window.closeDisconnectModal = () => coreManager.closeDisconnectModal();
+window.confirmDisconnect = () => coreManager.confirmDisconnect();
+
+// DEPRECATED: Keep for backward compatibility but not recommended
+window.disconnectCore = (connectionId) => {
+    console.warn("disconnectCore is deprecated, use showDisconnectModal instead");
     coreManager.disconnectCore(connectionId);
+};
