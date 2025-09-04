@@ -181,9 +181,6 @@
                     <a href="{{ route('cables.show', $cable) }}" class="inline-flex items-center justify-center w-8 h-8 text-indigo-600 hover:text-white hover:bg-indigo-600 border border-indigo-200 rounded-full transition-colors duration-150">
                         <i data-lucide="eye" class="w-4 h-4"></i>
                     </a>
-                    <a href="{{ route('cables.edit', $cable) }}" class="inline-flex items-center justify-center w-8 h-8 text-yellow-600 hover:text-white hover:bg-yellow-600 border border-yellow-200 rounded-full transition-colors duration-150">
-                        <i data-lucide="edit" class="w-4 h-4"></i>
-                    </a>
                 </div>
             </div>
         </div>
@@ -252,10 +249,6 @@
                         <a href="{{ route('cables.show', $cable) }}" class="text-indigo-600 hover:text-indigo-900 flex items-center gap-1">
                             <i data-lucide="eye" class="w-5 h-5"></i> View
                         </a>
-                        <!--
-                        <a href="{{ route('cables.edit', $cable) }}" class="text-yellow-600 hover:text-yellow-900 flex items-center gap-1">
-                            <i data-lucide="edit" class="w-5 h-5"></i> Edit
-                        </a> -->
                     </td>
                 </tr>
                 @empty
