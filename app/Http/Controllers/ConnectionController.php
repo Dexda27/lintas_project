@@ -244,7 +244,7 @@ class ConnectionController extends Controller
             $cables = Cable::select('id', 'name', 'cable_id', 'source_site', 'destination_site')
                 ->where('region', $regionId)
                 ->where('status', 'ok')
-                ->whereHas('fiberCores', function($query) {
+                ->whereHas('fiberCores', function ($query) {
                     $query->where('status', 'ok')
                         ->whereDoesntHave('connectionA')
                         ->whereDoesntHave('connectionB');
