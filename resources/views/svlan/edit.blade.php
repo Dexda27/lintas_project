@@ -139,7 +139,6 @@
         $('#node_id').select2({
             placeholder: "-- Pilih atau ketik untuk mencari Node --",
             allowClear: true,
-            theme: "bootstrap-5",
             width: '100%'
         });
     });
