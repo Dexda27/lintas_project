@@ -16,14 +16,24 @@
 @section('content')
 
 {{-- Header --}}
-<div class="mb-8 flex items-center justify-between">
-    <div>
-        <h1 class="text-3xl font-bold text-gray-900">{{ $cable->name }}</h1>
-        <p class="text-gray-800 font-medium mt-2">Cable ID: {{ $cable->cable_id }}</p>
-    </div>
-    <div class="flex space-x-2">
-        <a href="{{ route('cables.edit', $cable) }}" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">Edit Cable</a>
-        <a href="{{ route('cables.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">Back to List</a>
+<div class="mb-8">
+    <div class="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
+        <div class="min-w-0 flex-1">
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 break-words">{{ $cable->name }}</h1>
+            <p class="text-gray-800 font-medium mt-2 text-sm sm:text-base break-all">Cable ID: {{ $cable->cable_id }}</p>
+        </div>
+        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 flex-shrink-0">
+            <a href="{{ route('cables.edit', $cable) }}"
+                class="inline-flex items-center justify-center bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 transition-colors duration-200 text-sm sm:text-base w-full sm:w-auto">
+                <i data-lucide="edit" class="w-4 h-4 mr-2"></i>
+                Edit Cable
+            </a>
+            <a href="{{ route('cables.index') }}"
+                class="inline-flex items-center justify-center bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition-colors duration-200 text-sm sm:text-base w-full sm:w-auto">
+                <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+                Back to List
+            </a>
+        </div>
     </div>
 </div>
 
@@ -497,4 +507,4 @@
         </div>
     </div>
 </div
-@endsection
+    @endsection

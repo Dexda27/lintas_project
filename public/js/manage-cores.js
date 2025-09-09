@@ -277,38 +277,53 @@ class CoreManager {
     }
 
     // NEW: Show disconnect confirmation modal
-    showDisconnectModal(connectionId, sourceCoreNum, sourceTubeNum, targetCableName, targetCoreNum, targetTubeNum) {
+    showDisconnectModal(
+        connectionId,
+        sourceCoreNum,
+        sourceTubeNum,
+        targetCableName,
+        targetCoreNum,
+        targetTubeNum
+    ) {
         // Store connection ID for later use
         this.currentConnectionToDisconnect = connectionId;
-        document.getElementById('connection-to-disconnect').value = connectionId;
+        document.getElementById("connection-to-disconnect").value =
+            connectionId;
 
         // Get current cable name from page
-        const currentCableName = document.querySelector('h1').textContent;
+        const currentCableName = document.querySelector("h1").textContent;
 
         // Populate modal with connection info
-        document.getElementById('disconnect-source-info').textContent =
-            `${currentCableName} - Tube ${sourceTubeNum}, Core ${sourceCoreNum}`;
-        document.getElementById('disconnect-target-info').textContent =
-            `${targetCableName} - Tube ${targetTubeNum}, Core ${targetCoreNum}`;
+        document.getElementById(
+            "disconnect-source-info"
+        ).textContent = `${currentCableName} - Tube ${sourceTubeNum}, Core ${sourceCoreNum}`;
+        document.getElementById(
+            "disconnect-target-info"
+        ).textContent = `${targetCableName} - Tube ${targetTubeNum}, Core ${targetCoreNum}`;
 
         // Show modal
-        this.showModal('disconnect-confirmation-modal');
+        this.showModal("disconnect-confirmation-modal");
     }
 
     // NEW: Close disconnect modal
     closeDisconnectModal() {
-        this.closeModal('disconnect-confirmation-modal');
+        this.closeModal("disconnect-confirmation-modal");
         this.currentConnectionToDisconnect = null;
     }
 
     // NEW: Confirm disconnect action
     async confirmDisconnect() {
         if (!this.currentConnectionToDisconnect) {
-            this.showNotification("No connection selected for disconnection", "error");
+            this.showNotification(
+                "No connection selected for disconnection",
+                "error"
+            );
             return;
         }
 
-        const disconnectBtn = document.querySelector('#disconnect-confirmation-modal button[onclick="confirmDisconnect()"]');
+        const disconnectBtn = document.querySelector(
+            '#disconnect-confirmation-modal button[onclick="confirmDisconnect()"]'
+        );
         this.toggleLoading(disconnectBtn, true);
 
         try {
@@ -321,25 +336,33 @@ class CoreManager {
                 );
             } catch (error) {
                 // If DELETE fails with 405, try with POST method explicitly
-                if (error.message.includes('405')) {
-                    console.log("DELETE method failed, trying POST with _method override");
+                if (error.message.includes("405")) {
+                    console.log(
+                        "DELETE method failed, trying POST with _method override"
+                    );
 
-                    result = await fetch(`/connections/${this.currentConnectionToDisconnect}`, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'X-CSRF-TOKEN': this.getCSRFToken(),
-                            'X-Requested-With': 'XMLHttpRequest',
-                        },
-                        body: new URLSearchParams({
-                            '_token': this.getCSRFToken(),
-                            '_method': 'DELETE'
-                        })
-                    });
+                    result = await fetch(
+                        `/connections/${this.currentConnectionToDisconnect}`,
+                        {
+                            method: "POST",
+                            headers: {
+                                Accept: "application/json",
+                                "Content-Type":
+                                    "application/x-www-form-urlencoded",
+                                "X-CSRF-TOKEN": this.getCSRFToken(),
+                                "X-Requested-With": "XMLHttpRequest",
+                            },
+                            body: new URLSearchParams({
+                                _token: this.getCSRFToken(),
+                                _method: "DELETE",
+                            }),
+                        }
+                    );
 
                     if (!result.ok) {
-                        throw new Error(`HTTP ${result.status}: ${result.statusText}`);
+                        throw new Error(
+                            `HTTP ${result.status}: ${result.statusText}`
+                        );
                     }
 
                     result = await result.json();
@@ -348,19 +371,27 @@ class CoreManager {
                 }
             }
 
-            if (result.success || result.status === 'success') {
-                this.showNotification("Connection disconnected successfully!", "success");
+            if (result.success || result.status === "success") {
+                this.showNotification(
+                    "Connection disconnected successfully!",
+                    "success"
+                );
                 this.closeDisconnectModal();
                 // Reload page to reflect changes
                 setTimeout(() => {
                     location.reload();
                 }, 1000);
             } else {
-                throw new Error(result.message || result.error || "Disconnection failed");
+                throw new Error(
+                    result.message || result.error || "Disconnection failed"
+                );
             }
         } catch (error) {
             console.error("Disconnect error:", error);
-            this.showNotification(`Failed to disconnect: ${error.message}`, "error");
+            this.showNotification(
+                `Failed to disconnect: ${error.message}`,
+                "error"
+            );
         } finally {
             this.toggleLoading(disconnectBtn, false);
         }
@@ -370,7 +401,9 @@ class CoreManager {
     async disconnectCore(connectionId) {
         // This function is now deprecated in favor of the modal approach
         // Keeping it for backward compatibility but it should not be called directly
-        console.warn("disconnectCore called directly - use showDisconnectModal instead");
+        console.warn(
+            "disconnectCore called directly - use showDisconnectModal instead"
+        );
 
         if (!connectionId) {
             this.showNotification("Invalid connection ID", "error");
@@ -384,7 +417,10 @@ class CoreManager {
             );
 
             if (result.success) {
-                this.showNotification("Connection disconnected successfully!", "success");
+                this.showNotification(
+                    "Connection disconnected successfully!",
+                    "success"
+                );
                 location.reload();
             } else {
                 this.showNotification(`Error: ${result.message}`, "error");
@@ -469,7 +505,7 @@ class CoreManager {
             });
         } else if (modalId === "disconnect-confirmation-modal") {
             this.currentConnectionToDisconnect = null;
-            document.getElementById('connection-to-disconnect').value = '';
+            document.getElementById("connection-to-disconnect").value = "";
         }
     }
 
@@ -799,7 +835,11 @@ class CoreManager {
     }
 
     closeVisibleModal() {
-        const modals = ["core-edit-modal", "join-core-modal", "disconnect-confirmation-modal"];
+        const modals = [
+            "core-edit-modal",
+            "join-core-modal",
+            "disconnect-confirmation-modal",
+        ];
 
         for (const modalId of modals) {
             const modal = document.getElementById(modalId);
@@ -911,7 +951,11 @@ class CoreManager {
                 <svg class="w-4 h-4 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                 </svg>
-                ${button.textContent.includes('Disconnect') ? 'Disconnecting...' : 'Processing...'}
+                ${
+                    button.textContent.includes("Disconnect")
+                        ? "Disconnecting..."
+                        : "Processing..."
+                }
             `;
             button.disabled = true;
         } else {
@@ -961,6 +1005,7 @@ class CoreManager {
     }
 
     // FIXED: Complete rewrite of updateDescription method to match HTML structure
+    // FIXED: Complete rewrite of updateDescription method to match HTML structure and proper positioning
     updateDescription(card, description) {
         console.log("Updating description:", description); // Debug log
 
@@ -971,7 +1016,7 @@ class CoreManager {
             return;
         }
 
-        // Look for existing description row with the structure from template
+        // Look for existing description row
         let existingDescRow = null;
         const flexItems = detailSection.querySelectorAll(
             ".flex.justify-between"
@@ -994,15 +1039,34 @@ class CoreManager {
                     valueSpan.textContent = description.trim();
                 }
             } else {
-                // Create new description row matching template structure
+                // Create new description row
                 console.log("Creating new description row");
                 const descRow = document.createElement("div");
                 descRow.className = "flex justify-between";
                 descRow.innerHTML = `
-                    <span class="text-gray-600">Description:</span>
-                    <span class="font-medium">${description.trim()}</span>
-                `;
-                detailSection.appendChild(descRow);
+                <span class="text-gray-600">Description:</span>
+                <span class="font-medium">${description.trim()}</span>
+            `;
+
+                // FIXED: Insert description in the correct position
+                // Find the right position: after Attenuation (if exists) but before Connection info
+                const connectionInfo = detailSection.querySelector(
+                    ".mt-2.p-2.bg-blue-50"
+                );
+
+                if (connectionInfo) {
+                    // Insert before connection info
+                    detailSection.insertBefore(descRow, connectionInfo);
+                } else {
+                    // If no connection info, find the last .flex.justify-between element and insert after it
+                    const lastFlexItem = Array.from(flexItems).pop();
+                    if (lastFlexItem) {
+                        lastFlexItem.insertAdjacentElement("afterend", descRow);
+                    } else {
+                        // Fallback: append to detail section
+                        detailSection.appendChild(descRow);
+                    }
+                }
             }
         } else {
             // Remove description row if empty
@@ -1028,13 +1092,29 @@ window.joinCore = (coreId) => {
 window.closeJoinModal = () => coreManager.closeModal("join-core-modal");
 
 // NEW: Global functions for disconnect modal
-window.showDisconnectModal = (connectionId, sourceCoreNum, sourceTubeNum, targetCableName, targetCoreNum, targetTubeNum) =>
-    coreManager.showDisconnectModal(connectionId, sourceCoreNum, sourceTubeNum, targetCableName, targetCoreNum, targetTubeNum);
+window.showDisconnectModal = (
+    connectionId,
+    sourceCoreNum,
+    sourceTubeNum,
+    targetCableName,
+    targetCoreNum,
+    targetTubeNum
+) =>
+    coreManager.showDisconnectModal(
+        connectionId,
+        sourceCoreNum,
+        sourceTubeNum,
+        targetCableName,
+        targetCoreNum,
+        targetTubeNum
+    );
 window.closeDisconnectModal = () => coreManager.closeDisconnectModal();
 window.confirmDisconnect = () => coreManager.confirmDisconnect();
 
 // DEPRECATED: Keep for backward compatibility but not recommended
 window.disconnectCore = (connectionId) => {
-    console.warn("disconnectCore is deprecated, use showDisconnectModal instead");
+    console.warn(
+        "disconnectCore is deprecated, use showDisconnectModal instead"
+    );
     coreManager.disconnectCore(connectionId);
 };
