@@ -33,7 +33,7 @@
                                 <input type="text" name="search" id="search-input" 
                                        placeholder="Cari data Node ID, VPN, NMS..." 
                                        value="{{ request('search') }}"
-                                       class="w-full h-10 pl-4 pr-10 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300">
+                                       class="bg-white w-full h-10 pl-4 pr-10 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300">
                                 <button type="submit" id="search-submit-btn" class="absolute top-0 right-0 h-10 w-10 flex items-center justify-center text-gray-600 hover:text-blue-600">
                                     <i data-lucide="search" class="w-5 h-5"></i>
                                 </button>
