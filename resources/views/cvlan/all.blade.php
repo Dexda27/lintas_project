@@ -73,12 +73,6 @@
             </div>
         </div>
     </div>
-
-    @if (session('success'))
-        <div class="bg-emerald-100 border-l-4 border-emerald-500 text-emerald-700 p-4 mb-6 rounded-lg" role="alert">
-            {{ session('success') }}
-        </div>
-    @endif
     
     {{-- Main Content Table --}}
     <div class="bg-white rounded-2xl shadow-lg p-6">
@@ -153,7 +147,7 @@
                                     @elseif(!is_null($cvlan->metro))
                                         <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">Metro: {{ $cvlan->metro }}</span>
                                     @elseif(!is_null($cvlan->vpn))
-                                        <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded-full">VPN: {{ $cvlan->vpn }}</span>
+                                        <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2 py-0.5 rounded-full">VPN: {{ $cvlan->vpn }}</span>
                                     @elseif(!is_null($cvlan->inet))
                                         <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-0.5 rounded-full">INET: {{ $cvlan->inet }}</span>
                                     @elseif(!is_null($cvlan->extra))

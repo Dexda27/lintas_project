@@ -48,44 +48,48 @@
                 </div>
             </div>
             
-            {{-- Sisi Kanan: Form Pencarian dan Filter dengan CSS Grid --}}
+            {{-- Sisi Kanan: Form Pencarian dan Filter dengan Flexbox --}}
             <div class="w-full sm:w-auto mt-4 sm:mt-0">
                 <form action="{{ route('cvlan.index', $svlan->id) }}" method="GET">
-                    {{-- Hidden input untuk menjaga state sorting & filter saat mencari --}}
+                    {{-- Hidden input untuk menjaga state --}}
                     <input type="hidden" name="sort" value="{{ request('sort') }}">
                     <input type="hidden" name="order" value="{{ request('order') }}">
                     
-                    <div class="grid grid-cols-[1fr,auto] gap-2">
+                    <div class="flex flex-col gap-2">
 
-                        <div class="relative">
-                            <input type="text" name="search" placeholder="Cari..." value="{{ request('search') }}" class="w-full pl-10 pr-4 py-2.5 bg-white/10 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 placeholder-blue-100 transition-colors">
-                            <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-200 pointer-events-none"></i>
+                        <div class="flex items-center gap-2">
+                            <div class="relative flex-grow">
+                                <input type="text" name="search" placeholder="Cari..." value="{{ request('search') }}" class="w-full pl-10 pr-4 py-2.5 bg-white/10 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 placeholder-blue-100 transition-colors">
+                                <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-200 pointer-events-none"></i>
+                            </div>
+                            <button type="submit" class="p-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md transition-colors flex-shrink-0">
+                                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                            </button>
                         </div>
-                        <button type="submit" class="p-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md transition-colors flex-shrink-0">
-                            <i data-lucide="arrow-right" class="w-5 h-5"></i>
-                        </button>
 
-                        <div class="relative">
-                            <i data-lucide="filter" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-white pointer-events-none z-10"></i>
-                            <select name="koneksi_filter" onchange="this.form.submit()" 
-                                    class="w-full appearance-none bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2.5 pl-12 pr-8 rounded-lg shadow-md transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-300">
-                                <option value="nms" {{ request('koneksi_filter') == 'nms' ? 'selected' : '' }}>NMS</option>
-                                <option value="metro" {{ request('koneksi_filter') == 'metro' ? 'selected' : '' }}>Metro</option>
-                                <option value="vpn" {{ request('koneksi_filter') == 'vpn' ? 'selected' : '' }}>VPN</option>
-                                <option value="inet" {{ request('koneksi_filter') == 'inet' ? 'selected' : '' }}>INET</option>
-                                <option value="extra" {{ request('koneksi_filter') == 'extra' ? 'selected' : '' }}>EXTRA</option>
-                            </select>
-                            <i data-lucide="chevron-down" class="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-white pointer-events-none"></i>
+                        <div class="flex items-center gap-2">
+                            <div class="relative flex-grow">
+                                <i data-lucide="filter" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-white pointer-events-none z-10"></i>
+                                <select name="koneksi_filter" onchange="this.form.submit()" 
+                                        class="w-full appearance-none bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2.5 pl-12 pr-8 rounded-lg shadow-md transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-300">
+                                    <option value="nms" {{ request('koneksi_filter') == 'nms' ? 'selected' : '' }}>NMS</option>
+                                    <option value="metro" {{ request('koneksi_filter') == 'metro' ? 'selected' : '' }}>Metro</option>
+                                    <option value="vpn" {{ request('koneksi_filter') == 'vpn' ? 'selected' : '' }}>VPN</option>
+                                    <option value="inet" {{ request('koneksi_filter') == 'inet' ? 'selected' : '' }}>INET</option>
+                                    <option value="extra" {{ request('koneksi_filter') == 'extra' ? 'selected' : '' }}>EXTRA</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-white pointer-events-none"></i>
+                            </div>
+                            
+                            @if(request('search'))
+                                <a href="{{ route('cvlan.index', ['svlan_id' => $svlan->id, 'koneksi_filter' => request('koneksi_filter')]) }}" 
+                                title="Reset Pencarian" 
+                                class="p-2.5 bg-gray-500 hover:bg-gray-600 text-white rounded-lg shadow-md transition-colors flex-shrink-0">
+                                    <i data-lucide="rotate-cw" class="w-5 h-5"></i>
+                                </a>
+                            @endif
                         </div>
-                        @if(request('search'))
-                            <a href="{{ route('cvlan.index', ['svlan_id' => $svlan->id, 'koneksi_filter' => request('koneksi_filter')]) }}" 
-                            title="Reset Pencarian" 
-                            class="p-2.5 bg-gray-500 hover:bg-gray-600 text-white rounded-lg shadow-md transition-colors flex-shrink-0">
-                                <i data-lucide="rotate-cw" class="w-5 h-5"></i>
-                            </a>
-                        @else
-                            <div></div> 
-                        @endif
+
                     </div>
                 </form>
             </div>

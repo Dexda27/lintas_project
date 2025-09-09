@@ -62,44 +62,51 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {{-- Wrapper untuk field yang terkait SVLAN --}}
-                            <div id="svlan-fields-wrapper" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="md:col-span-2">
-                                    <label for="svlan_id" class="block text-sm font-medium text-gray-700 mb-1">Terhubung ke SVLAN</label>
-                                    <select id="svlan_id" name="svlan_id" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                        @foreach($svlans as $svlan)
-                                            <option 
-                                                value="{{ $svlan->id }}" 
-                                                {{ old('svlan_id') == $svlan->id ? 'selected' : '' }}
-                                                data-nms="{{ $svlan->svlan_nms }}"
-                                                data-metro="{{ $svlan->svlan_me }}"
-                                                data-vpn="{{ $svlan->svlan_vpn }}"
-                                                data-inet="{{ $svlan->svlan_inet }}"
-                                                data-extra="{{ $svlan->extra }}"
-                                                data-node="{{ $svlan->node->nama_node ?? 'N/A' }}"
-                                            >
-                                                {{-- Teks ini akan diisi oleh JavaScript --}}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                
+                        <div id="svlan-fields-wrapper" class="hidden md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            
+                            {{-- Dropdown untuk memilih SVLAN (memakan 2 kolom) --}}
+                            <div class="md:col-span-2">
+                                <label for="svlan_id" class="block text-sm font-medium text-gray-700 mb-1">Terhubung ke SVLAN</label>
+                                <select id="svlan_id" name="svlan_id" class="block w-full">
+                                    @foreach($svlans as $svlan)
+                                        <option 
+                                            value="{{ $svlan->id }}" 
+                                            {{ old('svlan_id') == $svlan->id ? 'selected' : '' }}
+                                            data-nms="{{ $svlan->svlan_nms }}"
+                                            data-metro="{{ $svlan->svlan_me }}"
+                                            data-vpn="{{ $svlan->svlan_vpn }}"
+                                            data-inet="{{ $svlan->svlan_inet }}"
+                                            data-extra="{{ $svlan->extra }}"
+                                            data-node="{{ $svlan->node->nama_node ?? 'N/A' }}"
+                                        >
+                                            {{-- Teks ini akan diisi oleh JavaScript --}}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+
+                                {{-- Kolom Pertama: Jenis Koneksi --}}
                                 <div>
                                     <label for="connection_type" class="block text-sm font-medium text-gray-700 mb-1">Jenis Koneksi</label>
-                                    <select id="connection_type" name="connection_type" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                        <option value="nms" {{ $activeFilter == 'nms' ? 'selected' : '' }}>NMS</option>
-                                        <option value="metro" {{ $activeFilter == 'metro' ? 'selected' : '' }}>Metro</option>
-                                        <option value="vpn" {{ $activeFilter == 'vpn' ? 'selected' : '' }}>VPN</option>
-                                        <option value="inet" {{ $activeFilter == 'inet' ? 'selected' : '' }}>INET</option>
-                                        <option value="extra" {{ $activeFilter == 'extra' ? 'selected' : '' }}>EXTRA</option>
+                                    <select id="connection_type" name="connection_type" class="block w-full">
+                                        <option value="nms" {{ old('connection_type') == 'nms' ? 'selected' : '' }}>NMS</option>
+                                        <option value="metro" {{ old('connection_type') == 'metro' ? 'selected' : '' }}>Metro</option>
+                                        <option value="vpn" {{ old('connection_type') == 'vpn' ? 'selected' : '' }}>VPN</option>
+                                        <option value="inet" {{ old('connection_type') == 'inet' ? 'selected' : '' }}>INET</option>
+                                        <option value="extra" {{ old('connection_type') == 'extra' ? 'selected' : '' }}>EXTRA</option>
                                     </select>
                                 </div>
 
-                                <div id="connection-value-wrapper" class="{{ $activeFilter ? '' : 'hidden' }}">
+                                {{-- Kolom Kedua: Nilai Koneksi --}}
+                                <div id="connection-value-wrapper">
                                     <label id="connection-value-label" for="connection_value" class="block text-sm font-medium text-gray-700 mb-1">Nilai</label>
-                                    <input type="number" id="connection_value" name="connection_value" value="{{ old('connection_value', $cvlan->nms ?? $cvlan->metro ?? $cvlan->vpn ?? $cvlan->inet ?? $cvlan->extra) }}" class="block w-full px-3 py-4 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" max="9999" oninput="if (this.value.length > 4) this.value = this.value.slice(0, 4);">
+                                    <input type="number" id="connection_value" name="connection_value" value="{{ old('connection_value') }}" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm" max="9999" oninput="if (this.value.length > 4) this.value = this.value.slice(0, 4);">
                                 </div>
-                                
+
                             </div>
+
+                        </div>
                             
                             {{-- Wrapper untuk field Node (mode standalone) --}}
                             <div id="node-field-wrapper" class="md:col-span-2 space-y-6">
