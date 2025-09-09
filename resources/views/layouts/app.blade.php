@@ -9,7 +9,9 @@
     <link rel="icon" type="image/png" href="{{ asset('assets/images/logo2.png') }}">
     <title>@yield('title', 'Fiber Core Management')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
+    <!-- Select2 CSS for enhanced selects used in CVLAN views -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    
 </head>
 
 <body class="bg-gray-50">
@@ -95,7 +97,7 @@
                                     <div class="px-2 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                         vlan Management
                                     </div>
-                                    <a href="#" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 ">
+                                    <a href="{{ route('svlan.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 ">
                                         <i data-lucide="network" class="w-5 h-5 mr-3"></i>
                                         Vlan Management
                                     </a>
@@ -196,7 +198,7 @@
         </div>
     </footer>
     </div>
-
+    
     <script>
         // Sidebar state management
         let sidebarOpen = window.innerWidth >= 1024; // desktop terbuka, mobile/tablet tertutup
@@ -350,6 +352,10 @@
             lucide.createIcons();
         });
     </script>
+
+    <!-- jQuery and Select2 (needed by CVLAN edit/create views) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     @stack('scripts')
 </body>
