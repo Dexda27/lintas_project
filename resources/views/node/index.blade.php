@@ -53,15 +53,6 @@
             <i data-lucide="network" class="w-64 h-64 text-white"></i>
         </div>
     </div>
-    
-    {{-- Menampilkan notifikasi success/error --}}
-    @if(session('success'))
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-md">{{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-md">{{ session('error') }}</div>
-    @endif
-
 
     {{-- Konten Tabel --}}
     <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6 my-8 overflow-x-auto">

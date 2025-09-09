@@ -29,25 +29,18 @@
                         {{-- Form fields --}}
                         <div class="space-y-6">
                             
-                            {{-- ======================= PERUBAHAN DI SINI ======================= --}}
+                            {{-- Pilih Node --}}
                             <div>
-                                <label for="node_id" class="block text-sm font-semibold text-gray-600 mb-2">Pilih Node</label>
-                                {{-- Tidak ada perubahan di sini, Select2 akan menargetkan ID ini --}}
-                                <select id="node_id" name="node_id" required
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
-                                    <option value="" disabled selected>-- Pilih atau ketik untuk mencari Node --</option>
-                                    
+                                <label for="node_id" class="block text-sm font-medium text-gray-700 mb-1">Pilih Node</label>
+                                <select id="node_id" name="node_id" class="block w-full">
+                                    <option></option> {{-- Option kosong untuk placeholder Select2 --}}
                                     @foreach($nodes as $node)
                                         <option value="{{ $node->id }}" {{ old('node_id') == $node->id ? 'selected' : '' }}>
                                             {{ $node->nama_node }}
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('node_id')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
                             </div>
-                            {{-- ===================== AKHIR DARI PERUBAHAN ==================== --}}
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
@@ -132,15 +125,33 @@
 @endsection
 
 @push('scripts')
+{{-- Style khusus untuk membuat tema Select2 cocok dengan Tailwind --}}
+<style>
+    .form-input {
+        @apply block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm;
+    }
+    .select2-container--bootstrap-5 .select2-selection {
+        background-color: #f9fafb; border: 1px solid #d1d5db; border-radius: 0.375rem;
+        min-height: 42px; padding: 0.375rem 0.75rem; display: flex; align-items: center; box-shadow: 0 0 #0000;
+    }
+    .select2-container--bootstrap-5 .select2-selection__rendered { color: #4b5563; }
+    .select2-container--bootstrap-5 .select2-selection__placeholder { color: #9ca3af; }
+    .select2-container--bootstrap-5 .select2-selection__arrow { height: 100%; }
+    .select2-container--bootstrap-5.select2-container .select2-search--dropdown .select2-search__field { border-radius: 0.375rem; }
+    .select2-container { width: 100% !important; }
+    .select2-container--bootstrap-5.select2-container--focus .select2-selection {
+        border-color: #3b82f6; box-shadow: 0 0 0 1px rgba(59,130,246,0.2);
+    }
+</style>
+
 <script>
-    // Pastikan DOM sudah siap
-    $(document).ready(function() {
-        // Inisialisasi Select2 pada elemen dengan ID 'node_id'
-        $('#node_id').select2({
-            placeholder: "-- Pilih atau ketik untuk mencari Node --",
-            allowClear: true,
-            width: '100%'         // Memastikan lebar dropdown sesuai form
-        });
+$(document).ready(function() {
+    // Inisialisasi Select2 pada dropdown Node dengan tema dan placeholder
+    $('#node_id').select2({
+        theme: "bootstrap-5",
+        width: '100%',
+        placeholder: 'Pilih atau ketik untuk mencari Node...'
     });
+});
 </script>
 @endpush

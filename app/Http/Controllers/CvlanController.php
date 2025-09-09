@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Cvlan;
 use App\Models\Svlan;
 use App\Models\Node;
+use App\Exports\CvlansExport;       // <-- TAMBAHKAN INI
+use Maatwebsite\Excel\Facades\Excel;  // <-- TAMBAHKAN INI
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -470,115 +472,19 @@ class CvlanController extends Controller
     
     
     /**
-     * Export data CVLAN (semua atau terfilter) ke file CSV.
+     * Export data CVLAN (semua atau terfilter) ke file EXCEL (.xlsx).
      */
-    public function exportAllCsv(Request $request)
+    public function exportAllCsv(Request $request) // Nama fungsi bisa tetap sama
     {
-        // Logika query untuk mendapatkan data CVLAN (sama seperti di method all())
+        // Ambil parameter filter dari request
         $search = $request->query('search');
         $koneksiFilter = $request->query('koneksi_filter');
-        $query = Cvlan::with(['svlan.node', 'node']);
 
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('cvlan_slot', 'like', "%{$search}%")
-                  ->orWhere('no_jaringan', 'like', "%{$search}%")
-                  ->orWhere('nama_pelanggan', 'like', "%{$search}%")
-                  ->orWhereHas('node', function ($nodeQuery) use ($search) {
-                      $nodeQuery->where('nama_node', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('svlan.node', function ($nodeQuery) use ($search) {
-                      $nodeQuery->where('nama_node', 'like', "%{$search}%");
-                  });
-            });
-        }
-        
-        if ($koneksiFilter) {
-            if ($koneksiFilter === 'mandiri') {
-                $query->whereNull('svlan_id');
-            } elseif (in_array($koneksiFilter, ['nms', 'metro', 'vpn', 'inet', 'extra'])) {
-                $query->whereNotNull($koneksiFilter);
-            }
-        }
-        
-        $cvlans = $query->get();
+        // Ganti ekstensi file menjadi .xlsx
+        $fileName = 'semua_cvlan_export_' . date('Y-m-d') . '.xlsx';
 
-        $fileName = 'semua_cvlan_export_' . date('Y-m-d') . '.csv';
-        $headers = [
-            "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename=$fileName",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
-        ];
-        
-        // ======================= AWAL PERUBAHAN =======================
-
-        // 1. Ubah header CSV agar sesuai dengan tampilan tabel
-        $columns = [
-            'Node', 'Status', 'CVLAN Slot', 'Koneksi', 'No Jaringan', 'Nama Pelanggan'
-        ];
-
-        $callback = function() use($cvlans, $columns) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, $columns);
-
-            foreach ($cvlans as $cvlan) {
-                
-                // 2. Buat logika PHP untuk meniru tampilan di Blade
-                $node = $cvlan->svlan->node->nama_node ?? $cvlan->node->nama_node ?? 'N/A';
-                
-                // Logika untuk kolom STATUS
-                $status = 'Mandiri';
-                if ($cvlan->svlan) {
-                    $statusDetail = '';
-                    if ($cvlan->nms !== null) {
-                        $statusDetail = "SVLAN-NMS: " . $cvlan->svlan->svlan_nms;
-                    } elseif ($cvlan->metro !== null) {
-                        $statusDetail = "SVLAN-Metro: " . $cvlan->svlan->svlan_me;
-                    } elseif ($cvlan->vpn !== null) {
-                        $statusDetail = "SVLAN-VPN: " . $cvlan->svlan->svlan_vpn;
-                    } elseif ($cvlan->inet !== null) {
-                        $statusDetail = "SVLAN-INET: " . $cvlan->svlan->svlan_inet;
-                    } elseif ($cvlan->extra !== null) {
-                        $statusDetail = "SVLAN-Extra: " . $cvlan->svlan->extra;
-                    } else {
-                        $statusDetail = "SVLAN: " . $cvlan->svlan->svlan_nms;
-                    }
-                    $status = "Terhubung (" . $statusDetail . ")";
-                }
-
-                // Logika untuk kolom KONEKSI
-                $koneksi = '-';
-                if ($cvlan->nms !== null) {
-                    $koneksi = "NMS: " . $cvlan->nms;
-                } elseif ($cvlan->metro !== null) {
-                    $koneksi = "Metro: " . $cvlan->metro;
-                } elseif ($cvlan->vpn !== null) {
-                    $koneksi = "VPN: " . $cvlan->vpn;
-                } elseif ($cvlan->inet !== null) {
-                    $koneksi = "INET: " . $cvlan->inet;
-                } elseif ($cvlan->extra !== null) {
-                    $koneksi = "Extra: " . $cvlan->extra;
-                }
-
-                // 3. Susun baris CSV sesuai format baru
-                $row = [
-                    'Node'           => $node,
-                    'Status'         => $status,
-                    'CVLAN Slot'     => $cvlan->cvlan_slot,
-                    'Koneksi'        => $koneksi,
-                    'No Jaringan'    => $cvlan->no_jaringan ?? 'N/A',
-                    'Nama Pelanggan' => $cvlan->nama_pelanggan ?? 'N/A',
-                ];
-
-                fputcsv($file, $row);
-            }
-            fclose($file);
-        };
-        // ======================== AKHIR PERUBAHAN ========================
-
-        return new StreamedResponse($callback, 200, $headers);
+        // Panggil class CvlansExport untuk diunduh
+        return Excel::download(new CvlansExport($search, $koneksiFilter), $fileName);
     }
 
     /**

@@ -37,10 +37,6 @@
 
     {{-- Konten Tabel --}}
     <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6 my-8 overflow-x-auto">
-        @if(session('success'))
-            <div class="bg-emerald-100 border-l-4 border-emerald-500 text-emerald-700 p-4 mb-4 rounded-md">{{ session('success') }}</div>
-        @endif
-
         {{--Search Bar--}}
         <div class="mb-6">
             <form action="{{ route('svlan.index') }}" method="GET" class="flex items-center gap-3">
