@@ -6,7 +6,7 @@
 <div class="container mx-auto px-4">
     <div class="bg-gradient-to-br from-blue-500 to-indigo-700 text-slate-50 rounded-2xl shadow-lg p-6 sm:p-8 my-8 relative">
         <div class="flex flex-wrap items-center justify-between gap-4">
-            
+
             {{-- Sisi Kiri: Judul dan Tombol Aksi --}}
             <div>
                 <h1 class="text-3xl font-bold drop-shadow-lg">Data CVLAN</h1>
@@ -47,14 +47,14 @@
                     </a>
                 </div>
             </div>
-            
+
             {{-- Sisi Kanan: Form Pencarian dan Filter dengan CSS Grid --}}
             <div class="w-full sm:w-auto mt-4 sm:mt-0">
                 <form action="{{ route('cvlan.index', $svlan->id) }}" method="GET">
                     {{-- Hidden input untuk menjaga state sorting & filter saat mencari --}}
                     <input type="hidden" name="sort" value="{{ request('sort') }}">
                     <input type="hidden" name="order" value="{{ request('order') }}">
-                    
+
                     <div class="grid grid-cols-[1fr,auto] gap-2">
 
                         <div class="relative">
@@ -67,7 +67,7 @@
 
                         <div class="relative">
                             <i data-lucide="filter" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-white pointer-events-none z-10"></i>
-                            <select name="koneksi_filter" onchange="this.form.submit()" 
+                            <select name="koneksi_filter" onchange="this.form.submit()"
                                     class="w-full appearance-none bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2.5 pl-12 pr-8 rounded-lg shadow-md transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-300">
                                 <option value="nms" {{ request('koneksi_filter') == 'nms' ? 'selected' : '' }}>NMS</option>
                                 <option value="metro" {{ request('koneksi_filter') == 'metro' ? 'selected' : '' }}>Metro</option>
@@ -78,13 +78,13 @@
                             <i data-lucide="chevron-down" class="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-white pointer-events-none"></i>
                         </div>
                         @if(request('search'))
-                            <a href="{{ route('cvlan.index', ['svlan_id' => $svlan->id, 'koneksi_filter' => request('koneksi_filter')]) }}" 
-                            title="Reset Pencarian" 
+                            <a href="{{ route('cvlan.index', ['svlan_id' => $svlan->id, 'koneksi_filter' => request('koneksi_filter')]) }}"
+                            title="Reset Pencarian"
                             class="p-2.5 bg-gray-500 hover:bg-gray-600 text-white rounded-lg shadow-md transition-colors flex-shrink-0">
                                 <i data-lucide="rotate-cw" class="w-5 h-5"></i>
                             </a>
                         @else
-                            <div></div> 
+                            <div></div>
                         @endif
                     </div>
                 </form>
@@ -93,7 +93,7 @@
         </div>
     </div>
 
-    
+
 
     <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
         <div class="overflow-x-auto">
@@ -110,7 +110,7 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($cvlans as $cvlan)
-                        <tr>        
+                        <tr>
                             <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">
                                 {{-- LOGIKA NMS DIMASUKKAN KE DALAM BLOK @if INI --}}
                                 @if(!is_null($cvlan->nms))
@@ -129,21 +129,21 @@
                             </td>
 
                             <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">{{ $cvlan->no_jaringan ?? 'N/A' }}</td>
-                            
+
                             <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">{{ $cvlan->nama_pelanggan ?? 'N/A' }}</td>
-                            
+
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <div class="flex items-center justify-center gap-2"> 
+                                <div class="flex items-center justify-center gap-2">
                                     <a href="{{ route('cvlan.edit', ['svlan_id' => $svlan->id, 'id' => $cvlan->id, 'koneksi_filter' => request('koneksi_filter'), 'origin' => 'index']) }}" class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-indigo-400 to-indigo-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200" title="Edit">
                                         <i data-lucide="pen-square" class="w-4 h-4"></i>
                                     </a>
                                     <form action="{{ route('cvlan.destroy', ['svlan_id' => $svlan->id, 'id' => $cvlan->id]) }}" method="POST" onsubmit="return confirm('Anda yakin ingin menghapus CVLAN ini?');" class="inline-block">
                                         @csrf
                                         @method('DELETE')
-                                        
+
                                         {{-- TAMBAHKAN INPUT TERSEMBUNYI INI --}}
                                         <input type="hidden" name="koneksi_filter_origin" value="{{ request('koneksi_filter') }}">
-                                        
+
                                         <button type="submit" class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-red-400 to-red-500 rounded-lg shadow-sm" title="Hapus">
                                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                                         </button>
@@ -172,7 +172,7 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        
+
         // 1. Inisialisasi ikon Lucide
         lucide.createIcons();
 
@@ -184,7 +184,7 @@
         if (dropdownButton && dropdownMenu && dropdownContainer) {
             dropdownButton.addEventListener('click', function (event) {
                 // Mencegah event 'click' menyebar ke document
-                event.stopPropagation(); 
+                event.stopPropagation();
                 dropdownMenu.classList.toggle('hidden');
             });
 

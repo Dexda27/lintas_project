@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Semua CVLAN')
+@section('title', 'List All CVLANs')
 
 @section('content')
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-    
+
     {{-- Header Banner --}}
     <div class="bg-gradient-to-br from-blue-400 to-indigo-600 text-slate-50 rounded-2xl shadow-lg p-6 sm:p-8 my-8 relative">
         <div class="flex flex-wrap items-center justify-between gap-4">
@@ -27,7 +27,7 @@
                     </a>
                 </div>
             </div>
-            
+
             {{-- Right Side: Search and Filter --}}
             <div class="w-full sm:w-auto mt-4 sm:mt-0">
                 <form action="{{ route('cvlan.all') }}" method="GET">
@@ -42,7 +42,7 @@
                         </button>
                         <div class="relative">
                             <i data-lucide="filter" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-white pointer-events-none z-10"></i>
-                            <select name="koneksi_filter" onchange="this.form.submit()" 
+                            <select name="koneksi_filter" onchange="this.form.submit()"
                                     class="w-full appearance-none bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2.5 pl-12 pr-8 rounded-lg shadow-md transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-300">
                                 <option value="">Filter VLAN</option>
                                 <option value="mandiri" {{ request('koneksi_filter') == 'mandiri' ? 'selected' : '' }}>Mandiri</option>
@@ -67,12 +67,6 @@
         </div>
     </div>
 
-    @if (session('success'))
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg" role="alert">
-            {{ session('success') }}
-        </div>
-    @endif
-    
     {{-- Main Content Table --}}
     <div class="bg-white rounded-2xl shadow-lg p-6">
         <div class="overflow-x-auto">
@@ -82,7 +76,7 @@
                         <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">
                             <div class="flex items-center justify-center">Node</div>
                         </th>
-                        
+
                         <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">
                             <div class="flex items-center justify-center">Status</div>
                         </th>
@@ -108,7 +102,7 @@
                             </td>
                             <td class="px-6 py-4 text-sm text-center">
                                 @if($cvlan->svlan)
-                                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full">Connected</span>
+                                    <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2 py-0.5 rounded-full">Connected</span>
                                     <span class="text-xs text-gray-500 block mt-1">
                                         @if(!is_null($cvlan->nms))
                                             SVLAN-NMS: {{ $cvlan->svlan->svlan_nms }}
@@ -174,20 +168,20 @@
                                         $editParams = $isStandalone
                                             ? ['id' => $cvlan->id]
                                             : ['svlan_id' => $cvlan->svlan_id, 'id' => $cvlan->id];
-                                        
+
                                         // Menambahkan parameter 'origin' untuk memberi tahu halaman edit dari mana kita datang
                                         $editParams['origin'] = 'all';
                                     @endphp
-                                    <a href="{{ route($editRoute, $editParams) }}" 
+                                    <a href="{{ route($editRoute, $editParams) }}"
                                        title="Edit"
                                        class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-indigo-400 to-indigo-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
                                         <i data-lucide="pencil" class="w-4 h-4"></i>
                                     </a>
-                                    
+
                                     <form action="{{ route('cvlan.destroyall', $cvlan->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus CVLAN ini?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" 
+                                        <button type="submit"
                                                 title="Hapus"
                                                 class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-red-400 to-red-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
                                             <i data-lucide="trash-2" class="w-4 h-4"></i>

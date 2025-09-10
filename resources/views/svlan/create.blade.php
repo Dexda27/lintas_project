@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Add New SVLAN')
 @section('content')
 
 <div class="bg-gray-100 font-sans">
@@ -25,10 +25,10 @@
 
                     <form action="{{ route('svlan.store') }}" method="POST" class="flex flex-col flex-grow">
                         @csrf
-                        
+
                         {{-- Form fields --}}
                         <div class="space-y-6">
-                            
+
                             {{-- ======================= PERUBAHAN DI SINI ======================= --}}
                             <div>
                                 <label for="node_id" class="block text-sm font-semibold text-gray-600 mb-2">Pilih Node</label>
@@ -36,7 +36,7 @@
                                 <select id="node_id" name="node_id" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
                                     <option value="" disabled selected>-- Pilih atau ketik untuk mencari Node --</option>
-                                    
+
                                     @foreach($nodes as $node)
                                         <option value="{{ $node->id }}" {{ old('node_id') == $node->id ? 'selected' : '' }}>
                                             {{ $node->nama_node }}
@@ -125,7 +125,7 @@
                     </p>
                 </div>
             </div>
-            
+
         </div>
     </div>
 </div>
