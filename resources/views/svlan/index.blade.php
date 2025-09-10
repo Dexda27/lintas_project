@@ -1,6 +1,7 @@
 @extends('layouts.app')
+@section('title', 'Data SVLAN')
+@section('content' )
 
-@section('content')
 
 <div class="container mx-auto px-4">
     {{-- Banner Atas --}}
@@ -25,7 +26,7 @@
                         <i data-lucide="plus-circle" class="w-5 h-5"></i>
                         <span>Tambah SVLAN</span>
                     </a>
-                    
+
                 </div>
             </div>
         </div>
@@ -37,9 +38,6 @@
 
     {{-- Konten Tabel --}}
     <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6 my-8 overflow-x-auto">
-        @if(session('success'))
-            <div class="bg-emerald-100 border-l-4 border-emerald-500 text-emerald-700 p-4 mb-4 rounded-md">{{ session('success') }}</div>
-        @endif
 
         {{--Search Bar--}}
         <div class="mb-6">
@@ -48,10 +46,10 @@
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-white">
                         <i data-lucide="search" class="w-5 h-5"></i>
                     </span>
-                    <input 
-                        type="text" 
-                        name="search" 
-                        placeholder="Cari data Node ID, VPN, NMS..." 
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Cari data Node ID, VPN, NMS..."
                         value="{{ request('search') }}"
                         class="w-full pl-10 pr-4 py-2.5 bg-blue-500 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 placeholder-blue-100 transition-colors">
                 </div>
@@ -96,14 +94,14 @@
                 @forelse($svlans as $svlan)
                 <tr class="bg-white hover:bg-gray-50 cursor-pointer">
                     <td class="px-6 py-4 font-bold text-gray-900 border border-slate-300 align-middle">{{ $svlan->node->nama_node ?? $svlan->node_id }}</td>
-                    
+
                     {{-- KOLOM NMS (BELUM ADA FILTER DI CONTROLLER, TAPI LINK DISIAPKAN) --}}
                     <td class="px-6 py-4 border border-slate-300 text-center align-middle">
                         <a href="{{ route('cvlan.index', ['svlan_id' => $svlan->id, 'koneksi_filter' => 'nms']) }}" title="Lihat CVLAN dengan NMS ini" class="block hover:opacity-80 transition-opacity">
                             <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">{{ $svlan->svlan_nms }}</span>
                         </a>
                     </td>
-                    
+
                     {{-- KOLOM ME (FILTER KE 'metro') --}}
                     <td class="px-6 py-4 border border-slate-300 text-center align-middle">
                         <a href="{{ route('cvlan.index', ['svlan_id' => $svlan->id, 'koneksi_filter' => 'metro']) }}" title="Lihat CVLAN dengan Metro ini" class="block hover:opacity-80 transition-opacity">
@@ -135,12 +133,12 @@
                     <td class="px-2 py-4 text-center border border-slate-300 align-middle">
                         {{-- Mengubah layout menjadi horizontal (flex-row) --}}
                         <div class="flex flex-col items-center justify-center gap-2">
-                            
+
                             <a href="{{ route('svlan.edit', $svlan->id) }}" title="Edit" class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
                                 <i data-lucide="file-pen-line" class="w-4 h-4"></i>
                             </a>
-                            
-                            <button type="button" 
+
+                            <button type="button"
                                     title="Hapus"
                                     class="delete-svlan-btn inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-red-600 to-red-700 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200"
                                     data-svlan-id="{{ $svlan->id }}"
@@ -148,7 +146,7 @@
                                     data-action-url="{{ route('svlan.destroy', $svlan->id) }}">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
-                            
+
                         </div>
                     </td>
                 </tr>
@@ -220,10 +218,10 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', function() {
             const targetSelector = this.dataset.target;
             const cvlanContainer = document.querySelector(targetSelector);
-            
+
             if (cvlanContainer) {
                 const allCvlanItems = cvlanContainer.querySelectorAll('.cvlan-item');
-                
+
                 allCvlanItems.forEach((item, index) => {
                     if (index >= 2) {
                         item.classList.toggle('hidden');

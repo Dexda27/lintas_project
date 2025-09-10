@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Edit Node')
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-8">
@@ -19,7 +19,7 @@
         <form action="{{ route('nodes.update', $node->id) }}" method="POST">
             @csrf
             @method('PUT') {{-- Method spoofing untuk update --}}
-            
+
             <div class="space-y-4">
                 <div>
                     <label for="nama_node" class="block text-sm font-semibold text-gray-600 mb-2">Nama Node</label>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah CVLAN Baru')
+@section('title', 'Add New CVLAN')
 
 @section('content')
 <div class="bg-gray-100 font-sans">
