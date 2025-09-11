@@ -11,7 +11,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- Select2 CSS for enhanced selects used in CVLAN views -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    
+
 </head>
 
 <body class="bg-gray-50">
@@ -95,11 +95,19 @@
                              <li class="border-t border-gray-200 my-4"></li>
                                 <li>
                                     <div class="px-2 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                        vlan Management
+                                        Vlan Management
                                     </div>
                                     <a href="{{ route('svlan.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 ">
                                         <i data-lucide="network" class="w-5 h-5 mr-3"></i>
-                                        Vlan Management
+                                        SVlan
+                                    </a>
+                                    <a href="{{ route('cvlan.all') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 ">
+                                        <i data-lucide="waypoints" class="w-5 h-5 mr-3"></i>
+                                        CVlan
+                                    </a>
+                                    <a href="{{ route('nodes.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 ">
+                                        <i data-lucide="workflow" class="w-5 h-5 mr-3"></i>
+                                        Node
                                     </a>
                                 </li>
                             @endif
@@ -196,7 +204,7 @@
         </div>
     </footer>
     </div>
-    
+
     <script>
         // Sidebar state management
         let sidebarOpen = window.innerWidth >= 1024; // desktop terbuka, mobile/tablet tertutup
