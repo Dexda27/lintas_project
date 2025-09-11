@@ -166,14 +166,14 @@
                 </table>
             </div>
         </div>
+        <a href="{{ route('svlan.index') }}"
+            class="inline-flex items-center gap-2 mt-5 px-3 py-3 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg shadow-sm transition-colors duration-200">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Kembali</span>
+        </a>
     </div>
 </div>
-            <a href="{{ route('svlan.index') }}"
-               class="inline-flex items-center gap-2 px-3 py-3 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg shadow-sm transition-colors duration-200">
-                <i data-lucide="arrow-left" class="w-4 h-4">
-                    <span>kembali</span>
-                </i>
-            </a>
+
 
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
