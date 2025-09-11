@@ -208,7 +208,7 @@ $(document).ready(function() {
     const infoPanelText = $('#info-panel-text');
 
     // Inisialisasi Select2 untuk Node dan Jenis Koneksi (non-search for connection type)
-    $('#node_id, #connection_type').select2({ theme: "bootstrap-5", width: '100%', minimumResultsForSearch: Infinity });
+    $('#node_id, #connection_type').select2({width: '100%'});
     
     // ==================================================================
     // == PERUBAHAN UTAMA DI SINI ==

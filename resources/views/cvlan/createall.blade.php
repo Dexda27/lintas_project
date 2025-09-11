@@ -164,7 +164,7 @@
 $(document).ready(function() {
     $('.form-input, .form-select').addClass('block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm');
     $('#svlan_id, #node_id').select2({ width: '100%' });
-    $('#connection_type').select2({ width: '100%', minimumResultsForSearch: Infinity });
+    $('#connection_type').select2({ width: '100%'});
     $(document).ready(function() {
 
     switchToStandaloneMode();
