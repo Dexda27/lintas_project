@@ -118,8 +118,8 @@
                     </div>
 
                     <div class="flex gap-2 pt-2">
-                        <a href="{{ route('svlan.edit', $svlan->id) }}" class="flex items-center gap-1 px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm rounded-lg transition-colors">
-                            <i data-lucide="edit" class="w-4 h-4"></i>
+                        <a href="{{ route('svlan.edit', $svlan->id) }}" class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-indigo-400 to-indigo-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
+                                        <i data-lucide="pencil" class="w-4 h-4"></i>
                             <span>Edit</span>
                         </a>
                         <button type="button"
@@ -170,11 +170,11 @@
                     <div class="text-sm text-gray-600">{{ $svlan->keterangan }}</div>
 
                     <div class="flex justify-center items-center gap-2">
-                        <a href="{{ route('svlan.edit', $svlan->id) }}" class="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" title="Edit">
-                            <i data-lucide="edit" class="w-4 h-4"></i>
+                        <a href="{{ route('svlan.edit', $svlan->id) }}" class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-indigo-400 to-indigo-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
+                                        <i data-lucide="pencil" class="w-4 h-4"></i>
                         </a>
                         <button type="button"
-                                class="delete-svlan-btn p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-red-400 to-red-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200"
                                 title="Delete"
                                 data-svlan-id="{{ $svlan->id }}"
                                 data-cvlan-count="{{ $svlan->cvlans->count() }}"
