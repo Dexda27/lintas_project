@@ -19,43 +19,43 @@ class SvlanController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-{
-    // Ambil parameter dari URL, berikan nilai default
-    $search = $request->query('search');
-    $sortField = $request->query('sort', 'id');
-    $sortOrder = $request->query('order', 'asc');
+    {
+        // Ambil parameter dari URL, berikan nilai default
+        $search = $request->query('search');
+        $sortField = $request->query('sort', 'id');
+        $sortOrder = $request->query('order', 'asc');
 
-    // Query dasar dengan eager loading untuk relasi node dan cvlans
-    $query = Svlan::with(['cvlans', 'node']);
+        // Query dasar dengan eager loading untuk relasi node dan cvlans
+        $query = Svlan::with(['cvlans', 'node']);
 
-    // Logika untuk pencarian
-    if ($search) {
-        $query->where(function ($q) use ($search) {
-            $q->where('svlan_nms', 'like', "%{$search}%")
-              ->orWhere('svlan_vpn', 'like', "%{$search}%")
-              ->orWhere('svlan_inet', 'like', "%{$search}%")
-              // Pencarian berdasarkan nama node dari relasi
-              ->orWhereHas('node', function ($nodeQuery) use ($search) {
-                  $nodeQuery->where('nama_node', 'like', "%{$search}%");
-              });
-        });
+        // Logika untuk pencarian
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('svlan_nms', 'like', "%{$search}%")
+                ->orWhere('svlan_vpn', 'like', "%{$search}%")
+                ->orWhere('svlan_inet', 'like', "%{$search}%")
+                // Pencarian berdasarkan nama node dari relasi
+                ->orWhereHas('node', function ($nodeQuery) use ($search) {
+                    $nodeQuery->where('nama_node', 'like', "%{$search}%");
+                });
+            });
+        }
+        
+        // Logika untuk sorting
+        // PERBAIKAN: Logika khusus untuk sorting berdasarkan nama_node
+        if ($sortField === 'node_id') {
+            $query->join('node', 'svlan.node_id', '=', 'node.id')
+                ->orderBy('node.nama_node', $sortOrder)
+                ->select('svlan.*'); // Penting agar tidak ada konflik kolom ID
+        } else {
+            // Sorting untuk kolom lain di tabel svlan
+            $query->orderBy($sortField, $sortOrder);
+        }
+
+        $svlans = $query->paginate(5); // Angka 5 bisa disesuaikan
+        
+        return view('svlan.index', compact('svlans', 'sortField', 'sortOrder'));
     }
-    
-    // Logika untuk sorting
-    // PERBAIKAN: Logika khusus untuk sorting berdasarkan nama_node
-    if ($sortField === 'node_id') {
-        $query->join('node', 'svlan.node_id', '=', 'node.id')
-              ->orderBy('node.nama_node', $sortOrder)
-              ->select('svlan.*'); // Penting agar tidak ada konflik kolom ID
-    } else {
-        // Sorting untuk kolom lain di tabel svlan
-        $query->orderBy($sortField, $sortOrder);
-    }
-
-    $svlans = $query->paginate(5); // Angka 5 bisa disesuaikan
-    
-    return view('svlan.index', compact('svlans', 'sortField', 'sortOrder'));
-}
 
     /**
      * Show the form for creating a new resource.

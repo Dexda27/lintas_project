@@ -22,11 +22,11 @@
         $backUrl = route('cvlan.all');
     }
 @endphp
-<div class="bg-gray-100 font-sans">
-    <div class="container mx-auto px-4 py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-8">
-                <div class="bg-white rounded-2xl shadow-lg p-8 md:p-10 h-full flex flex-col">
+<div>
+    
+        <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+            
+                <div class="">
                     {{-- Header --}}
                     <div class="flex items-start justify-between mb-4 flex-wrap gap-4">
                         <div>
@@ -157,38 +157,9 @@
                         </div>
                     </form>
                 </div>
-            </div>
-
-            {{-- Kolom Info Kanan --}}
-            <div class="lg:col-span-4">
-                <div class="bg-gradient-to-br from-blue-400 to-indigo-600 p-8 text-white rounded-2xl shadow-lg h-full flex flex-col justify-center items-center text-center">
-                    <div id="info-panel-icon">
-                        <i data-lucide="server-cog" class="w-16 h-16 mb-4 opacity-80"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4">Edit CVLAN</h3>
-                    <p id="info-panel-text" class="opacity-90 leading-relaxed">
-                        @switch($activeFilter)
-                            @case('vpn')
-                                Mengubah data CVLAN pada SVLAN-VPN: <br><span class="font-bold text-white">{{ $svlan->svlan_vpn }}</span>.
-                                @break
-                            @case('inet')
-                                Mengubah data CVLAN pada SVLAN-INET: <br><span class="font-bold text-white">{{ $svlan->svlan_inet }}</span>.
-                                @break
-                            @case('metro')
-                                Mengubah data CVLAN pada SVLAN-Metro: <br><span class="font-bold text-white">{{ $svlan->svlan_me }}</span>.
-                                @break
-                            @case('extra')
-                                Mengubah data CVLAN pada SVLAN-Extra: <br><span class="font-bold text-white">{{ $svlan->extra }}</span>.
-                                @break
-                            @default
-                                Mengubah data CVLAN pada SVLAN-NMS: <br><span class="font-bold text-white">{{ $svlan->svlan_nms }}</span>.
-                        @endswitch
-                        <br><br>Anda bisa memindahkannya ke SVLAN lain atau menjadikannya Standalone dengan tombol di samping.
-                    </p>
-                </div>
-            </div>
+            
         </div>
-    </div>
+    
 </div>
 @endsection
 

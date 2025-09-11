@@ -10,62 +10,58 @@
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-gray-900 mb-2">Dashboard CVLAN Management</h1>
             <p class="text-gray-600">Overview of CVLAN infrastructure</p>
-        </div>
+        </div>      
 
-        {{-- Action Buttons --}}
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <a href="{{ route('cvlan.exportAll', request()->all()) }}"
-               class="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white font-medium rounded-lg shadow-sm transition-colors duration-200">
-                <i data-lucide="download" class="w-4 h-4"></i>
-                <span>Export All</span>
+        {{-- Export, Add Button, Search and Filter Section --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6 flex items-center justify-between flex-wrap gap-4">
+    
+        <div class="flex items-center gap-4">
+            <a href="{{ route('cvlan.exportAll', request()->all()) }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-medium text-white bg-teal-600 hover:bg-teal-700 rounded-lg shadow-sm transition-all duration-200">
+                <i data-lucide="download" class="w-5 h-5"></i>
+                <span>Export CVLAN</span>
             </a>
-            <a href="{{ route('cvlan.createall') }}"
-               class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg shadow-sm transition-colors duration-200">
-                <i data-lucide="plus" class="w-4 h-4"></i>
+            <a href="{{ route('cvlan.createall') }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg shadow-sm transition-all duration-200">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i>
                 <span>Add New CVLAN</span>
             </a>
         </div>
 
-        {{-- Search and Filter Section --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-            <form action="{{ route('cvlan.all') }}" method="GET">
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <div class="flex-1">
-                        <div class="relative">
-                            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
-                            <input type="text"
-                                   name="search"
-                                   placeholder="Search Node ID, VPN, NMS..."
-                                   value="{{ request('search') }}"
-                                   class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        </div>
-                    </div>
-                    <div class="sm:w-48">
-                        <select name="koneksi_filter"
-                                onchange="this.form.submit()"
-                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <option value="">All Types</option>
-                            <option value="mandiri" {{ request('koneksi_filter') == 'mandiri' ? 'selected' : '' }}>Mandiri</option>
-                            <option value="nms" {{ request('koneksi_filter') == 'nms' ? 'selected' : '' }}>NMS</option>
-                            <option value="metro" {{ request('koneksi_filter') == 'metro' ? 'selected' : '' }}>Metro</option>
-                            <option value="vpn" {{ request('koneksi_filter') == 'vpn' ? 'selected' : '' }}>VPN</option>
-                            <option value="inet" {{ request('koneksi_filter') == 'inet' ? 'selected' : '' }}>INET</option>
-                            <option value="extra" {{ request('koneksi_filter') == 'extra' ? 'selected' : '' }}>EXTRA</option>
-                        </select>
-                    </div>
-                    <button type="submit"
-                            class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
-                        Search
-                    </button>
-                    @if(request('search') || request('koneksi_filter') || request('sort'))
-                        <a href="{{ route('cvlan.all') }}"
-                           class="px-6 py-2.5 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors duration-200">
-                            Reset
-                        </a>
-                    @endif
+        <form action="{{ route('cvlan.all') }}" method="GET" class="w-full md:w-auto">
+            <div class="flex flex-col sm:flex-row gap-2">
+                <div class="relative flex-grow">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                    <input type="text"
+                        name="search"
+                        placeholder="Search Node ID, VPN, NMS..."
+                        value="{{ request('search') }}"
+                        class="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
-            </form>
-        </div>
+                <div class="w-full sm:w-48">
+                    <select name="koneksi_filter"
+                            onchange="this.form.submit()"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">All Types</option>
+                        <option value="mandiri" {{ request('koneksi_filter') == 'mandiri' ? 'selected' : '' }}>Mandiri</option>
+                        <option value="nms" {{ request('koneksi_filter') == 'nms' ? 'selected' : '' }}>NMS</option>
+                        <option value="metro" {{ request('koneksi_filter') == 'metro' ? 'selected' : '' }}>Metro</option>
+                        <option value="vpn" {{ request('koneksi_filter') == 'vpn' ? 'selected' : '' }}>VPN</option>
+                        <option value="inet" {{ request('koneksi_filter') == 'inet' ? 'selected' : '' }}>INET</option>
+                        <option value="extra" {{ request('koneksi_filter') == 'extra' ? 'selected' : '' }}>EXTRA</option>
+                    </select>
+                </div>
+                <button type="submit"
+                        class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
+                    Search
+                </button>
+                @if(request('search') || request('koneksi_filter') || request('sort'))
+                    <a href="{{ route('cvlan.all') }}"
+                    class="px-5 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
+                        Reset
+                    </a>
+                @endif
+            </div>
+        </form>
+    </div>
 
         {{-- CVLAN Data Section --}}
         <div class="bg-white rounded-xl shadow-sm border border-gray-200">
@@ -132,7 +128,7 @@
                                         @elseif(!is_null($cvlan->metro))
                                             <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">Metro: {{ $cvlan->metro }}</span>
                                         @elseif(!is_null($cvlan->vpn))
-                                            <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded-full">VPN: {{ $cvlan->vpn }}</span>
+                                            <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2 py-0.5 rounded-full">VPN: {{ $cvlan->vpn }}</span>
                                         @elseif(!is_null($cvlan->inet))
                                             <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-0.5 rounded-full">INET: {{ $cvlan->inet }}</span>
                                         @elseif(!is_null($cvlan->extra))
@@ -207,17 +203,6 @@
                 {{ $cvlans->appends(request()->query())->links('vendor.pagination.custom-pagination') }}
             </div>
         @endif
-
-        {{-- Back to SVLAN Button --}}
-        <div class="mt-8 flex justify-start">
-            <a href="{{ route('svlan.index') }}"
-               class="inline-flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-50 text-gray-700 font-medium border border-gray-300 rounded-lg shadow-sm transition-colors duration-200">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                <span>Kembali ke SVLAN</span>
-            </a>
-        </div>
-
-
 </div>
 
 <style>
