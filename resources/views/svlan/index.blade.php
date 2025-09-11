@@ -2,64 +2,55 @@
 @section('title', 'Data SVLAN')
 @section('content')
 
-<div >
+<div>
     {{-- Header Section --}}
     <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900 mb-2">Dashboard SVLAN Management</h1>
         <p class="text-gray-600">Overview of SVLAN infrastructure</p>
     </div>
 
-    {{-- Action Buttons --}}
-    <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-        <div class="flex flex-wrap gap-4">
-            {{-- <a href="{{ route('nodes.index') }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <i data-lucide="network" class="w-5 h-5"></i>
-                <span>View All Nodes</span>
-            </a>
-            <a href="{{ route('cvlan.all') }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <i data-lucide="list-checks" class="w-5 h-5"></i>
-                <span>View All CVLAN</span>
-            </a> --}}
-            <a href="{{ route('svlan.exportAll', request()->query()) }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-medium text-white bg-teal-600 hover:bg-teal-700 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+    {{-- Action Buttons, Search and Filter Section --}}
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-8 flex items-center justify-between flex-wrap gap-4">
+        
+        {{-- Grup Tombol Aksi --}}
+        <div class="flex items-center gap-4">
+            <a href="{{ route('svlan.exportAll', request()->query()) }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-medium text-white bg-teal-600 hover:bg-teal-700 rounded-lg shadow-md transition-all duration-300">
                 <i data-lucide="download" class="w-5 h-5"></i>
                 <span>Export All</span>
             </a>
-            <a href="{{ route('svlan.create') }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-medium text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+            <a href="{{ route('svlan.create') }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg shadow-md transition-all duration-300">
                 <i data-lucide="plus-circle" class="w-5 h-5"></i>
                 <span>Add New SVLAN</span>
             </a>
         </div>
-    </div>
 
-    {{-- Search and Filter Section --}}
-    <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-        <form action="{{ route('svlan.index') }}" method="GET" class="flex flex-col md:flex-row gap-4">
-            <div class="flex-1">
-                <div class="relative">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                        <i data-lucide="search" class="w-5 h-5"></i>
-                    </span>
+        {{-- Form Pencarian --}}
+        <form action="{{ route('svlan.index') }}" method="GET" class="w-full md:w-auto">
+            <div class="flex flex-col sm:flex-row gap-2">
+                <div class="relative flex-grow">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
                     <input
                         type="text"
                         name="search"
                         placeholder="Search Node ID, VPN, NMS..."
                         value="{{ request('search') }}"
-                        class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        class="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
+                <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
+                    Search
+                </button>
+                @if(request('search'))
+                    <a href="{{ route('svlan.index') }}" class="px-5 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center">
+                        Reset
+                    </a>
+                @endif
             </div>
-            <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
-                Search
-            </button>
-            @if(request('search'))
-                <a href="{{ route('svlan.index') }}" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors">
-                    Reset
-                </a>
-            @endif
         </form>
     </div>
 
+
     {{-- SVLAN Data Cards --}}
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
         <div class="p-6 border-b border-gray-200">
             <h2 class="text-xl font-semibold text-gray-900">SVLAN Data</h2>
         </div>
@@ -227,7 +218,7 @@
 
 {{-- Delete Modal (unchanged) --}}
 <div id="deleteSvlanModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-    <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-sm rounded-md bg-white">
         <div class="mt-3 text-center">
             <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
                 <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
