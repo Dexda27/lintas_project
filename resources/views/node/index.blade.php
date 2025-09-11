@@ -22,18 +22,13 @@
                         <span>Generate Sample</span>
                     </a>
                     --}}
-
-                    <a href="{{ route('svlan.index') }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-semibold text-black bg-white rounded-lg shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-in-out">
-                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
-                        <span>Kembali ke SVLAN</span>
-                    </a>
                     <div class="flex items-center gap-2">
                         <div class="text-black">
                             <form action="{{ route('nodes.index') }}" method="GET" class="relative w-72">
                                 <input type="text" name="search" id="search-input"
                                        placeholder="Cari data Node ID, VPN, NMS..."
                                        value="{{ request('search') }}"
-                                       class="w-full h-10 pl-4 pr-10 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300">
+                                       class="w-full h-10 pl-4 pr-10 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white">
                                 <button type="submit" id="search-submit-btn" class="absolute top-0 right-0 h-10 w-10 flex items-center justify-center text-gray-600 hover:text-blue-600">
                                     <i data-lucide="search" class="w-5 h-5"></i>
                                 </button>
