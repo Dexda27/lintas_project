@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Svlan;
 use App\Models\Node;
+use App\Exports\SvlansExport; // <-- Tambahkan ini
+use Maatwebsite\Excel\Facades\Excel; // <-- Tambahkan ini
+
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -133,65 +136,16 @@ class SvlanController extends Controller
     }
     
     /**
-     * Export all (or filtered) SVLANs to a CSV file (without CVLAN details).
+     * Export all (or filtered) SVLANs to an Excel file.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     * @return \Illuminate\Http\Response
      */
     public function exportAll(Request $request)
     {
-        // Logika query untuk filtering tetap sama
         $search = $request->query('search');
-        $query = Svlan::with('node'); // Eager load node
+        $fileName = 'daftar_svlan_' . date('Y-m-d') . '.xlsx'; // Ganti ekstensi menjadi .xlsx
 
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('svlan_nms', 'like', "%{$search}%")
-                  ->orWhere('svlan_vpn', 'like', "%{$search}%")
-                  ->orWhere('svlan_inet', 'like', "%{$search}%")
-                  ->orWhereHas('node', function ($nodeQuery) use ($search) {
-                      $nodeQuery->where('nama_node', 'like', "%{$search}%");
-                  });
-            });
-        }
-        
-        $svlans = $query->get();
-
-        $fileName = 'semua_svlan_' . date('Y-m-d') . '.csv';
-
-        $headers = [
-            "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename=$fileName",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
-        ];
-
-        // 1. HAPUS SEMUA KOLOM CVLAN DARI HEADER
-        $columns = [
-            'Node ID', 'NMS', 'ME', 'VPN', 'INET', 'Extra', 'Keterangan'
-        ];
-
-        $callback = function() use($svlans, $columns) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, $columns);
-
-            // 2. LOOPING HANYA UNTUK SETIAP SVLAN (LOGIKA CVLAN DIHILANGKAN)
-            foreach ($svlans as $svlan) {
-                $row = [
-                    'Node ID'      => $svlan->node->nama_node ?? $svlan->node_id,
-                    'NMS'          => $svlan->svlan_nms,
-                    'ME'           => $svlan->svlan_me,
-                    'VPN'          => $svlan->svlan_vpn,
-                    'INET'         => $svlan->svlan_inet,
-                    'Extra'        => $svlan->extra,
-                    'Keterangan'   => $svlan->keterangan,
-                ];
-                fputcsv($file, $row);
-            }
-            fclose($file);
-        };
-
-        return new StreamedResponse($callback, 200, $headers);
+        return Excel::download(new SvlansExport($search), $fileName);
     }
 }

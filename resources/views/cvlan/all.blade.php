@@ -15,12 +15,12 @@
         {{-- Action Buttons --}}
         <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
             <a href="{{ route('cvlan.exportAll', request()->all()) }}"
-               class="inline-flex items-center gap-2 px-6 py-3 bg-teal-500 hover:bg-teal-600 text-white font-medium rounded-lg shadow-sm transition-colors duration-200">
+               class="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white font-medium rounded-lg shadow-sm transition-colors duration-200">
                 <i data-lucide="download" class="w-4 h-4"></i>
                 <span>Export All</span>
             </a>
             <a href="{{ route('cvlan.createall') }}"
-               class="inline-flex items-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg shadow-sm transition-colors duration-200">
+               class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg shadow-sm transition-colors duration-200">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span>Add New CVLAN</span>
             </a>

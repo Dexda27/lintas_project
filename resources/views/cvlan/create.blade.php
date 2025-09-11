@@ -16,7 +16,7 @@
                 {{-- PERUBAHAN 3: Tambahkan input tersembunyi untuk mengirim jenis koneksi --}}
                 <input type="hidden" name="connection_type" value="{{ request('koneksi_filter') }}">
 
-                @if ($errors->any())
+                {{-- @if ($errors->any())
                     <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-md" role="alert">
                         <p class="font-bold">Terjadi Kesalahan:</p>
                         <ul class="mt-2 list-disc list-inside">
@@ -25,7 +25,7 @@
                             @endforeach
                         </ul>
                     </div>
-                @endif
+                @endif --}}
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {{-- PERUBAHAN 1: Hapus dropdown dan ganti dengan tampilan statis --}}

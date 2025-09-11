@@ -24,9 +24,9 @@
                 <i data-lucide="download" class="w-5 h-5"></i>
                 <span>Export All</span>
             </a>
-            <a href="{{ route('svlan.create') }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+            <a href="{{ route('svlan.create') }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-semibold text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                 <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                <span>+ Add New SVLAN</span>
+                <span>Add New SVLAN</span>
             </a>
         </div>
     </div>
