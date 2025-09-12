@@ -70,18 +70,41 @@
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-700">
                                 @if($node->svlans->isNotEmpty())
-                                    <div class="flex flex-col gap-3">
-                                        @foreach($node->svlans as $svlan)
-                                            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
-                                                <span class="font-semibold">NMS:</span><span class="px-2 py-0.5 bg-purple-100 text-purple-800 rounded-full">{{ $svlan->svlan_nms }}</span>
-                                                <span class="font-semibold">ME:</span><span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full">{{ $svlan->svlan_me }}</span>
-                                                <span class="font-semibold">VPN:</span><span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full">{{ $svlan->svlan_vpn }}</span>
-                                                <span class="font-semibold">INET:</span><span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded-full">{{ $svlan->svlan_inet }}</span>
-                                                @if($svlan->extra)
-                                                    <span class="font-semibold">Extra:</span><span class="px-2 py-0.5 bg-gray-100 text-gray-800 rounded-full">{{ $svlan->extra }}</span>
-                                                @endif
+                                    <div x-data="{ limit: 3 }" class="flex flex-col gap-3">
+                                        <template x-for="(svlan, index) in {{ $node->svlans->toJson() }}" :key="svlan.id">
+                                            <div 
+                                                x-show="index < limit" 
+                                                class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs"
+                                            >
+                                                <span class="font-semibold">NMS:</span>
+                                                <span class="px-2 py-0.5 bg-purple-100 text-purple-800 rounded-full" x-text="svlan.svlan_nms"></span>
+
+                                                <span class="font-semibold">ME:</span>
+                                                <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full" x-text="svlan.svlan_me"></span>
+
+                                                <span class="font-semibold">VPN:</span>
+                                                <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full" x-text="svlan.svlan_vpn"></span>
+
+                                                <span class="font-semibold">INET:</span>
+                                                <span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded-full" x-text="svlan.svlan_inet"></span>
+
+                                                <template x-if="svlan.extra">
+                                                    <div>
+                                                        <span class="font-semibold">Extra:</span>
+                                                        <span class="px-2 py-0.5 bg-gray-100 text-gray-800 rounded-full" x-text="svlan.extra"></span>
+                                                    </div>
+                                                </template>
                                             </div>
-                                        @endforeach
+                                        </template>
+
+                                        {{-- Tombol Lihat Lagi --}}
+                                        <button 
+                                            x-show="limit < {{ $node->svlans->count() }}" 
+                                            @click="limit += 3" 
+                                            class="mt-2 text-blue-600 text-xs font-medium hover:underline w-fit"
+                                        >
+                                            Lihat data lagi
+                                        </button>
                                     </div>
                                 @else
                                     <span class="text-sm text-gray-400 italic">Belum ada SVLAN terkait</span>
@@ -130,8 +153,6 @@
     @if($nodes->hasPages())
         <div class="mt-6">
             {{ $nodes->appends(request()->query())->links() }}
-            {{-- Jika Anda memiliki custom pagination view, gunakan: --}}
-            {{-- {{ $nodes->appends(request()->query())->links('vendor.pagination.custom-pagination') }} --}}
         </div>
     @endif
 </div>
