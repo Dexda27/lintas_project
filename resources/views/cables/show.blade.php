@@ -463,7 +463,6 @@
             </div>
 
             <div class="p-6">
-
                 <form id="core-edit-form" class="space-y-4">
                     <input type="hidden" id="edit-core-id">
 
@@ -506,5 +505,5 @@
             </div>
         </div>
     </div>
-</div
-    @endsection
+</div>
+@endsection
