@@ -53,7 +53,7 @@
 
                     @if ($errors->any())
                         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-6" role="alert">
-                            <strong class="font-bold">Oops! Ada kesalahan.</strong>
+                            <strong class="font-bold">Oops! Something Went Wrong.</strong>
                             <ul class="mt-2 list-disc list-inside">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
@@ -126,7 +126,7 @@
                                 {{-- Input CVLAN Slot DIPINDAHKAN KE SINI --}}
                                 <div>
                                     <label for="cvlan_slot" class="block text-sm font-medium text-gray-700 mb-1">CVLAN (Mandatory if Standalone)</label>
-                                    <input type="text" name="cvlan_slot" id="cvlan_slot" value="{{ old('cvlan_slot', $cvlan->cvlan_slot) }}" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm" placeholder="Belum ada nilai" max="9999"
+                                    <input type="text" name="cvlan_slot" id="cvlan_slot" value="{{ old('cvlan_slot', $cvlan->cvlan_slot) }}" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm" placeholder="There is no Value" max="9999"
                                     oninput="javascript: if (this.value.length > 4) this.value = this.value.slice(0, 4);"
                                     onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46">
                                 </div>
@@ -135,11 +135,11 @@
                             {{-- Field Umum yang selalu tampil --}}
                             
                             <div class="md:col-span-2">
-                                <label for="no_jaringan" class="block text-sm font-medium text-gray-700 mb-1">No Jaringan</label>
+                                <label for="no_jaringan" class="block text-sm font-medium text-gray-700 mb-1">Network No</label>
                                 <input type="text" name="no_jaringan" id="no_jaringan" value="{{ old('no_jaringan', $cvlan->no_jaringan) }}" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                             </div>
                             <div class="md:col-span-2">
-                                <label for="nama_pelanggan" class="block text-sm font-medium text-gray-700 mb-1">Nama Pelanggan</label>
+                                <label for="nama_pelanggan" class="block text-sm font-medium text-gray-700 mb-1">Customer</label>
                                 <input type="text" name="nama_pelanggan" id="nama_pelanggan" value="{{ old('nama_pelanggan', $cvlan->nama_pelanggan) }}" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                             </div>
                         </div>
@@ -148,11 +148,11 @@
                         <div class="mt-8 flex items-center gap-4">
                             <button type="submit" class="inline-flex items-center gap-2 py-2 px-6 font-semibold text-white bg-green-500 hover:bg-green-600 rounded-lg shadow-md transition-colors">
                                 <i data-lucide="save" class="w-5 h-5"></i>
-                                Simpan Perubahan
+                                Save Changes
                             </button>
                             
                             <a href="{{ $backUrl }}" class="inline-flex items-center gap-2 py-2 px-6 font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg shadow-md transition-colors">
-                                Batal
+                                Cancel
                             </a>
                         </div>
                     </form>

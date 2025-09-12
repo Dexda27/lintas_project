@@ -120,12 +120,12 @@
                                        onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46">
                             </div>
                             <div class="md:col-span-2">
-                                <label for="no_jaringan" class="block text-sm font-medium text-gray-700 mb-1">No Jaringan</label>
+                                <label for="no_jaringan" class="block text-sm font-medium text-gray-700 mb-1">Network No</label>
                                 <input type="text" id="no_jaringan" name="no_jaringan"
                                        value="{{ old('no_jaringan') }}" class="form-input">
                             </div>
                             <div class="md:col-span-2">
-                                <label for="nama_pelanggan" class="block text-sm font-medium text-gray-700 mb-1">Nama Pelanggan</label>
+                                <label for="nama_pelanggan" class="block text-sm font-medium text-gray-700 mb-1">Customer</label>
                                 <input type="text" id="nama_pelanggan" name="nama_pelanggan"
                                        value="{{ old('nama_pelanggan') }}" class="form-input">
                             </div>
@@ -141,19 +141,6 @@
                     </form>
                 </div>
             </div>
-
-            {{-- Right Column: Info Panel --}}
-            <div class="lg:col-span-4">
-                <div class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-2xl shadow-lg p-6 sticky top-8">
-                    <h2 class="text-xl font-semibold mb-4">Guidelines</h2>
-                    <ul class="space-y-2 text-sm">
-                        <li>📌 Select <strong>Node</strong> if CVLAN is standalone.</li>
-                        <li>🔗 Select <strong>SVLAN</strong> if you want to connect.</li>
-                        <li>✍️ Fill in general data such as <strong>CVLAN, No Jaringan, Nama Pelanggan</strong>.</li>
-                    </ul>
-                </div>
-            </div>
-
         </div>
     </div>
 </div>
