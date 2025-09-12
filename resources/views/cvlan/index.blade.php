@@ -12,22 +12,22 @@
             <p class="text-gray-600">
                 @switch($koneksiFilter)
                     @case('vpn')
-                        Untuk SVLAN VPN: <span class="font-bold">{{ $svlan->svlan_vpn }}</span>
+                        For SVLAN VPN: <span class="font-bold">{{ $svlan->svlan_vpn }}</span>
                         @break
                     @case('inet')
-                        Untuk SVLAN INET: <span class="font-bold">{{ $svlan->svlan_inet }}</span>
+                        For SVLAN INET: <span class="font-bold">{{ $svlan->svlan_inet }}</span>
                         @break
                     @case('extra')
-                    Untuk SVLAN EXTRA: <span class="font-bold">{{ $svlan->extra }}</span>
+                        For SVLAN EXTRA: <span class="font-bold">{{ $svlan->extra }}</span>
                         @break
                     @case('metro')
-                        Untuk SVLAN Metro: <span class="font-bold">{{ $svlan->svlan_me }}</span>
+                        For SVLAN Metro: <span class="font-bold">{{ $svlan->svlan_me }}</span>
                         @break
                     @case('nms')
-                        Untuk SVLAN NMS: <span class="font-bold">{{ $svlan->svlan_nms }}</span>
+                        For SVLAN NMS: <span class="font-bold">{{ $svlan->svlan_nms }}</span>
                         @break
                     @default
-                        Untuk SVLAN: <span class="font-bold">{{ $svlan->svlan_nms }}</span>
+                        For SVLAN: <span class="font-bold">{{ $svlan->svlan_nms }}</span>
                 @endswitch
                 <br>Node: <span class="font-bold">{{ $svlan->node->nama_node ?? 'N/A' }}</span>
             </p>
@@ -38,7 +38,7 @@
             <a href="{{ route('cvlan.create', ['svlan_id' => $svlan->id, 'koneksi_filter' => request('koneksi_filter')]) }}"
                class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg shadow-sm transition-colors duration-200">
                 <i data-lucide="plus" class="w-4 h-4"></i>
-                <span>Tambah CVLAN</span>
+                <span>Add New CVLAN</span>
             </a>
             <a href="{{ route('cvlan.exportForSvlan', $svlan->id) }}"
                class="inline-flex items-center gap-2 px-6 py-3 bg-teal-500 hover:bg-teal-600 text-white font-medium rounded-lg shadow-sm transition-colors duration-200">
@@ -59,7 +59,7 @@
                             <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
                             <input type="text"
                                    name="search"
-                                   placeholder="Cari..."
+                                   placeholder="search..."
                                    value="{{ request('search') }}"
                                    class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
