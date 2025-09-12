@@ -11,7 +11,7 @@
         </div>
 
         <div class="mb-6 border-t pt-6">
-            <h3 class="text-lg font-semibold text-gray-700 mb-2">Change Connection Type</h3>
+            <h3 class="text-lg font-semibold text-gray-700 mb-2">Change Connection Status</h3>
             <div id="connection-buttons">
                 <button type="button" id="make-standalone-btn" class="{{ $cvlan->svlan_id ? 'inline-flex' : 'hidden' }} items-center gap-2 py-2 px-4 font-semibold text-white bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 ease-in-out">
                     <i data-lucide="unlink" class="w-5 h-5"></i>
@@ -22,7 +22,7 @@
                     Connect ke SVLAN
                 </button>
             </div>
-            <p class="text-sm text-gray-500 mt-2">Gunakan tombol ini untuk mengubah status koneksi CVLAN.</p>
+            <p class="text-sm text-gray-500 mt-2">Use This Button to Change Cvlan Connection Status.</p>
         </div>
 
         <form action="{{ route('cvlan.updateall', ['id' => $cvlan->id]) }}" method="POST">
@@ -35,7 +35,7 @@
                 {{-- Konten untuk Mode SVLAN --}}
                 <div id="svlan-fields-wrapper" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 {{ $cvlan->svlan_id ? '' : 'hidden' }}">
                     <div class="md:col-span-2">
-                        <label for="svlan_id" class="block text-sm font-medium text-gray-700 mb-1">Hubungkan ke SVLAN</label>
+                        <label for="svlan_id" class="block text-sm font-medium text-gray-700 mb-1">Connect to SVLAN</label>
                         <select id="svlan_id" name="svlan_id" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                             @foreach($svlans as $svlan)
                                 <option 
@@ -53,7 +53,7 @@
                     </div>
                     <div class="md:col-span-2 mt-1 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="connection_type" class="block text-sm font-medium text-gray-700 mb-1">Jenis Koneksi</label>
+                            <label for="connection_type" class="block text-sm font-medium text-gray-700 mb-1">Connection Type</label>
                             @php
                                 $activeType = '';
                                 if ($cvlan->nms) $activeType = 'nms';
@@ -71,7 +71,7 @@
                             </select>
                         </div>
                         <div id="connection-value-wrapper" class="hidden">
-                            <label id="connection-value-label" for="connection_value" class="block text-sm font-medium text-gray-700 mb-1">Nilai</label>
+                            <label id="connection-value-label" for="connection_value" class="block text-sm font-medium text-gray-700 mb-1">Value</label>
                             <input type="number" id="connection_value" name="connection_value" value="{{ old('connection_value', $cvlan->metro ?? $cvlan->vpn ?? $cvlan->inet ?? $cvlan->extra) }}" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" max="9999"
                                 oninput="if (this.value.length > 4) this.value = this.value.slice(0, 4);"
                                 onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46">
@@ -82,7 +82,7 @@
                 {{-- Konten untuk Mode Standalone --}}
                 <div id="node-field-wrapper" class="md:col-span-2 space-y-6 {{ $cvlan->svlan_id ? 'hidden' : '' }}">
                     <div>
-                        <label for="node_id" class="block text-sm font-medium text-gray-700 mb-1">Node (Wajib jika mandiri)</label>
+                        <label for="node_id" class="block text-sm font-medium text-gray-700 mb-1">Node (Mandatory if Standalone)</label>
                         <select id="node_id" name="node_id" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                             @foreach($nodes as $node)
                                 <option value="{{ $node->id }}" {{ old('node_id', $cvlan->node_id) == $node->id ? 'selected' : '' }}>
@@ -92,7 +92,7 @@
                         </select>
                     </div>
                     <div>
-                        <label for="cvlan_slot" class="block text-sm font-medium text-gray-700 mb-1">CVLAN (Wajib untuk Mandiri)</label>
+                        <label for="cvlan_slot" class="block text-sm font-medium text-gray-700 mb-1">CVLAN (Mandatory if Standalone)</label>
                         <input type="text" name="cvlan_slot" id="cvlan_slot" value="{{ old('cvlan_slot', $cvlan->cvlan_slot) }}" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"  
                             oninput="if (this.value.length > 4) this.value = this.value.slice(0, 4);"
                             onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46">
@@ -229,8 +229,8 @@ $(document).ready(function() {
         const selectedType = connectionTypeSelect.val();
         if (selectedType) {
             const labelText = selectedType.charAt(0).toUpperCase() + selectedType.slice(1);
-            connectionValueLabel.text('Nilai ' + labelText);
-            connectionValueInput.prop('placeholder', 'Masukkan nilai ' + labelText);
+            connectionValueLabel.text('Value ' + labelText);
+            connectionValueInput.prop('placeholder', 'Input Value ' + labelText);
             connectionValueWrapper.removeClass('hidden');
             connectionValueInput.prop('required', true);
         } else {

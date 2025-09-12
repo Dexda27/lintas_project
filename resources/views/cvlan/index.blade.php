@@ -18,7 +18,7 @@
                         For SVLAN INET: <span class="font-bold">{{ $svlan->svlan_inet }}</span>
                         @break
                     @case('extra')
-                    For SVLAN EXTRA: <span class="font-bold">{{ $svlan->extra }}</span>
+                        For SVLAN EXTRA: <span class="font-bold">{{ $svlan->extra }}</span>
                         @break
                     @case('metro')
                         For SVLAN Metro: <span class="font-bold">{{ $svlan->svlan_me }}</span>
@@ -59,7 +59,7 @@
                             <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
                             <input type="text"
                                    name="search"
-                                   placeholder="Cari..."
+                                   placeholder="search..."
                                    value="{{ request('search') }}"
                                    class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
