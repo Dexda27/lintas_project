@@ -1,143 +1,177 @@
 @extends('layouts.app')
 
+@section('title', 'Management Node')
+
 @section('content')
+<div class="min-h-screen bg-gray-50">
 
-<div class="container mx-auto px-4">
-    {{-- Banner Atas --}}
-    <div class="bg-gradient-to-br from-purple-800 to-purple-400 text-slate-50 rounded-2xl shadow-lg p-6 sm:p-10 my-8 relative overflow-hidden">
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-3xl font-bold drop-shadow-lg">Data Semua Node</h1>
-                <div class="mt-4 flex items-center gap-3">
-                    {{-- TOMBOL TAMBAH NODE BARU --}}
-                    <a href="{{ route('nodes.create') }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-semibold text-white bg-green-500 hover:bg-green-600 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-in-out">
-                        <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                        <span>Tambah Node</span>
-                    </a>
-                    {{-- Generate Sample
-                    <a href="{{ route('nodes.generateSample') }}" 
-                    class="inline-flex items-center gap-2 py-2.5 px-5 font-semibold text-white bg-blue-500 hover:bg-blue-600 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-in-out"
-                    onclick="return confirm('Apakah Anda yakin ingin membuat 200 data sample? Data sample lama akan dihapus.');">
-                        <i data-lucide="test-tube-2" class="w-5 h-5"></i>
-                        <span>Generate Sample</span>
-                    </a>
-                    --}}
-                    
-                    <a href="{{ route('svlan.index') }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-semibold text-black bg-white rounded-lg shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-in-out">
-                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
-                        <span>Kembali ke SVLAN</span>
-                    </a>
-                    <div class="flex items-center gap-2">
-                        <div class="text-black">
-                            <form action="{{ route('nodes.index') }}" method="GET" class="relative w-72">
-                                <input type="text" name="search" id="search-input" 
-                                       placeholder="Cari data Node ID, VPN, NMS..." 
-                                       value="{{ request('search') }}"
-                                       class="w-full h-10 pl-4 pr-10 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300">
-                                <button type="submit" id="search-submit-btn" class="absolute top-0 right-0 h-10 w-10 flex items-center justify-center text-gray-600 hover:text-blue-600">
-                                    <i data-lucide="search" class="w-5 h-5"></i>
-                                </button>
-                            </form>
-                        </div>
-                        {{-- NEW: Reset Search Button --}}
-                        @if(request('search'))
-                            <a href="{{ route('nodes.index') }}" title="Reset Pencarian" class="inline-flex items-center justify-center w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full transition-colors">
-                                <i data-lucide="rotate-cw" class="w-5 h-5 text-white"></i>
-                            </a>
-                        @endif
-                    </div>
+    {{-- Header Section --}}
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Node Management</h1>
+        <p class="text-gray-600">Overview of Node and related SVLAN infrastructure</p>
+    </div>
+
+    {{-- Add Button, Search and Filter Section --}}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6 flex items-center justify-between flex-wrap gap-4">
+
+        {{-- Tombol Aksi --}}
+        <div class="flex items-center gap-4">
+            <a href="{{ route('nodes.create') }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg shadow-sm transition-all duration-200">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                <span>Add Node</span>
+            </a>
+        </div>
+
+        {{-- Form Pencarian --}}
+        <form action="{{ route('nodes.index') }}" method="GET" class="w-full md:w-auto">
+            <div class="flex flex-col sm:flex-row gap-2">
+                <div class="relative flex-grow">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                    <input type="text"
+                        name="search"
+                        placeholder="Search Node Name..."
+                        value="{{ request('search') }}"
+                        class="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
+                <button type="submit"
+                        class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
+                    Search
+                </button>
+                @if(request('search'))
+                    <a href="{{ route('nodes.index') }}"
+                    class="px-5 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center">
+                        Reset
+                    </a>
+                @endif
             </div>
-        </div>
-        <div class="absolute right-1 top-1 opacity-20 pointer-events-none">
-            <i data-lucide="network" class="w-64 h-64 text-white"></i>
-        </div>
+        </form>
     </div>
-    
-    {{-- Menampilkan notifikasi success/error --}}
-    @if(session('success'))
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-md">{{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-md">{{ session('error') }}</div>
-    @endif
 
+    {{-- Node Data Section --}}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-900">List All Node</h2>
+        </div>
 
-    {{-- Konten Tabel --}}
-    <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6 my-8 overflow-x-auto">
-        <table class="w-full text-sm text-left text-gray-600 border-collapse">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                <tr>
-                    <th scope="col" class="px-6 py-3 border border-slate-300 w-1/3">Nama Node</th>
-                    <th scope="col" class="px-6 py-3 border border-slate-300">SVLAN Terkait</th>
-                    <th scope="col" class="px-2 py-3 border border-slate-300 text-center">Aksi</th> 
-                
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($nodes as $node)
-                <tr class="bg-white hover:bg-gray-50">
-                    <td class="px-6 py-4 font-bold text-gray-900 border border-slate-300 align-top">{{ $node->nama_node }}</td>
-                    <td class="px-6 py-4 border border-slate-300 align-top">
-                        @if($node->svlans->isNotEmpty())
-                            <div class="flex flex-col gap-2">
-                                @foreach($node->svlans as $svlan)
-                                    <div class="p-2 bg-slate-100 rounded-lg text-xs">
-                                        <span class="text-gray-700 ml-2">
-                                            NMS: {{ $svlan->svlan_nms }}| ME: {{ $svlan->svlan_me }}| VPN: {{ $svlan->svlan_vpn }} | INET: {{ $svlan->svlan_inet }}| Extra: {{ $svlan->extra }}
-                                        </span>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider w-1/4">Node Name</th>
+                        <th class="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Connected SVLAN</th>
+                        <th class="px-6 py-4 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @forelse ($nodes as $node)
+                        <tr class="align-top">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
+                                {{ $node->nama_node }}
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-700">
+                                @if($node->svlans->isNotEmpty())
+                                    <div x-data="{ limit: 3 }" class="flex flex-col gap-3">
+                                        <template x-for="(svlan, index) in {{ $node->svlans->toJson() }}" :key="svlan.id">
+                                            <div 
+                                                x-show="index < limit" 
+                                                class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs"
+                                            >
+                                                <span class="font-semibold">NMS:</span>
+                                                <span class="px-2 py-0.5 bg-purple-100 text-purple-800 rounded-full" x-text="svlan.svlan_nms"></span>
+
+                                                <span class="font-semibold">ME:</span>
+                                                <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full" x-text="svlan.svlan_me"></span>
+
+                                                <span class="font-semibold">VPN:</span>
+                                                <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full" x-text="svlan.svlan_vpn"></span>
+
+                                                <span class="font-semibold">INET:</span>
+                                                <span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded-full" x-text="svlan.svlan_inet"></span>
+
+                                                <template x-if="svlan.extra">
+                                                    <div>
+                                                        <span class="font-semibold">Extra:</span>
+                                                        <span class="px-2 py-0.5 bg-gray-100 text-gray-800 rounded-full" x-text="svlan.extra"></span>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </template>
+
+                                        {{-- Tombol Lihat Lagi --}}
+                                        <button 
+                                            x-show="limit < {{ $node->svlans->count() }}" 
+                                            @click="limit += 3" 
+                                            class="mt-2 text-blue-600 text-xs font-medium hover:underline w-fit"
+                                        >
+                                            View All
+                                        </button>
                                     </div>
-                                @endforeach
-                            </div>
-                        @else
-                            <div class="flex flex-col items-center">
-                                <i data-lucide="folder-search" class="w-12 h-12 text-gray-400 mb-4"></i>
-                                <div class="text-center text-gray-400 italic text-xs py-2">Belum ada SVLAN terkait</div>
-                            </div>
-                        @endif
-                    </td>
-                    {{-- TOMBOL-TOMBOL AKSI --}}
-                    <td class="px-2 py-2 text-center border border-slate-300 align-middle">
-                        <div class="flex flex-col items-center justify-center gap-2">
+                                @else
+                                    <span class="text-sm text-gray-400 italic">No SVLAN Related</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                <div class="flex items-center justify-center gap-2">
+                                    <a href="{{ route('nodes.edit', $node->id) }}"
+                                       title="Edit"
+                                       class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-indigo-400 to-indigo-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
+                                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                                    </a>
 
-                            <a href="{{ route('nodes.edit', $node->id) }}" title="Edit" class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
-                                <i data-lucide="file-pen-line" class="w-4 h-4"></i>
-                            </a>
-                            
-                            <form action="{{ route('nodes.destroy', $node->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus Node ini?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" title="Hapus" class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-red-600 to-red-700 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
-                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="3" class="text-center text-gray-400 py-10 border border-slate-300">
-                        <div class="flex flex-col items-center">
-                            <i data-lucide="folder-search" class="w-12 h-12 text-gray-400 mb-4"></i><br>
-                        </div>
-                        <b>Belum ada Data Node di sistem,</b><br>klik tombol tambah untuk menambahkan Node ID.
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+                                    <form action="{{ route('nodes.destroy', $node->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus Node ini? Menghapus Node juga akan menghapus semua SVLAN dan CVLAN yang terkait.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                title="Hapus"
+                                                class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-red-400 to-red-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="px-6 py-12 text-center text-gray-500">
+                                <div class="flex flex-col items-center">
+                                    <i data-lucide="folder-search" class="w-12 h-12 text-gray-400 mb-4"></i>
+                                    @if(request('search'))
+                                        <p class="font-semibold">Search "{{ request('search') }}" Not Found.</p>
+                                    @else
+                                        <p class="font-semibold">Empty Node.</p>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
-    {{--pagination--}}
-    <div class="mt-4">
-        {{ $nodes->appends(request()->query())->links() }}
-    </div>
+
+    {{-- Pagination --}}
+    @if($nodes->hasPages())
+        <div class="mt-6">
+            {{ $nodes->appends(request()->query())->links() }}
+        </div>
+    @endif
 </div>
-    
 
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        lucide.createIcons();
-    });
-</script>
+<style>
+/* Custom scrollbar untuk table (opsional, tapi bagus untuk konsistensi) */
+.overflow-x-auto::-webkit-scrollbar {
+    height: 6px;
+}
+.overflow-x-auto::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+.overflow-x-auto::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+</style>
 @endsection

@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Edit Node')
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-8">
@@ -19,10 +19,10 @@
         <form action="{{ route('nodes.update', $node->id) }}" method="POST">
             @csrf
             @method('PUT') {{-- Method spoofing untuk update --}}
-            
+
             <div class="space-y-4">
                 <div>
-                    <label for="nama_node" class="block text-sm font-semibold text-gray-600 mb-2">Nama Node</label>
+                    <label for="nama_node" class="block text-sm font-semibold text-gray-600 mb-2">Node Name</label>
                     <input type="text" id="nama_node" name="nama_node" value="{{ old('nama_node', $node->nama_node) }}" required
                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
                 </div>
@@ -33,7 +33,7 @@
                     Update Node
                 </button>
                 <a href="{{ route('nodes.index') }}" class="w-full md:w-auto bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg text-center transition duration-300 transform hover:scale-105">
-                    Batal
+                    Cancel
                 </a>
             </div>
         </form>

@@ -6,12 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="//unpkg.com/alpinejs" defer></script>
     <link rel="icon" type="image/png" href="{{ asset('assets/images/logo2.png') }}">
     <title>@yield('title', 'Fiber Core Management')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- Select2 CSS for enhanced selects used in CVLAN views -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    
+
 </head>
 
 <body class="bg-gray-50">
@@ -69,7 +70,7 @@
                         <ul class="space-y-2">
                             <li>
                                 <div class="px-2 py-1 mb-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                    FO Management
+                                    Fiber Optik Management
                                 </div>
                                 <a href="{{ route('dashboard') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-700' : '' }}">
                                     <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
@@ -95,11 +96,19 @@
                              <li class="border-t border-gray-200 my-4"></li>
                                 <li>
                                     <div class="px-2 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                        vlan Management
+                                        Vlan Management
                                     </div>
                                     <a href="{{ route('svlan.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 ">
                                         <i data-lucide="network" class="w-5 h-5 mr-3"></i>
-                                        Vlan Management
+                                        SVlan
+                                    </a>
+                                    <a href="{{ route('cvlan.all') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 ">
+                                        <i data-lucide="waypoints" class="w-5 h-5 mr-3"></i>
+                                        CVlan
+                                    </a>
+                                    <a href="{{ route('nodes.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 ">
+                                        <i data-lucide="workflow" class="w-5 h-5 mr-3"></i>
+                                        Node
                                     </a>
                                 </li>
                             @endif
@@ -130,7 +139,7 @@
                     <div class="p-4 mt-auto border-t border-gray-200">
                         <form method="POST" action="{{ route('logout') }}" id="logout-form">
                             @csrf
-                            <button type="button" onclick="confirmLogout()" class="flex items-center w-full p-2 text-gray-700 rounded hover:bg-red-50 hover:text-red-700 transition-colors">
+                            <button type="button" onclick="confirmLogout()" class="flex items-center w-full p-2 text-gray-700 rounded hover:bg-red-50 hover:text-red-700 transition-colors cursor-pointer">
                                 <i data-lucide="Log-Out" class="w-5 h-5 mr-3"></i>
                                 Logout
                             </button>
@@ -196,7 +205,7 @@
         </div>
     </footer>
     </div>
-    
+
     <script>
         // Sidebar state management
         let sidebarOpen = window.innerWidth >= 1024; // desktop terbuka, mobile/tablet tertutup

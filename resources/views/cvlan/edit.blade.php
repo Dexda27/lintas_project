@@ -22,33 +22,33 @@
         $backUrl = route('cvlan.all');
     }
 @endphp
-<div class="bg-gray-100 font-sans">
-    <div class="container mx-auto px-4 py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-8">
-                <div class="bg-white rounded-2xl shadow-lg p-8 md:p-10 h-full flex flex-col">
+<div>
+    
+        <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+            
+                <div class="">
                     {{-- Header --}}
                     <div class="flex items-start justify-between mb-4 flex-wrap gap-4">
                         <div>
                             <h1 class="text-3xl font-bold text-gray-800">Edit CVLAN</h1>
-                            <p class="text-gray-500 mt-1">Mengubah detail untuk CVLAN</p>
+                            <p class="text-gray-500 mt-1">Change CVLAN Detail</p>
                         </div>
                     </div>
                     
                     {{-- Tombol Aksi Koneksi --}}
                     <div class="mb-6 border-t pt-6">
-                        <h3 class="text-lg font-semibold text-gray-700 mb-2">Ubah Status Koneksi</h3>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-2">Change Connection Status</h3>
                         <div id="connection-buttons">
                             <button type="button" id="make-standalone-btn" class="{{ $cvlan->svlan_id ? 'inline-flex' : 'hidden' }} items-center gap-2 py-2 px-4 font-semibold text-white bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 ease-in-out">
                                 <i data-lucide="unlink" class="w-5 h-5"></i>
-                                Jadikan Standalone
+                                Make Standalone
                             </button>
                             <button type="button" id="reconnect-svlan-btn" class="{{ $cvlan->svlan_id ? 'hidden' : 'inline-flex' }} items-center gap-2 py-2 px-4 font-semibold text-white bg-gradient-to-br from-green-500 to-teal-600 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 ease-in-out">
                                 <i data-lucide="link" class="w-5 h-5"></i>
-                                Sambungkan Kembali ke SVLAN
+                                Connect to SVLan
                             </button>
                         </div>
-                        <p class="text-sm text-gray-500 mt-2">Gunakan tombol ini untuk mengubah status koneksi CVLAN.</p>
+                        <p class="text-sm text-gray-500 mt-2">Use this button for change Cvlan conenction status.</p>
                     </div>
 
                     @if ($errors->any())
@@ -73,7 +73,7 @@
                             {{-- PERBAIKAN: class="contents" dihapus dan diganti dengan sub-grid --}}
                             <div id="svlan-fields-wrapper" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="md:col-span-2">
-                                    <label for="svlan_id" class="block text-sm font-medium text-gray-700 mb-1">Terhubung ke SVLAN</label>
+                                    <label for="svlan_id" class="block text-sm font-medium text-gray-700 mb-1">Connect to SVLAN</label>
                                     <select id="svlan_id" name="svlan_id" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                         @foreach($allSvlan as $singleSvlan)
                                             <option 
@@ -93,7 +93,7 @@
                                 </div>
                                 
                                 <div>
-                                    <label for="connection_type" class="block text-sm font-medium text-gray-700 mb-1">Jenis Koneksi</label>
+                                    <label for="connection_type" class="block text-sm font-medium text-gray-700 mb-1">Connection Type</label>
                                     <select id="connection_type" name="connection_type" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                         <option value="nms" {{ $activeFilter == 'nms' ? 'selected' : '' }}>NMS</option>
                                         <option value="metro" {{ $activeFilter == 'metro' ? 'selected' : '' }}>Metro</option>
@@ -104,7 +104,7 @@
                                 </div>
 
                                 <div id="connection-value-wrapper" class="{{ $activeFilter ? '' : 'hidden' }}">
-                                    <label id="connection-value-label" for="connection_value" class="block text-sm font-medium text-gray-700 mb-1">Nilai</label>
+                                    <label id="connection-value-label" for="connection_value" class="block text-sm font-medium text-gray-700 mb-1">Value</label>
                                     <input type="number" id="connection_value" name="connection_value" value="{{ old('connection_value', $cvlan->nms ?? $cvlan->metro ?? $cvlan->vpn ?? $cvlan->inet ?? $cvlan->extra) }}" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" max="9999" oninput="if (this.value.length > 4) this.value = this.value.slice(0, 4);">
                                 </div>
                                 
@@ -113,7 +113,7 @@
                             {{-- Wrapper untuk field Node (hanya tampil saat mode mandiri) --}}
                             <div id="node-field-wrapper" class="hidden md:col-span-2 space-y-6">
                                 <div>
-                                    <label for="node_id" class="block text-sm font-medium text-gray-700 mb-1">Pilih Node (Wajib untuk Mandiri)</label>
+                                    <label for="node_id" class="block text-sm font-medium text-gray-700 mb-1">Node (Mandatory if Standalone)</label>
                                     <select id="node_id" name="node_id" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm">
                                         @foreach($nodes as $node)
                                             <option value="{{ $node->id }}" {{ old('node_id', $cvlan->node_id) == $node->id ? 'selected' : '' }}>
@@ -125,7 +125,7 @@
                                 
                                 {{-- Input CVLAN Slot DIPINDAHKAN KE SINI --}}
                                 <div>
-                                    <label for="cvlan_slot" class="block text-sm font-medium text-gray-700 mb-1">CVLAN (Wajib untuk Mandiri)</label>
+                                    <label for="cvlan_slot" class="block text-sm font-medium text-gray-700 mb-1">CVLAN (Mandatory if Standalone)</label>
                                     <input type="text" name="cvlan_slot" id="cvlan_slot" value="{{ old('cvlan_slot', $cvlan->cvlan_slot) }}" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm" placeholder="Belum ada nilai" max="9999"
                                     oninput="javascript: if (this.value.length > 4) this.value = this.value.slice(0, 4);"
                                     onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46">
@@ -157,38 +157,9 @@
                         </div>
                     </form>
                 </div>
-            </div>
-
-            {{-- Kolom Info Kanan --}}
-            <div class="lg:col-span-4">
-                <div class="bg-gradient-to-br from-blue-400 to-indigo-600 p-8 text-white rounded-2xl shadow-lg h-full flex flex-col justify-center items-center text-center">
-                    <div id="info-panel-icon">
-                        <i data-lucide="server-cog" class="w-16 h-16 mb-4 opacity-80"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4">Edit CVLAN</h3>
-                    <p id="info-panel-text" class="opacity-90 leading-relaxed">
-                        @switch($activeFilter)
-                            @case('vpn')
-                                Mengubah data CVLAN pada SVLAN-VPN: <br><span class="font-bold text-white">{{ $svlan->svlan_vpn }}</span>.
-                                @break
-                            @case('inet')
-                                Mengubah data CVLAN pada SVLAN-INET: <br><span class="font-bold text-white">{{ $svlan->svlan_inet }}</span>.
-                                @break
-                            @case('metro')
-                                Mengubah data CVLAN pada SVLAN-Metro: <br><span class="font-bold text-white">{{ $svlan->svlan_me }}</span>.
-                                @break
-                            @case('extra')
-                                Mengubah data CVLAN pada SVLAN-Extra: <br><span class="font-bold text-white">{{ $svlan->extra }}</span>.
-                                @break
-                            @default
-                                Mengubah data CVLAN pada SVLAN-NMS: <br><span class="font-bold text-white">{{ $svlan->svlan_nms }}</span>.
-                        @endswitch
-                        <br><br>Anda bisa memindahkannya ke SVLAN lain atau menjadikannya Standalone dengan tombol di samping.
-                    </p>
-                </div>
-            </div>
+            
         </div>
-    </div>
+    
 </div>
 @endsection
 
@@ -237,7 +208,7 @@ $(document).ready(function() {
     const infoPanelText = $('#info-panel-text');
 
     // Inisialisasi Select2 untuk Node dan Jenis Koneksi (non-search for connection type)
-    $('#node_id, #connection_type').select2({ theme: "bootstrap-5", width: '100%', minimumResultsForSearch: Infinity });
+    $('#node_id, #connection_type').select2({width: '100%'});
     
     // ==================================================================
     // == PERUBAHAN UTAMA DI SINI ==
@@ -309,8 +280,8 @@ $(document).ready(function() {
         const selectedType = connectionTypeSelect.val();
         if (selectedType) {
             const labelText = selectedType.charAt(0).toUpperCase() + selectedType.slice(1);
-            connectionValueLabel.text('Nilai ' + labelText);
-            connectionValueInput.prop('placeholder', 'Masukkan nilai ' + labelText);
+            connectionValueLabel.text('Value ' + labelText);
+            connectionValueInput.prop('placeholder', 'Input Value' + labelText);
             connectionValueWrapper.removeClass('hidden');
         } else {
             connectionValueWrapper.addClass('hidden');
