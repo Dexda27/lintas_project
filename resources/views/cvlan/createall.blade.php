@@ -5,11 +5,11 @@
 @section('content')
 <div class="bg-gray-100 font-sans">
     <div class="container mx-auto px-4 py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8">
 
             {{-- Kolom Kiri: Form --}}
             <div class="lg:col-span-8">
-                <div class="bg-white rounded-2xl shadow-lg p-8">
+                <div class="">
 
                     {{-- Header --}}
                     <div class="flex items-start justify-between mb-6 flex-wrap gap-4">
@@ -141,19 +141,6 @@
                     </form>
                 </div>
             </div>
-
-            {{-- Kolom Kanan: Panel Info (Opsional, bisa dihapus kalau tidak perlu) --}}
-            <div class="lg:col-span-4">
-                <div class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-2xl shadow-lg p-6 sticky top-8">
-                    <h2 class="text-xl font-semibold mb-4">Panduan</h2>
-                    <ul class="space-y-2 text-sm">
-                        <li>📌 Pilih <strong>Node</strong> jika CVLAN mandiri.</li>
-                        <li>🔗 Pilih <strong>SVLAN</strong> jika ingin menghubungkan.</li>
-                        <li>✍️ Masukkan data umum seperti <strong>CVLAN, No Jaringan, Nama Pelanggan</strong>.</li>
-                    </ul>
-                </div>
-            </div>
-
         </div>
     </div>
 </div>

@@ -11,7 +11,7 @@
         </div>
 
         <div class="mb-6 border-t pt-6">
-            <h3 class="text-lg font-semibold text-gray-700 mb-2">Ubah Status Koneksi</h3>
+            <h3 class="text-lg font-semibold text-gray-700 mb-2">Change Connection Type</h3>
             <div id="connection-buttons">
                 <button type="button" id="make-standalone-btn" class="{{ $cvlan->svlan_id ? 'inline-flex' : 'hidden' }} items-center gap-2 py-2 px-4 font-semibold text-white bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 ease-in-out">
                     <i data-lucide="unlink" class="w-5 h-5"></i>

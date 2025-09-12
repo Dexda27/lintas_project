@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Manajemen Node')
+@section('title', 'Management Node')
 
 @section('content')
 <div class="min-h-screen bg-gray-50">
 
     {{-- Header Section --}}
     <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">Manajemen Node</h1>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Node Management</h1>
         <p class="text-gray-600">Overview of Node and related SVLAN infrastructure</p>
     </div>
 
@@ -18,7 +18,7 @@
         <div class="flex items-center gap-4">
             <a href="{{ route('nodes.create') }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg shadow-sm transition-all duration-200">
                 <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                <span>Tambah Node</span>
+                <span>Add Node</span>
             </a>
         </div>
 
@@ -29,7 +29,7 @@
                     <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
                     <input type="text"
                         name="search"
-                        placeholder="Cari Nama Node..."
+                        placeholder="Search Node Name..."
                         value="{{ request('search') }}"
                         class="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
@@ -50,16 +50,16 @@
     {{-- Node Data Section --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
         <div class="px-6 py-4 border-b border-gray-200">
-            <h2 class="text-xl font-semibold text-gray-900">Data Semua Node</h2>
+            <h2 class="text-xl font-semibold text-gray-900">List All Node</h2>
         </div>
 
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider w-1/4">Nama Node</th>
-                        <th class="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">SVLAN Terkait</th>
-                        <th class="px-6 py-4 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                        <th class="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider w-1/4">Node Name</th>
+                        <th class="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Connected SVLAN</th>
+                        <th class="px-6 py-4 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">Action</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -103,11 +103,11 @@
                                             @click="limit += 3" 
                                             class="mt-2 text-blue-600 text-xs font-medium hover:underline w-fit"
                                         >
-                                            Lihat data lagi
+                                            View All
                                         </button>
                                     </div>
                                 @else
-                                    <span class="text-sm text-gray-400 italic">Belum ada SVLAN terkait</span>
+                                    <span class="text-sm text-gray-400 italic">No SVLAN Related</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
@@ -136,9 +136,9 @@
                                 <div class="flex flex-col items-center">
                                     <i data-lucide="folder-search" class="w-12 h-12 text-gray-400 mb-4"></i>
                                     @if(request('search'))
-                                        <p class="font-semibold">Tidak ada Node yang cocok dengan pencarian "{{ request('search') }}".</p>
+                                        <p class="font-semibold">Search "{{ request('search') }}" Not Found.</p>
                                     @else
-                                        <p class="font-semibold">Belum ada data Node di sistem.</p>
+                                        <p class="font-semibold">Empty Node.</p>
                                     @endif
                                 </div>
                             </td>

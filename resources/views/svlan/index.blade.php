@@ -16,7 +16,7 @@
         <div class="flex items-center gap-4">
             <a href="{{ route('svlan.exportAll', request()->query()) }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-medium text-white bg-teal-600 hover:bg-teal-700 rounded-lg shadow-md transition-all duration-300">
                 <i data-lucide="download" class="w-5 h-5"></i>
-                <span>Export All</span>
+                <span>Export SVLAN</span>
             </a>
             <a href="{{ route('svlan.create') }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg shadow-md transition-all duration-300">
                 <i data-lucide="plus-circle" class="w-5 h-5"></i>
