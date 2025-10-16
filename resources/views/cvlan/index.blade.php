@@ -12,22 +12,22 @@
             <p class="text-gray-600">
                 @switch($koneksiFilter)
                     @case('vpn')
-                        Untuk SVLAN VPN: <span class="font-bold">{{ $svlan->svlan_vpn }}</span>
+                        For SVLAN VPN: <span class="font-bold">{{ $svlan->svlan_vpn }}</span>
                         @break
                     @case('inet')
-                        Untuk SVLAN INET: <span class="font-bold">{{ $svlan->svlan_inet }}</span>
+                        For SVLAN INET: <span class="font-bold">{{ $svlan->svlan_inet }}</span>
                         @break
                     @case('extra')
-                    Untuk SVLAN EXTRA: <span class="font-bold">{{ $svlan->extra }}</span>
+                        For SVLAN EXTRA: <span class="font-bold">{{ $svlan->extra }}</span>
                         @break
                     @case('metro')
-                        Untuk SVLAN Metro: <span class="font-bold">{{ $svlan->svlan_me }}</span>
+                        For SVLAN Metro: <span class="font-bold">{{ $svlan->svlan_me }}</span>
                         @break
                     @case('nms')
-                        Untuk SVLAN NMS: <span class="font-bold">{{ $svlan->svlan_nms }}</span>
+                        For SVLAN NMS: <span class="font-bold">{{ $svlan->svlan_nms }}</span>
                         @break
                     @default
-                        Untuk SVLAN: <span class="font-bold">{{ $svlan->svlan_nms }}</span>
+                        For SVLAN: <span class="font-bold">{{ $svlan->svlan_nms }}</span>
                 @endswitch
                 <br>Node: <span class="font-bold">{{ $svlan->node->nama_node ?? 'N/A' }}</span>
             </p>
@@ -38,7 +38,7 @@
             <a href="{{ route('cvlan.create', ['svlan_id' => $svlan->id, 'koneksi_filter' => request('koneksi_filter')]) }}"
                class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg shadow-sm transition-colors duration-200">
                 <i data-lucide="plus" class="w-4 h-4"></i>
-                <span>Tambah CVLAN</span>
+                <span>Add New CVLAN</span>
             </a>
             <a href="{{ route('cvlan.exportForSvlan', $svlan->id) }}"
                class="inline-flex items-center gap-2 px-6 py-3 bg-teal-500 hover:bg-teal-600 text-white font-medium rounded-lg shadow-sm transition-colors duration-200">
@@ -59,7 +59,7 @@
                             <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
                             <input type="text"
                                    name="search"
-                                   placeholder="Cari..."
+                                   placeholder="search..."
                                    value="{{ request('search') }}"
                                    class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
@@ -103,9 +103,9 @@
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                VLAN
                             </th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">No Jaringan</th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Pelanggan</th>
-                            <th class="relative px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">No Network</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                            <th class="relative px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -156,8 +156,8 @@
                                 <td colspan="4" class="px-6 py-12 text-center text-gray-500">
                                     <div class="flex flex-col items-center">
                                         <i data-lucide="folder-search" class="w-12 h-12 text-gray-400 mb-4"></i>
-                                        <p class="font-semibold">Belum ada data CVLAN untuk SVLAN ini.</p>
-                                        <p class="text-sm">Silakan tambah data melalui tombol di atas.</p>
+                                        <p class="font-semibold">There is no CVLAN data in this SVLAN.</p>
+                                        <p class="text-sm">Please Add new data using the button above.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -169,7 +169,7 @@
         <a href="{{ route('svlan.index') }}"
             class="inline-flex items-center gap-2 mt-5 px-3 py-3 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg shadow-sm transition-colors duration-200">
             <i data-lucide="arrow-left" class="w-4 h-4"></i>
-            <span>Kembali</span>
+            <span>Back</span>
         </a>
     </div>
 </div>

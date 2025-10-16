@@ -16,7 +16,7 @@
         <div class="flex items-center gap-4">
             <a href="{{ route('svlan.exportAll', request()->query()) }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-medium text-white bg-teal-600 hover:bg-teal-700 rounded-lg shadow-md transition-all duration-300">
                 <i data-lucide="download" class="w-5 h-5"></i>
-                <span>Export All</span>
+                <span>Export SVLAN</span>
             </a>
             <a href="{{ route('svlan.create') }}" class="inline-flex items-center gap-2 py-2.5 px-5 font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg shadow-md transition-all duration-300">
                 <i data-lucide="plus-circle" class="w-5 h-5"></i>
@@ -73,7 +73,7 @@
             <div class="text-center">VPN</div>
             <div class="text-center">INET</div>
             <div class="text-center">Extra</div>
-            <div>Notes</div>
+            <div class="text-center">Description</div>
             <div class="text-center">Actions</div>
         </div>
 
@@ -118,12 +118,12 @@
                     </div>
 
                     <div class="flex gap-2 pt-2">
-                        <a href="{{ route('svlan.edit', $svlan->id) }}" class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-indigo-400 to-indigo-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
+                        <a href="{{ route('svlan.edit', $svlan->id) }}" class="inline-flex items-center justify-center gap-1 p-2 font-medium text-white bg-gradient-to-br from-indigo-400 to-indigo-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
                                         <i data-lucide="pencil" class="w-4 h-4"></i>
                             <span>Edit</span>
                         </a>
                         <button type="button"
-                                class="delete-svlan-btn flex items-center gap-1 px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition-colors"
+                                class="delete-svlan-btn flex items-center gap-1 px-3 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors"
                                 data-svlan-id="{{ $svlan->id }}"
                                 data-cvlan-count="{{ $svlan->cvlans->count() }}"
                                 data-action-url="{{ route('svlan.destroy', $svlan->id) }}">
@@ -167,7 +167,7 @@
                         </a>
                     </div>
 
-                    <div class="text-sm text-gray-600">{{ $svlan->keterangan }}</div>
+                    <div class="text-sm text-center text-gray-600">{{ $svlan->keterangan }}</div>
 
                     <div class="flex justify-center items-center gap-2">
                         <a href="{{ route('svlan.edit', $svlan->id) }}" class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-indigo-400 to-indigo-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
