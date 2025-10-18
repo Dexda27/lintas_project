@@ -19,7 +19,7 @@ class CvlanController extends Controller
     public function index($svlan_id, Request $request)
     {
         $svlan = Svlan::with('node')->findOrFail($svlan_id);
-        
+
         $search = $request->query('search');
         $sortField = $request->query('sort', 'cvlan_slot');
         $sortOrder = $request->query('order', 'asc');
@@ -54,7 +54,7 @@ class CvlanController extends Controller
                 ->orWhere('extra', 'like', "%{$search}%");
         });
     }
-        
+
         $cvlans = $cvlansQuery->orderBy($sortField, $sortOrder)->get();
 
         return view('cvlan.index', compact('svlan', 'cvlans', 'koneksiFilter'));
@@ -84,7 +84,7 @@ class CvlanController extends Controller
             'no_jaringan'      => 'nullable|string|max:255',
             'nama_pelanggan'   => 'nullable|string|max:255',
         ]);
-        
+
         $dataToCreate = [
             'svlan_id'        => $svlan->id,
             'node_id'         => $svlan->node_id,
@@ -113,7 +113,7 @@ class CvlanController extends Controller
             } elseif ($connectionType === 'extra') {
                 $dataToCreate['extra'] = $connectionValue;
             }
-            
+
         }
 
         $svlan->cvlans()->create($dataToCreate);
@@ -122,7 +122,7 @@ class CvlanController extends Controller
 
         // Gunakan nilai filter saat melakukan redirect
         return redirect()->route('cvlan.index', [
-            'svlan_id' => $svlan->id, 
+            'svlan_id' => $svlan->id,
             'koneksi_filter' => $originFilter
         ])->with('success', 'CVLAN berhasil ditambahkan!');
     }
@@ -140,7 +140,7 @@ class CvlanController extends Controller
         $svlan = Svlan::findOrFail($svlan_id);
         $allSvlan = Svlan::with('node')->get();
         $nodes = Node::all();
-        
+
         return view('cvlan.edit', compact('cvlan', 'svlan', 'allSvlan', 'nodes'));
     }
 
@@ -195,10 +195,10 @@ class CvlanController extends Controller
             $newSvlan = Svlan::find($validated['svlan_id']);
             $cvlan->svlan_id = $newSvlan->id;
             $cvlan->node_id = $newSvlan->node_id;
-            
+
             // Atur cvlan_slot menjadi NULL jika terhubung ke SVLAN
-            $cvlan->cvlan_slot = null; 
-            
+            $cvlan->cvlan_slot = null;
+
             // Reset dan atur koneksi baru
             $cvlan->nms = null; $cvlan->metro = null; $cvlan->vpn = null; $cvlan->inet = null; $cvlan->extra = null;
             $connectionType = $validated['connection_type'] ?? null;
@@ -207,9 +207,9 @@ class CvlanController extends Controller
                 $cvlan->{$connectionType} = $connectionValue;
             }
         }
-        
+
         $cvlan->save();
-        
+
         // Logika redirect
         $origin = $request->input('origin');
         $originFilter = $request->input('koneksi_filter_origin');
@@ -241,7 +241,7 @@ class CvlanController extends Controller
             'koneksi_filter' => $originFilter
         ])->with('success', 'CVLAN berhasil dihapus.');
     }
-    
+
 //-------------------------------------------------------------------------------------------------------
 
     /**
@@ -250,7 +250,7 @@ class CvlanController extends Controller
     public function all(Request $request)
     {
         $search = $request->query('search');
-        $sortField = $request->query('sort', 'id'); 
+        $sortField = $request->query('sort', 'id');
         $sortOrder = $request->query('order', 'asc');
         $koneksiFilter = $request->query('koneksi_filter');
 
@@ -300,9 +300,9 @@ class CvlanController extends Controller
         } else {
             $query->orderBy($sortField, $sortOrder);
         }
-        
-        $cvlans = $query->paginate(15);
-        
+
+        $cvlans = $query->paginate(10);
+
         return view('cvlan.all', compact('cvlans', 'sortField', 'sortOrder', 'koneksiFilter'));
     }
 
@@ -361,7 +361,7 @@ class CvlanController extends Controller
 
             $connectionType = $validated['connection_type'] ?? null;
             $connectionValue = $validated['connection_value'] ?? null;
-            
+
             $cvlan->nms = null;
             $cvlan->metro = null;
             $cvlan->vpn = null;
@@ -426,7 +426,7 @@ class CvlanController extends Controller
                 'cvlan_slot'       => 'nullable|string|max:255' // Boleh kosong jika terhubung
             ];
         }
-        
+
         $validated = $request->validate(array_merge($commonRules, $specificRules));
 
         // --- Logika Penyimpanan Data ---
@@ -442,10 +442,10 @@ class CvlanController extends Controller
             $newSvlan = Svlan::find($validated['svlan_id']);
             $cvlan->svlan_id = $newSvlan->id;
             $cvlan->node_id = $newSvlan->node_id;
-            
+
             // Atur cvlan_slot menjadi NULL jika terhubung ke SVLAN
             $cvlan->cvlan_slot = null;
-            
+
             // Reset dan atur koneksi baru
             $cvlan->nms = null; $cvlan->metro = null; $cvlan->vpn = null; $cvlan->inet = null; $cvlan->extra = null;
             $connectionType = $validated['connection_type'] ?? null;
@@ -454,9 +454,9 @@ class CvlanController extends Controller
                 $cvlan->{$connectionType} = $connectionValue;
             }
         }
-        
+
         $cvlan->save();
-        
+
         return redirect()->route('cvlan.all')->with('success', 'CVLAN berhasil diperbarui.');
     }
 
@@ -469,8 +469,8 @@ class CvlanController extends Controller
         $cvlan->delete();
         return redirect()->route('cvlan.all')->with('success', 'CVLAN berhasil dihapus!');
     }
-    
-    
+
+
     /**
      * Export data CVLAN (semua atau terfilter) ke file EXCEL (.xlsx).
      */
@@ -487,104 +487,4 @@ class CvlanController extends Controller
         return Excel::download(new CvlansExport($search, $koneksiFilter), $fileName);
     }
 
-    /**
-     * Export data CVLAN untuk SVLAN tertentu ke CSV.
-     */
-    public function exportCsvForSvlan($svlan_id, Request $request)
-    {
-        $svlan = Svlan::with('node')->findOrFail($svlan_id);
-
-        $search = $request->query('search');
-        $koneksiFilter = $request->query('koneksi_filter');
-
-        $query = $svlan->cvlans()->with(['svlan.node', 'node']);
-
-        if ($koneksiFilter) {
-            if (in_array($koneksiFilter, ['nms', 'metro', 'vpn', 'inet', 'extra'])) {
-                $query->whereNotNull($koneksiFilter);
-            }
-        }
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('cvlan_slot', 'like', "%{$search}%")
-                  ->orWhere('no_jaringan', 'like', "%{$search}%")
-                  ->orWhere('nama_pelanggan', 'like', "%{$search}%")
-                  ->orWhere('nms', 'like', "%{$search}%")
-                  ->orWhere('metro', 'like', "%{$search}%")
-                  ->orWhere('vpn', 'like', "%{$search}%")
-                  ->orWhere('inet', 'like', "%{$search}%")
-                  ->orWhere('extra', 'like', "%{$search}%");
-            });
-        }
-
-        $cvlans = $query->orderBy('id', 'asc')->get();
-
-        $fileName = 'cvlan_svlan_' . $svlan->id . '_' . date('Y-m-d') . '.csv';
-        $headers = [
-            'Content-type' => 'text/csv',
-            'Content-Disposition' => "attachment; filename={$fileName}",
-            'Pragma' => 'no-cache',
-            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires' => '0',
-        ];
-
-        $columns = ['Node', 'Status', 'CVLAN Slot', 'Koneksi', 'No Jaringan', 'Nama Pelanggan'];
-
-        $callback = function () use ($cvlans, $columns) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, $columns);
-
-            foreach ($cvlans as $cvlan) {
-                $node = $cvlan->svlan->node->nama_node ?? $cvlan->node->nama_node ?? 'N/A';
-
-                $status = 'Mandiri';
-                if ($cvlan->svlan) {
-                    $statusDetail = '';
-                    if ($cvlan->nms !== null) {
-                        $statusDetail = 'SVLAN-NMS: ' . ($cvlan->svlan->svlan_nms ?? '');
-                    } elseif ($cvlan->metro !== null) {
-                        $statusDetail = 'SVLAN-Metro: ' . ($cvlan->svlan->svlan_me ?? '');
-                    } elseif ($cvlan->vpn !== null) {
-                        $statusDetail = 'SVLAN-VPN: ' . ($cvlan->svlan->svlan_vpn ?? '');
-                    } elseif ($cvlan->inet !== null) {
-                        $statusDetail = 'SVLAN-INET: ' . ($cvlan->svlan->svlan_inet ?? '');
-                    } elseif ($cvlan->extra !== null) {
-                        $statusDetail = 'SVLAN-Extra: ' . ($cvlan->svlan->extra ?? '');
-                    } else {
-                        $statusDetail = 'SVLAN: ' . ($cvlan->svlan->svlan_nms ?? '');
-                    }
-                    $status = 'Terhubung (' . $statusDetail . ')';
-                }
-
-                $koneksi = '-';
-                if ($cvlan->nms !== null) {
-                    $koneksi = 'NMS: ' . $cvlan->nms;
-                } elseif ($cvlan->metro !== null) {
-                    $koneksi = 'Metro: ' . $cvlan->metro;
-                } elseif ($cvlan->vpn !== null) {
-                    $koneksi = 'VPN: ' . $cvlan->vpn;
-                } elseif ($cvlan->inet !== null) {
-                    $koneksi = 'INET: ' . $cvlan->inet;
-                } elseif ($cvlan->extra !== null) {
-                    $koneksi = 'Extra: ' . $cvlan->extra;
-                }
-
-                $row = [
-                    'Node' => $node,
-                    'Status' => $status,
-                    'CVLAN Slot' => $cvlan->cvlan_slot,
-                    'Koneksi' => $koneksi,
-                    'No Jaringan' => $cvlan->no_jaringan ?? 'N/A',
-                    'Nama Pelanggan' => $cvlan->nama_pelanggan ?? 'N/A',
-                ];
-
-                fputcsv($file, $row);
-            }
-
-            fclose($file);
-        };
-
-        return new StreamedResponse($callback, 200, $headers);
-    }
 }

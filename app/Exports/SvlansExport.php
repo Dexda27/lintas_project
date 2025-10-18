@@ -38,7 +38,7 @@ class SvlansExport implements FromQuery, WithHeadings, WithMapping, WithStyles, 
                   });
             });
         }
-        
+
         return $query;
     }
 
@@ -55,7 +55,6 @@ class SvlansExport implements FromQuery, WithHeadings, WithMapping, WithStyles, 
             'SVLAN-VPN',
             'SVLAN-INET',
             'EXTRA',
-            'Keterangan',
         ];
     }
 
@@ -76,7 +75,6 @@ class SvlansExport implements FromQuery, WithHeadings, WithMapping, WithStyles, 
             $svlan->svlan_vpn,
             $svlan->svlan_inet,
             $svlan->extra,
-            $svlan->keterangan,
         ];
     }
 

@@ -51,7 +51,7 @@ class CvlansExport implements FromQuery, WithHeadings, WithMapping, WithStyles, 
                 $query->whereNotNull($this->koneksiFilter);
             }
         }
-        
+
         return $query->orderBy('id', 'asc');
     }
 
@@ -65,10 +65,10 @@ class CvlansExport implements FromQuery, WithHeadings, WithMapping, WithStyles, 
             'NO',
             'Node',
             'Status',
-            'CVLAN Slot',
-            'Koneksi',
-            'No Jaringan',
-            'Nama Pelanggan'
+            'CVLAN',
+            'Vlan',
+            'Network',
+            'Customer'
         ];
     }
 
@@ -84,21 +84,25 @@ class CvlansExport implements FromQuery, WithHeadings, WithMapping, WithStyles, 
 
         // Logika untuk menampilkan data, disalin dari export CSV Anda
         $node = $cvlan->svlan->node->nama_node ?? $cvlan->node->nama_node ?? 'N/A';
-        
+
         $status = 'Mandiri';
         if ($cvlan->svlan) {
             $statusDetail = '';
             if ($cvlan->nms !== null) $statusDetail = "SVLAN-NMS: " . $cvlan->svlan->svlan_nms;
             elseif ($cvlan->metro !== null) $statusDetail = "SVLAN-Metro: " . $cvlan->svlan->svlan_me;
             elseif ($cvlan->vpn !== null) $statusDetail = "SVLAN-VPN: " . $cvlan->svlan->svlan_vpn;
+            elseif ($cvlan->inet !== null) $statusDetail = "SVLAN-INET: " . $cvlan->svlan->svlan_inet;
+            elseif ($cvlan->extra !== null) $statusDetail = "SVLAN-EXTRA: " . $cvlan->svlan->extra;
             // ... tambahkan logika lain jika perlu
-            $status = "Terhubung (" . $statusDetail . ")";
+            $status = "Connected (" . $statusDetail . ")";
         }
 
         $koneksi = '-';
         if ($cvlan->nms !== null) $koneksi = "NMS: " . $cvlan->nms;
         elseif ($cvlan->metro !== null) $koneksi = "Metro: " . $cvlan->metro;
         elseif ($cvlan->vpn !== null) $koneksi = "VPN: " . $cvlan->vpn;
+        elseif ($cvlan->inet !== null) $koneksi = "INET: " . $cvlan->inet;
+        elseif ($cvlan->extra !== null) $koneksi = "EXTRA: " . $cvlan->extra;
         // ... tambahkan logika lain jika perlu
 
         return [
