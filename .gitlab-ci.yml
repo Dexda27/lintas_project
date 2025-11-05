@@ -1,0 +1,40 @@
+stages:
+    - docker_publish
+    - deploy_to_prod
+
+docker_publish:
+    stage: docker_publish
+    image: docker:latest
+    services:
+        - docker:dind
+    before_script:
+        - if [ "$CI_COMMIT_BRANCH" = "prod" ]; then export ENV_MODE="prod"; else export ENV_MODE=$CI_COMMIT_BRANCH; fi
+    script:
+        - docker build -t $DOCKER_REGISTRY/$DOCKER_USERNAME/$APP_NAME:$ENV_MODE .
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - docker push $DOCKER_USERNAME/$APP_NAME:$ENV_MODE
+    only:
+        - prod
+
+deploy_to_prod:
+    stage: deploy_to_prod
+    image: alpine
+    environment:
+        name: prod
+    before_script:
+        - apk add --no-cache envsubst openssh-client git curl
+        - curl -1sLf 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.alpine.sh' | sh
+        - apk add infisical=$INFISICAL_CLI_VERSION
+    script:
+        - infisical export --projectId=$INFISICAL_PROJECT_ID --domain=$INFISICAL_DOMAIN --env=prod | sed -E "s/='(.*)'$/=\1/" > .env
+        - source .env
+        - echo $SERVER_PRIVATE_KEY | base64 -d > server.pem && chmod 600 server.pem
+        - mkdir -p ~/.ssh
+        - echo -e "Host prod-server\n  HostName $SERVER_HOST\n  User $SERVER_USERNAME\n  IdentityFile server.pem\n  StrictHostKeyChecking no" > ~/.ssh/config
+        - ssh prod-server "mkdir -p $APP_PATH"
+        - scp .env prod-server:$APP_PATH/.env
+        - export $(grep -v '^#' .env | xargs) && envsubst < deploy/docker-compose.prod.yml  > docker-compose.yml
+        - scp docker-compose.yml prod-server:$APP_PATH/docker-compose.yml
+        - ssh prod-server "cd $APP_PATH && docker compose up -d"
+    only:
+        - prod
