@@ -29,11 +29,10 @@
                         {{-- Form fields --}}
                         <div class="space-y-6">
 
-                            {{-- ======================= PERUBAHAN DI SINI ======================= --}}
+                            {{-- Node Selection --}}
                             <div>
                                 <label for="node_id" class="block text-sm font-semibold text-gray-600 mb-2">Select Node</label>
-                                {{-- Tidak ada perubahan di sini, Select2 akan menargetkan ID ini --}}
-                                <select id="node_id" name="node_id" required
+                                <select id="node_id" name="node_id" required tabindex="1"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
                                     <option value="" disabled selected>Select or Search for Node</option>
 
@@ -47,21 +46,20 @@
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
-                            {{-- ===================== AKHIR DARI PERUBAHAN ==================== --}}
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label for="svlan_nms" class="block text-sm font-semibold text-gray-600 mb-2">SVLAN NMS</label>
-                                    <input type="number" id="svlan_nms" name="svlan_nms" value="{{ old('svlan_nms') }}" required max="9999"
+                                    <input type="number" id="svlan_nms" name="svlan_nms" value="{{ old('svlan_nms') }}" required max="9999" tabindex="2"
                                     oninput="javascript: if (this.value.length > 4) this.value = this.value.slice(0, 4);"
-                                    onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46"
+                                    onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 9"
                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
                                 </div>
                                 <div>
                                     <label for="svlan_me" class="block text-sm font-semibold text-gray-600 mb-2">SVLAN ME</label>
-                                    <input type="number" id="svlan_me" name="svlan_me" value="{{ old('svlan_me') }}" max="9999"
+                                    <input type="number" id="svlan_me" name="svlan_me" value="{{ old('svlan_me') }}" max="9999" tabindex="3"
                                     oninput="javascript: if (this.value.length > 4) this.value = this.value.slice(0, 4);"
-                                    onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46"
+                                    onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 9"
                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
                                 </div>
                             </div>
@@ -69,41 +67,41 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label for="svlan_vpn" class="block text-sm font-semibold text-gray-600 mb-2">SVLAN VPN</label>
-                                    <input type="number" id="svlan_vpn" name="svlan_vpn" value="{{ old('svlan_vpn') }}" required max="9999"
+                                    <input type="number" id="svlan_vpn" name="svlan_vpn" value="{{ old('svlan_vpn') }}" required max="9999" tabindex="4"
                                         oninput="javascript: if (this.value.length > 4) this.value = this.value.slice(0, 4);"
-                                        onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46"
+                                        onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 9"
                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
                                 </div>
                                 <div>
                                     <label for="svlan_inet" class="block text-sm font-semibold text-gray-600 mb-2">SVLAN INET</label>
-                                    <input type="number" id="svlan_inet" name="svlan_inet" value="{{ old('svlan_inet') }}" required max="9999"
+                                    <input type="number" id="svlan_inet" name="svlan_inet" value="{{ old('svlan_inet') }}" required max="9999" tabindex="5"
                                         oninput="javascript: if (this.value.length > 4) this.value = this.value.slice(0, 4);"
-                                        onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46"
+                                        onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 9"
                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
                                 </div>
                             </div>
 
                             <div>
                                 <label for="extra" class="block text-sm font-semibold text-gray-600 mb-2">Extra</label>
-                                <input type="number" id="extra" name="extra" value="{{ old('extra') }}" max="9999"
+                                <input type="number" id="extra" name="extra" value="{{ old('extra') }}" max="9999" tabindex="6"
                                 oninput="javascript: if (this.value.length > 4) this.value = this.value.slice(0, 4);"
-                                onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46"
+                                onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 9"
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
                             </div>
 
                             <div>
                                 <label for="keterangan" class="block text-sm font-semibold text-gray-600 mb-2">Notes</label>
-                                <textarea id="keterangan" name="keterangan" rows="3"
+                                <textarea id="keterangan" name="keterangan" rows="3" tabindex="7"
                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">{{ old('keterangan') }}</textarea>
                             </div>
                         </div>
 
                         {{-- Form Footer with Action Buttons --}}
                         <div class="mt-auto pt-8 flex items-center gap-4">
-                            <button type="submit" class="w-full md:w-auto bg-green-700 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
+                            <button type="submit" tabindex="8" class="w-full md:w-auto bg-green-700 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
                                 Save Data
                             </button>
-                            <a href="{{ route('svlan.index') }}" class="w-full md:w-auto bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg text-center transition duration-300 transform hover:scale-105">
+                            <a href="{{ route('svlan.index') }}" tabindex="9" class="w-full md:w-auto bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg text-center transition duration-300 transform hover:scale-105">
                                 Cancel
                             </a>
                         </div>
@@ -123,7 +121,7 @@
         $('#node_id').select2({
             placeholder: "Select or search for node",
             allowClear: true,
-            width: '100%'         // Memastikan lebar dropdown sesuai form
+            width: '100%'
         });
     });
 </script>

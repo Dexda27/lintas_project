@@ -1,0 +1,47 @@
+# Version control
+.git
+.gitignore
+
+# Environment files
+.env
+.env.*
+
+# PHP dependencies (installed inside container)
+vendor/
+
+# Node.js dependencies (installed inside container)
+node_modules/
+
+# Public assets (built inside container)
+public/hot
+public/build/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Tests (if not needed in production image)
+tests/
+
+# Documentation
+README.md
+*.md
+
+# Temporary files
+tmp/
+temp/
+
+# Composer and package manager locks (optional, if you install inside container)
+# composer.lock
+# package-lock.json
+# yarn.lock

@@ -13,38 +13,38 @@ class NodeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request) // Tambahkan Request $request di sini
-    {
-        // 1. Ambil kata kunci pencarian dari request
-        $search = $request->input('search');
-
-        // 2. Query dasar untuk mengambil data node beserta relasi svlans
-        // Perhatikan tidak ada ->get() di sini
-        $query = Node::with('svlans')->orderBy('nama_node');
-
-        // 3. Jika ada input pencarian, tambahkan kondisi WHERE
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                // Cari berdasarkan nama_node
-                $q->where('nama_node', 'like', "%{$search}%")
-                  
-                  // Atau cari di dalam data relasi svlans
-                  ->orWhereHas('svlans', function ($svlanQuery) use ($search) {
-                      $svlanQuery->where('node_id', 'like', "%{$search}%")
-                                 ->orWhere('svlan_vpn', 'like', "%{$search}%")
-                                 ->orWhere('svlan_nms', 'like', "%{$search}%");
-                  });
-            });
-        }
-
-        // 4. Eksekusi query dengan pagination dan kirim data ke view
-        // Menggunakan paginate lebih baik daripada get() untuk data yang banyak
-        $nodes = $query->paginate(8);
-
-        // Pastikan nama view Anda benar ('node.index' atau 'nodes.index')
-        // Berdasarkan file Anda, nama view-nya adalah 'node.index'
-        return view('node.index', compact('nodes'));
+    public function index(Request $request)
+{
+    // Ambil kata kunci pencarian dan per_page dari request
+    $search = $request->input('search');
+    $perPage = $request->input('per_page', 10); // Default 10
+    
+    // Validasi per_page agar hanya menerima nilai yang diizinkan
+    if (!in_array($perPage, [10, 25, 50, 100])) {
+        $perPage = 10;
     }
+
+    // Query dasar untuk mengambil data node beserta relasi svlans
+    $query = Node::with('svlans')->orderBy('nama_node');
+
+    // Jika ada input pencarian, tambahkan kondisi WHERE
+    if ($search) {
+        $query->where(function ($q) use ($search) {
+            $q->where('nama_node', 'like', "%{$search}%")
+              ->orWhereHas('svlans', function ($svlanQuery) use ($search) {
+                  $svlanQuery->where('node_id', 'like', "%{$search}%")
+                             ->orWhere('svlan_vpn', 'like', "%{$search}%")
+                             ->orWhere('svlan_nms', 'like', "%{$search}%");
+              });
+        });
+    }
+
+    // Eksekusi query dengan pagination dinamis
+    $nodes = $query->paginate($perPage);
+
+    return view('node.index', compact('nodes'));
+}
+
 
     // generate sample node_id, svlan, dan cvlan
     public function generateSampleData()

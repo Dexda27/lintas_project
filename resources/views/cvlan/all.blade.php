@@ -181,11 +181,43 @@
             </div>
         </div>
 
-        {{-- Pagination --}}
-        @if($cvlans->hasPages())
-            <div class="mt-6">
-                {{ $cvlans->appends(request()->query())->links('vendor.pagination.custom-pagination') }}
-            </div>
-        @endif
+        {{-- Pagination with Per Page Selector --}}
+@if($cvlans->hasPages() || $cvlans->total() > 10)
+<div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+    {{-- Per Page Selector (Bottom Left) --}}
+    <div class="flex items-center gap-3">
+        <label for="perPage" class="text-sm text-gray-700 font-medium">Show:</label>
+        <select id="perPage" 
+                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+            <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
+            <option value="25" {{ request('per_page', 10) == 25 ? 'selected' : '' }}>25</option>
+            <option value="50" {{ request('per_page', 10) == 50 ? 'selected' : '' }}>50</option>
+            <option value="100" {{ request('per_page', 10) == 100 ? 'selected' : '' }}>100</option>
+        </select>
+        <span class="text-sm text-gray-700">entries per page</span>
+    </div>
+
+    {{-- Pagination Links --}}
+    <div class="flex-1 flex justify-center sm:justify-end">
+        {{ $cvlans->appends(request()->query())->links('vendor.pagination.custom-pagination') }}
+    </div>
+</div>
+@endif
+
+{{-- JavaScript untuk Per Page Selector --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Per Page Selector Logic
+        const perPageSelect = document.getElementById('perPage');
+        if (perPageSelect) {
+            perPageSelect.addEventListener('change', function() {
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('per_page', this.value);
+                currentUrl.searchParams.set('page', '1'); // Reset to first page
+                window.location.href = currentUrl.toString();
+            });
+        }
+    });
+</script>
 </div>
 @endsection

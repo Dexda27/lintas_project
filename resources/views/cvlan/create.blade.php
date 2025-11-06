@@ -12,65 +12,71 @@
             <form action="{{ route('cvlan.store', $svlan->id) }}" method="POST">
                 @csrf
                 <input type="hidden" name="koneksi_filter_origin" value="{{ request('koneksi_filter') }}">
-
-                {{-- PERUBAHAN 3: Tambahkan input tersembunyi untuk mengirim jenis koneksi --}}
                 <input type="hidden" name="connection_type" value="{{ request('koneksi_filter') }}">
 
-                {{-- @if ($errors->any())
-                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-md" role="alert">
-                        <p class="font-bold">Terjadi Kesalahan:</p>
-                        <ul class="mt-2 list-disc list-inside">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif --}}
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {{-- PERUBAHAN 1: Hapus dropdown dan ganti dengan tampilan statis --}}
+                    {{-- Connection Type (Static Display) --}}
                     @if(request('koneksi_filter'))
                         <div class="md:col-span-1">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Connection type</label>
-                            {{-- PERUBAHAN 1: Menambahkan class sm:text-sm agar ukuran font konsisten --}}
                             <p class="block w-full px-3 py-2 bg-gray-200 text-gray-700 border border-gray-300 rounded-md shadow-sm sm:text-sm">
                                 {{ strtoupper(request('koneksi_filter')) }}
                             </p>
                         </div>
 
+                        {{-- Connection Value Input --}}
                         <div class="md:col-span-1">
                             <label for="connection_value" class="block text-sm font-medium text-gray-700 mb-1">
                                 Value {{ strtoupper(request('koneksi_filter')) }}
                             </label>
-                            {{-- PERUBAHAN 2: Menghapus class 'form-input' dan menggantinya dengan class yang sama persis seperti elemen <p> --}}
-                            <input type="number" id="connection_value" name="connection_value" value="{{ old('connection_value') }}"
-                                class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                placeholder="Input Value..." required
-                                max="9999" oninput="javascript: if (this.value.length > 4) this.value = this.value.slice(0, 4);">
+                            <input type="number" 
+                                   id="connection_value" 
+                                   name="connection_value" 
+                                   value="{{ old('connection_value') }}"
+                                   tabindex="1"
+                                   class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                   placeholder="Input Value..." 
+                                   required
+                                   max="9999" 
+                                   oninput="javascript: if (this.value.length > 4) this.value = this.value.slice(0, 4);"
+                                   onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 9">
                         </div>
                     @endif
-
 
                     {{-- No Jaringan --}}
                     <div class="md:col-span-2">
                         <label for="no_jaringan" class="block text-sm font-medium text-gray-700 mb-1">No Jaringan</label>
-                        <input type="text" name="no_jaringan" id="no_jaringan" value="{{ old('no_jaringan') }}" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <input type="text" 
+                               name="no_jaringan" 
+                               id="no_jaringan" 
+                               value="{{ old('no_jaringan') }}" 
+                               tabindex="2"
+                               class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                     </div>
 
                     {{-- Nama Pelanggan --}}
                     <div class="md:col-span-2">
                         <label for="nama_pelanggan" class="block text-sm font-medium text-gray-700 mb-1">Nama Pelanggan</label>
-                        <input type="text" name="nama_pelanggan" id="nama_pelanggan" value="{{ old('nama_pelanggan') }}" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <input type="text" 
+                               name="nama_pelanggan" 
+                               id="nama_pelanggan" 
+                               value="{{ old('nama_pelanggan') }}" 
+                               tabindex="3"
+                               class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                     </div>
                 </div>
 
                 {{-- Action Buttons --}}
                 <div class="mt-8 flex items-center gap-4">
-                    <button type="submit" class="inline-flex items-center gap-2 py-2 px-6 font-semibold text-white bg-green-500 hover:bg-green-600 rounded-lg shadow-md transition-colors">
+                    <button type="submit" 
+                            tabindex="4"
+                            class="inline-flex items-center gap-2 py-2 px-6 font-semibold text-white bg-green-500 hover:bg-green-600 rounded-lg shadow-md transition-colors">
                         <i data-lucide="save" class="w-5 h-5"></i>
                         Simpan Data
                     </button>
-                    <a href="{{ route('cvlan.index', ['svlan_id' => $svlan->id, 'koneksi_filter' => request('koneksi_filter')]) }}" class="inline-flex items-center gap-2 py-2 px-6 font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg shadow-md transition-colors">
+                    <a href="{{ route('cvlan.index', ['svlan_id' => $svlan->id, 'koneksi_filter' => request('koneksi_filter')]) }}" 
+                       tabindex="5"
+                       class="inline-flex items-center gap-2 py-2 px-6 font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg shadow-md transition-colors">
                         Batal
                     </a>
                 </div>
@@ -112,6 +118,11 @@
         </div>
     </div>
 </div>
-@endsection
 
-{{-- Tidak ada skrip tambahan yang wajib untuk halaman ini --}}
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        lucide.createIcons();
+    });
+</script>
+@endsection

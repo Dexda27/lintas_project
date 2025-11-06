@@ -5,14 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="//unpkg.com/alpinejs" defer></script>
     <link rel="icon" type="image/png" href="{{ asset('assets/images/logo2.png') }}">
     <title>@yield('title', 'Fiber Core Management')</title>
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <!-- Select2 CSS for enhanced selects used in CVLAN views -->
+    
+    <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
+    
+    <!-- jQuery - HARUS DIMUAT PERTAMA -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    
+    <!-- Select2 JS - DIMUAT SETELAH JQUERY -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Alpine.js -->
+    <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 
 <body class="bg-gray-50">
@@ -22,18 +33,14 @@
     <div class="min-h-screen">
         <!-- Navigation -->
         <nav class="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 shadow-lg fixed top-0 left-0 right-0 z-30 transition-all duration-300" id="navbar">
-
-            <div class=" mx-auto px-4">
+            <div class="mx-auto px-4">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
                         <!-- Hamburger Menu Button -->
-                        <button id="sidebar-toggle" class="text-white focus:outline-none  p-2 rounded-md hover:bg-blue-700 transition-colors">
+                        <button id="sidebar-toggle" class="text-white focus:outline-none p-2 rounded-md hover:bg-blue-700 transition-colors">
                             <i data-lucide="menu" class="w-6 h-6" id="hamburger-icon"></i>
-
                         </button>
                         <h4 class="text-md font-bold text-white tracking-wide">Fiber Core Management</h4>
-
-
                     </div>
 
                     <div class="flex items-center space-x-4">
@@ -64,7 +71,6 @@
                     <div class="p-4 flex-1 overflow-y-auto">
                         <div class="mb-6">
                             <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="w-30 h-10 mx-auto">
-
                         </div>
                         <ul class="border-t border-gray-200 my-4"></ul>
                         <ul class="space-y-2">
@@ -100,26 +106,25 @@
                             </li>
 
                             @if(auth()->user()->isSuperAdmin())
-                             <li class="border-t border-gray-200 my-4"></li>
-                                <li>
-                                    <div class="px-2 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                        Vlan Management
-                                    </div>
-                                    <a href="{{ route('svlan.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 ">
-                                        <i data-lucide="network" class="w-5 h-5 mr-3"></i>
-                                        SVlan
-                                    </a>
-                                    <a href="{{ route('cvlan.all') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 ">
-                                        <i data-lucide="waypoints" class="w-5 h-5 mr-3"></i>
-                                        CVlan
-                                    </a>
-                                    <a href="{{ route('nodes.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 ">
-                                        <i data-lucide="workflow" class="w-5 h-5 mr-3"></i>
-                                        Node
-                                    </a>
-                                </li>
+                            <li class="border-t border-gray-200 my-4"></li>
+                            <li>
+                                <div class="px-2 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    Vlan Management
+                                </div>
+                                <a href="{{ route('svlan.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100">
+                                    <i data-lucide="network" class="w-5 h-5 mr-3"></i>
+                                    SVlan
+                                </a>
+                                <a href="{{ route('cvlan.all') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100">
+                                    <i data-lucide="waypoints" class="w-5 h-5 mr-3"></i>
+                                    CVlan
+                                </a>
+                                <a href="{{ route('nodes.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100">
+                                    <i data-lucide="workflow" class="w-5 h-5 mr-3"></i>
+                                    Node
+                                </a>
+                            </li>
                             @endif
-
 
                             @if(auth()->user()->isSuperAdmin())
                             <!-- Divider for admin sections -->
@@ -136,11 +141,8 @@
                                 </a>
                             </li>
                             @endif
-
                         </ul>
                     </div>
-
-
 
                     <!-- Logout button at bottom -->
                     <div class="p-4 mt-auto border-t border-gray-200">
@@ -156,7 +158,9 @@
             </div>
 
             <!-- Overlay for mobile -->
-            <div id="sidebar-overlay" class="fixed inset-0 backdrop-blur-xs z-10 hidden transition-all duration-300"></div> <!-- Main Content -->
+            <div id="sidebar-overlay" class="fixed inset-0 backdrop-blur-xs z-10 hidden transition-all duration-300"></div>
+            
+            <!-- Main Content -->
             <div id="main-content" class="flex-1 transition-all duration-300 ease-in-out ml-64">
                 <div class="p-4 md:p-8">
                     @if(session('success'))
@@ -172,8 +176,6 @@
                     @endif
 
                     @yield('content')
-
-
                 </div>
             </div>
         </div>
@@ -206,12 +208,12 @@
             </div>
         </div>
     </div>
+
     <footer class="mt-10 bg-white shadow-inner border-t border-gray-200">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-center text-gray-600 text-sm">
             <p>&copy; {{ date('Y') }} Fiber Core Management. All rights reserved.</p>
         </div>
     </footer>
-    </div>
 
     <script>
         // Sidebar state management
@@ -366,10 +368,6 @@
             lucide.createIcons();
         });
     </script>
-
-    <!-- jQuery and Select2 (needed by CVLAN edit/create views) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     @stack('scripts')
 </body>
