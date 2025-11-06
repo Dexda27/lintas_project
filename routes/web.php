@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CableController;
 use App\Http\Controllers\JointClosureController;
+use App\Http\Controllers\SplitterController;
 use App\Http\Controllers\ConnectionController;
 use App\Http\Controllers\SvlanController;
 use App\Http\Controllers\NodeController;
@@ -51,6 +52,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cables/{cable}/tubes-data', [ConnectionController::class, 'getTubesByCable'])->name('cables.tubes.data');
     Route::get('/cables/{cable}/tubes/{tube}/cores-data', [ConnectionController::class, 'getCoresByTube'])->name('cables.cores.data');
 
+    Route::middleware(['auth'])->group(function () {
+        // Splitter Routes
+        Route::resource('splitters', SplitterController::class);
+    });
+
     // User management routes (only accessible by super admin)
     Route::resource('users', UserController::class);
     Route::patch('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
@@ -85,5 +91,5 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/svlan/{svlan_id}/cvlans/{id}', [CvlanController::class, 'update'])->name('cvlan.update');
     Route::delete('/svlan/{svlan_id}/cvlans/{id}', [CvlanController::class, 'destroy'])->name('cvlan.destroy');
     Route::get('/svlan/{svlan_id}/cvlans/export', [CvlanController::class, 'exportCsvForSvlan'])->name('cvlan.exportForSvlan');
-    
+
 });

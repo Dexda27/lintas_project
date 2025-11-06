@@ -92,6 +92,13 @@
                                 </a>
                             </li>
 
+                            <li>
+                                <a href="{{ route('splitters.index') }}" class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100 {{ request()->routeIs('splitters.*') ? 'bg-blue-50 text-blue-700' : '' }}">
+                                    <i data-lucide="square-split-vertical" class="w-5 h-5 mr-3"></i>
+                                    Splitters
+                                </a>
+                            </li>
+
                             @if(auth()->user()->isSuperAdmin())
                              <li class="border-t border-gray-200 my-4"></li>
                                 <li>
