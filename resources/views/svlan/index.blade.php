@@ -73,7 +73,7 @@
             <div class="text-center">VPN</div>
             <div class="text-center">INET</div>
             <div class="text-center">Extra</div>
-            <div>Notes</div>
+            <div class="text-center">Description</div>
             <div class="text-center">Actions</div>
         </div>
 
@@ -118,12 +118,12 @@
                     </div>
 
                     <div class="flex gap-2 pt-2">
-                        <a href="{{ route('svlan.edit', $svlan->id) }}" class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-indigo-400 to-indigo-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
+                        <a href="{{ route('svlan.edit', $svlan->id) }}" class="inline-flex items-center justify-center gap-1 p-2 font-medium text-white bg-gradient-to-br from-indigo-400 to-indigo-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
                                         <i data-lucide="pencil" class="w-4 h-4"></i>
                             <span>Edit</span>
                         </a>
                         <button type="button"
-                                class="delete-svlan-btn flex items-center gap-1 px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition-colors"
+                                class="delete-svlan-btn flex items-center gap-1 px-3 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors"
                                 data-svlan-id="{{ $svlan->id }}"
                                 data-cvlan-count="{{ $svlan->cvlans->count() }}"
                                 data-action-url="{{ route('svlan.destroy', $svlan->id) }}">
@@ -167,7 +167,7 @@
                         </a>
                     </div>
 
-                    <div class="text-sm text-gray-600">{{ $svlan->keterangan }}</div>
+                    <div class="text-sm text-center text-gray-600">{{ $svlan->keterangan }}</div>
 
                     <div class="flex justify-center items-center gap-2">
                         <a href="{{ route('svlan.edit', $svlan->id) }}" class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-indigo-400 to-indigo-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
@@ -208,10 +208,26 @@
         </div>
     </div>
 
-    {{-- Pagination --}}
-    @if($svlans->hasPages())
-    <div class="mt-8">
-        {{ $svlans->appends(request()->query())->links('vendor.pagination.custom-pagination') }}
+    {{-- Pagination with Per Page Selector --}}
+    @if($svlans->hasPages() || $svlans->total() > 10)
+    <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        {{-- Per Page Selector (Bottom Left) --}}
+        <div class="flex items-center gap-3">
+            <label for="perPage" class="text-sm text-gray-700 font-medium">Show:</label>
+            <select id="perPage" 
+                    class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+                <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
+                <option value="25" {{ request('per_page', 10) == 25 ? 'selected' : '' }}>25</option>
+                <option value="50" {{ request('per_page', 10) == 50 ? 'selected' : '' }}>50</option>
+                <option value="100" {{ request('per_page', 10) == 100 ? 'selected' : '' }}>100</option>
+            </select>
+            <span class="text-sm text-gray-700">entries per page</span>
+        </div>
+
+        {{-- Pagination Links --}}
+        <div class="flex-1 flex justify-center sm:justify-end">
+            {{ $svlans->appends(request()->query())->links('vendor.pagination.custom-pagination') }}
+        </div>
     </div>
     @endif
 </div>
@@ -248,6 +264,17 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     lucide.createIcons();
+
+    // Per Page Selector Logic
+    const perPageSelect = document.getElementById('perPage');
+    if (perPageSelect) {
+        perPageSelect.addEventListener('change', function() {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('per_page', this.value);
+            currentUrl.searchParams.set('page', '1'); // Reset to first page
+            window.location.href = currentUrl.toString();
+        });
+    }
 
     // Modal logic
     const modal = document.getElementById('deleteSvlanModal');

@@ -5,7 +5,6 @@
 @section('content')
 <div class="min-h-screen bg-gray-50">
     
-
         {{-- Header Section --}}
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-gray-900 mb-2">Dashboard CVLAN Management</h1>
@@ -64,114 +63,99 @@
     </div>
 
         {{-- CVLAN Data Section --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
-            <div class="px-6 py-4 border-b border-gray-200">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 md:bg-transparent md:shadow-none md:border-none">
+            <div class="px-6 py-4 border-b border-gray-200 hidden md:block">
                 <h2 class="text-xl font-semibold text-gray-900">CVLAN Data</h2>
             </div>
 
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+            <div class="md:overflow-x-auto">
+                <table class="min-w-full">
+                    <thead class="bg-gray-50 hidden md:table-header-group">
                         <tr>
                             <th class="px-6 py-4 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">Node ID</th>
                             <th class="px-6 py-4 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">Status</th>
                             <th class="px-6 py-4 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">CVLAN</th>
                             <th class="px-6 py-4 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">VLAN</th>
-                            <th class="px-6 py-4 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">No. Jaringan</th>
-                            <th class="px-6 py-4 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">Nama Pelanggan</th>
+                            <th class="px-6 py-4 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">Network No</th>
+                            <th class="px-6 py-4 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">Customer</th>
                             <th class="px-6 py-4 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">ACTIONS</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody class="md:bg-white md:divide-y md:divide-gray-200">
                         @forelse ($cvlans as $cvlan)
-                            <tr>
-                                <td class="px-6 py-4 text-sm text-gray-900 text-center">
+                            {{-- [MODIFIED] Menghilangkan 'border' dan 'md:border-none' untuk hanya menggunakan shadow --}}
+                            <tr class="block md:table-row bg-white rounded-lg shadow-xl mb-4 md:shadow-none md:rounded-none md:mb-0 hover:bg-gray-50 md:border-b">
+                                <td class="px-4 py-3 md:px-6 md:py-4 block md:table-cell text-right md:text-center">
+                                    <span class="float-left font-semibold md:hidden">Node ID</span>
                                     {{ $cvlan->svlan->node->nama_node ?? $cvlan->node->nama_node ?? 'N/A' }}
                                 </td>
-                                <td class="px-6 py-4 text-sm text-center">
-                                    @if($cvlan->svlan)
-                                        <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2 py-0.5 rounded-full">Connected</span>
-                                        <span class="text-xs text-gray-500 block mt-1">
-                                            @if(!is_null($cvlan->nms))
-                                                SVLAN-NMS: {{ $cvlan->svlan->svlan_nms }}
-                                            @elseif(!is_null($cvlan->metro))
-                                                SVLAN-Metro: {{ $cvlan->svlan->svlan_me }}
-                                            @elseif(!is_null($cvlan->vpn))
-                                                SVLAN-VPN: {{ $cvlan->svlan->svlan_vpn }}
-                                            @elseif(!is_null($cvlan->inet))
-                                                SVLAN-INET: {{ $cvlan->svlan->svlan_inet }}
-                                            @elseif(!is_null($cvlan->extra))
-                                                SVLAN-EXTRA: {{ $cvlan->svlan->extra }}
-                                            @else
-                                                SVLAN: {{ $cvlan->svlan->svlan_nms }}
-                                            @endif
-
-                                        </span>
-                                    @else
-                                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">Standalone</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-500 text-center">
-                                    @if(!$cvlan->svlan)
-                                        {{-- Jika Standalone, tampilkan CVLAN Slot --}}
-                                        {{ $cvlan->cvlan_slot }}
-                                    @else
-                                        {{-- Jika Connected, tampilkan None --}}
-                                        <span class="text-gray-400 italic">None</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-500 text-center">
-                                    @if($cvlan->svlan)
-                                        {{-- Jika Connected, tampilkan detail koneksi --}}
-                                        @if(!is_null($cvlan->nms))
-                                            <span class="bg-purple-100 text-purple-800 text-xs font-semibold px-2 py-0.5 rounded-full">NMS: {{ $cvlan->nms }}</span>
-                                        @elseif(!is_null($cvlan->metro))
-                                            <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">Metro: {{ $cvlan->metro }}</span>
-                                        @elseif(!is_null($cvlan->vpn))
-                                            <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2 py-0.5 rounded-full">VPN: {{ $cvlan->vpn }}</span>
-                                        @elseif(!is_null($cvlan->inet))
-                                            <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-0.5 rounded-full">INET: {{ $cvlan->inet }}</span>
-                                        @elseif(!is_null($cvlan->extra))
-                                            <span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">EXTRA: {{ $cvlan->extra }}</span>
+                                <td class="px-4 py-3 md:px-6 md:py-4 block md:table-cell text-right md:text-center">
+                                    <span class="float-left font-semibold md:hidden">Status</span>
+                                    <div>
+                                        @if($cvlan->svlan)
+                                            <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2 py-0.5 rounded-full">Connected</span>
+                                            <span class="text-xs text-gray-500 block mt-1">
+                                                @if(!is_null($cvlan->nms)) SVLAN-NMS: {{ $cvlan->svlan->svlan_nms }}
+                                                @elseif(!is_null($cvlan->metro)) SVLAN-Metro: {{ $cvlan->svlan->svlan_me }}
+                                                @elseif(!is_null($cvlan->vpn)) SVLAN-VPN: {{ $cvlan->svlan->svlan_vpn }}
+                                                @elseif(!is_null($cvlan->inet)) SVLAN-INET: {{ $cvlan->svlan->svlan_inet }}
+                                                @elseif(!is_null($cvlan->extra)) SVLAN-EXTRA: {{ $cvlan->svlan->extra }}
+                                                @else SVLAN: {{ $cvlan->svlan->svlan_nms }}
+                                                @endif
+                                            </span>
                                         @else
-                                            -
+                                            <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">Standalone</span>
                                         @endif
-                                    @else
-                                        {{-- Jika Standalone, tampilkan None --}}
-                                        <span class="text-gray-400 italic">None</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 md:px-6 md:py-4 block md:table-cell text-right md:text-center">
+                                    <span class="float-left font-semibold md:hidden">CVLAN</span>
+                                    @if(!$cvlan->svlan) {{ $cvlan->cvlan_slot }}
+                                    @else <span class="text-gray-400 italic">None</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-500 text-center">
+                                <td class="px-4 py-3 md:px-6 md:py-4 block md:table-cell text-right md:text-center">
+                                    <span class="float-left font-semibold md:hidden">VLAN</span>
+                                    <div>
+                                        @if($cvlan->svlan)
+                                            @if(!is_null($cvlan->nms)) <span class="bg-purple-100 text-purple-800 text-xs font-semibold px-2 py-0.5 rounded-full">NMS: {{ $cvlan->nms }}</span>
+                                            @elseif(!is_null($cvlan->metro)) <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">Metro: {{ $cvlan->metro }}</span>
+                                            @elseif(!is_null($cvlan->vpn)) <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2 py-0.5 rounded-full">VPN: {{ $cvlan->vpn }}</span>
+                                            @elseif(!is_null($cvlan->inet)) <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-0.5 rounded-full">INET: {{ $cvlan->inet }}</span>
+                                            @elseif(!is_null($cvlan->extra)) <span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">EXTRA: {{ $cvlan->extra }}</span>
+                                            @else -
+                                            @endif
+                                        @else <span class="text-gray-400 italic">None</span>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 md:px-6 md:py-4 block md:table-cell text-right md:text-center">
+                                    <span class="float-left font-semibold md:hidden">Network No</span>
                                     {{ $cvlan->no_jaringan ?? '-' }}
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-500 text-center">
+                                <td class="px-4 py-3 md:px-6 md:py-4 block md:table-cell text-right md:text-center">
+                                    <span class="float-left font-semibold md:hidden">Customer</span>
                                     {{ $cvlan->nama_pelanggan ?? '-' }}
                                 </td>
-                                <td class="px-2 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                    <div class="flex items-center justify-center gap-2">
+                                <td class="px-4 py-3 md:px-6 md:py-4 block md:table-cell text-right md:text-center">
+                                    <span class="float-left font-semibold md:hidden">Actions</span>
+                                    <div class="flex items-center justify-end md:justify-center gap-2">
                                         @php
-                                            // Menentukan rute dan parameter dasar
                                             $isStandalone = !$cvlan->svlan;
                                             $editRoute = $isStandalone ? 'cvlan.editall' : 'cvlan.edit';
                                             $editParams = $isStandalone
                                                 ? ['id' => $cvlan->id]
                                                 : ['svlan_id' => $cvlan->svlan_id, 'id' => $cvlan->id];
-
-                                            // Menambahkan parameter 'origin' untuk memberi tahu halaman edit dari mana kita datang
                                             $editParams['origin'] = 'all';
                                         @endphp
-                                        <a href="{{ route($editRoute, $editParams) }}"
-                                           title="Edit"
-                                           class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-indigo-400 to-indigo-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
+                                        <a href="{{ route($editRoute, $editParams) }}" title="Edit" class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-indigo-400 to-indigo-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
                                             <i data-lucide="pencil" class="w-4 h-4"></i>
                                         </a>
 
                                         <form action="{{ route('cvlan.destroyall', $cvlan->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus CVLAN ini?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit"
-                                                    title="Hapus"
-                                                    class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-red-400 to-red-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
+                                            <button type="submit" title="Delete" class="inline-flex items-center justify-center p-2 font-semibold text-white bg-gradient-to-br from-red-400 to-red-500 rounded-lg shadow-sm hover:-translate-y-0.5 transition-transform duration-200">
                                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                                             </button>
                                         </form>
@@ -197,32 +181,43 @@
             </div>
         </div>
 
-        {{-- Pagination --}}
-        @if($cvlans->hasPages())
-            <div class="mt-6">
-                {{ $cvlans->appends(request()->query())->links('vendor.pagination.custom-pagination') }}
-            </div>
-        @endif
+        {{-- Pagination with Per Page Selector --}}
+@if($cvlans->hasPages() || $cvlans->total() > 10)
+<div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+    {{-- Per Page Selector (Bottom Left) --}}
+    <div class="flex items-center gap-3">
+        <label for="perPage" class="text-sm text-gray-700 font-medium">Show:</label>
+        <select id="perPage" 
+                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+            <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
+            <option value="25" {{ request('per_page', 10) == 25 ? 'selected' : '' }}>25</option>
+            <option value="50" {{ request('per_page', 10) == 50 ? 'selected' : '' }}>50</option>
+            <option value="100" {{ request('per_page', 10) == 100 ? 'selected' : '' }}>100</option>
+        </select>
+        <span class="text-sm text-gray-700">entries per page</span>
+    </div>
+
+    {{-- Pagination Links --}}
+    <div class="flex-1 flex justify-center sm:justify-end">
+        {{ $cvlans->appends(request()->query())->links('vendor.pagination.custom-pagination') }}
+    </div>
 </div>
+@endif
 
-<style>
-/* Custom scrollbar for table */
-.overflow-x-auto::-webkit-scrollbar {
-    height: 6px;
-}
-
-.overflow-x-auto::-webkit-scrollbar-track {
-    background: #f1f5f9;
-    border-radius: 3px;
-}
-
-.overflow-x-auto::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 3px;
-}
-
-.overflow-x-auto::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-}
-</style>
+{{-- JavaScript untuk Per Page Selector --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Per Page Selector Logic
+        const perPageSelect = document.getElementById('perPage');
+        if (perPageSelect) {
+            perPageSelect.addEventListener('change', function() {
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('per_page', this.value);
+                currentUrl.searchParams.set('page', '1'); // Reset to first page
+                window.location.href = currentUrl.toString();
+            });
+        }
+    });
+</script>
+</div>
 @endsection

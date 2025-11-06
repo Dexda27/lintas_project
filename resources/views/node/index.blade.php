@@ -70,41 +70,57 @@
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-700">
                                 @if($node->svlans->isNotEmpty())
-                                    <div x-data="{ limit: 3 }" class="flex flex-col gap-3">
-                                        <template x-for="(svlan, index) in {{ $node->svlans->toJson() }}" :key="svlan.id">
-                                            <div 
-                                                x-show="index < limit" 
-                                                class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs"
-                                            >
-                                                <span class="font-semibold">NMS:</span>
-                                                <span class="px-2 py-0.5 bg-purple-100 text-purple-800 rounded-full" x-text="svlan.svlan_nms"></span>
+                                    {{-- [MODIFIED] Logika Alpine.js ditulis ulang agar lebih sederhana dan andal --}}
+                                    <div x-data="{
+                                        isMobile: window.innerWidth < 768,
+                                        showAll: false,
+                                        total: {{ $node->svlans->count() }},
+                                        get limit() {
+                                            if (this.showAll) return this.total;
+                                            return this.isMobile ? 1 : 3;
+                                        }
+                                    }" @resize.window="isMobile = window.innerWidth < 768">
 
-                                                <span class="font-semibold">ME:</span>
-                                                <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full" x-text="svlan.svlan_me"></span>
-
-                                                <span class="font-semibold">VPN:</span>
-                                                <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full" x-text="svlan.svlan_vpn"></span>
-
-                                                <span class="font-semibold">INET:</span>
-                                                <span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded-full" x-text="svlan.svlan_inet"></span>
-
-                                                <template x-if="svlan.extra">
-                                                    <div>
-                                                        <span class="font-semibold">Extra:</span>
-                                                        <span class="px-2 py-0.5 bg-gray-100 text-gray-800 rounded-full" x-text="svlan.extra"></span>
+                                        <div class="flex flex-col">
+                                            <template x-for="(svlan, index) in {{ $node->svlans->toJson() }}" :key="svlan.id">
+                                                <div x-show="index < limit" x-transition.opacity.duration.300ms>
+                                                    {{-- [MODIFIED] Logika garis pemisah yang lebih simpel --}}
+                                                    <div :class="{ 'border-t border-gray-200 pt-3 mt-3': index > 0 }">
+                                                        <div class="grid grid-cols-2 gap-x-4 gap-y-2 md:flex md:flex-wrap md:items-center md:gap-x-4 md:gap-y-1 text-xs">
+                                                            <div>
+                                                                <span class="font-semibold">NMS:</span>
+                                                                <span class="px-2 py-0.5 bg-purple-100 text-purple-800 rounded-full" x-text="svlan.svlan_nms"></span>
+                                                            </div>
+                                                            <div>
+                                                                <span class="font-semibold">ME:</span>
+                                                                <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full" x-text="svlan.svlan_me"></span>
+                                                            </div>
+                                                            <div>
+                                                                <span class="font-semibold">VPN:</span>
+                                                                <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full" x-text="svlan.svlan_vpn"></span>
+                                                            </div>
+                                                            <div>
+                                                                <span class="font-semibold">INET:</span>
+                                                                <span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded-full" x-text="svlan.svlan_inet"></span>
+                                                            </div>
+                                                            <template x-if="svlan.extra">
+                                                                <div>
+                                                                    <span class="font-semibold">Extra:</span>
+                                                                    <span class="px-2 py-0.5 bg-gray-100 text-gray-800 rounded-full" x-text="svlan.extra"></span>
+                                                                </div>
+                                                            </template>
+                                                        </div>
                                                     </div>
-                                                </template>
-                                            </div>
-                                        </template>
+                                                </div>
+                                            </template>
+                                        </div>
 
-                                        {{-- Tombol Lihat Lagi --}}
-                                        <button 
-                                            x-show="limit < {{ $node->svlans->count() }}" 
-                                            @click="limit += 3" 
-                                            class="mt-2 text-blue-600 text-xs font-medium hover:underline w-fit"
-                                        >
-                                            View All
-                                        </button>
+                                        {{-- Tombol "View All" / "Show Less" --}}
+                                        <div x-show="total > (isMobile ? 1 : 3)">
+                                            <button @click="showAll = !showAll" class="mt-2 text-blue-600 text-xs font-medium hover:underline w-fit">
+                                                <span x-text="showAll ? 'Show Less' : 'View All'"></span>
+                                            </button>
+                                        </div>
                                     </div>
                                 @else
                                     <span class="text-sm text-gray-400 italic">No SVLAN Related</span>
@@ -149,29 +165,55 @@
         </div>
     </div>
 
-    {{-- Pagination --}}
-    @if($nodes->hasPages())
-        <div class="mt-6">
-            {{ $nodes->appends(request()->query())->links() }}
+    {{-- Pagination with Per Page Selector --}}
+    @if($nodes->hasPages() || $nodes->total() > 10)
+    <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        {{-- Per Page Selector (Bottom Left) --}}
+        <div class="flex items-center gap-3">
+            <label for="perPage" class="text-sm text-gray-700 font-medium">Show:</label>
+            <select id="perPage" 
+                    class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+                <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
+                <option value="25" {{ request('per_page', 10) == 25 ? 'selected' : '' }}>25</option>
+                <option value="50" {{ request('per_page', 10) == 50 ? 'selected' : '' }}>50</option>
+                <option value="100" {{ request('per_page', 10) == 100 ? 'selected' : '' }}>100</option>
+            </select>
+            <span class="text-sm text-gray-700">entries per page</span>
         </div>
+
+        {{-- Pagination Links (Center) --}}
+        @if($nodes->hasPages())
+        <div class="flex-1 flex justify-center">
+            {{ $nodes->onEachSide(2)->appends(request()->query())->links('vendor.pagination.custom-pagination') }}
+        </div>
+        @else
+        <div class="flex-1"></div>
+        @endif
+
+        {{-- Info - Tidak ada tombol Back seperti CVLAN --}}
+        <div></div>
+    </div>
     @endif
 </div>
 
-<style>
-/* Custom scrollbar untuk table (opsional, tapi bagus untuk konsistensi) */
-.overflow-x-auto::-webkit-scrollbar {
-    height: 6px;
-}
-.overflow-x-auto::-webkit-scrollbar-track {
-    background: #f1f5f9;
-    border-radius: 3px;
-}
-.overflow-x-auto::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 3px;
-}
-.overflow-x-auto::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-}
-</style>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        lucide.createIcons();
+
+        // Per Page Selector Logic
+        const perPageSelect = document.getElementById('perPage');
+        if (perPageSelect) {
+            perPageSelect.addEventListener('change', function() {
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('per_page', this.value);
+                currentUrl.searchParams.set('page', '1'); // Reset to first page
+                window.location.href = currentUrl.toString();
+            });
+        }
+    });
+</script>
+
+
+</div>
 @endsection

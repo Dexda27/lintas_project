@@ -114,16 +114,6 @@
                 </button>
             </form>
 
-            <!-- Demo Accounts -->
-            <div class="mt-8 p-4 bg-gray-50 rounded-lg">
-                <h3 class="text-sm font-semibold text-gray-700 mb-2">Demo Accounts:</h3>
-                <div class="text-xs text-gray-600 space-y-1">
-                    <div><strong>Superadmin:</strong> superadmin@fiber.com / password</div>
-                    <div><strong>Regional (Bali):</strong> bali@fiber.com / password</div>
-                    <div><strong>Regional (NTB):</strong> NTT@fiber.com / password</div>
-                </div>
-            </div>
-
             <!-- Register Link (only show if no users exist) -->
             @if(\App\Models\User::count() == 0)
                 <div class="text-center mt-6">

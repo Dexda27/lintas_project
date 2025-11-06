@@ -17,17 +17,22 @@ class CvlanController extends Controller
      * Menampilkan daftar CVLAN untuk SVLAN tertentu.
      */
     public function index($svlan_id, Request $request)
-    {
-        $svlan = Svlan::with('node')->findOrFail($svlan_id);
-        
-        $search = $request->query('search');
-        $sortField = $request->query('sort', 'cvlan_slot');
-        $sortOrder = $request->query('order', 'asc');
-        $koneksiFilter = $request->query('koneksi_filter');
+{
+    $svlan = Svlan::with('node')->findOrFail($svlan_id);
+    
+    $search = $request->query('search');
+    $sortField = $request->query('sort', 'id');
+    $sortOrder = $request->query('order', 'asc');
+    $koneksiFilter = $request->query('koneksi_filter');
+    $perPage = $request->query('per_page', 10);
+    
+    if (!in_array($perPage, [10, 25, 50, 100])) {
+        $perPage = 10;
+    }
 
-        $cvlansQuery = $svlan->cvlans();
+    $cvlansQuery = $svlan->cvlans();
 
-        if ($koneksiFilter) {
+    if ($koneksiFilter) {
         if ($koneksiFilter === 'metro') {
             $cvlansQuery->whereNotNull('metro');
         } elseif ($koneksiFilter === 'vpn') {
@@ -41,10 +46,8 @@ class CvlanController extends Controller
         }
     }
 
-    // 2. Terapkan PENCARIAN setelah filter
     if ($search) {
         $cvlansQuery->where(function ($query) use ($search) {
-            // Selalu cari di semua kolom ini, tidak peduli apa filternya
             $query->where('no_jaringan', 'like', "%{$search}%")
                 ->orWhere('nama_pelanggan', 'like', "%{$search}%")
                 ->orWhere('nms', 'like', "%{$search}%")
@@ -54,11 +57,13 @@ class CvlanController extends Controller
                 ->orWhere('extra', 'like', "%{$search}%");
         });
     }
-        
-        $cvlans = $cvlansQuery->orderBy($sortField, $sortOrder)->get();
+    
+    // PERBAIKAN 1: Ubah get() menjadi paginate($perPage)
+    $cvlans = $cvlansQuery->orderBy($sortField, $sortOrder)->paginate($perPage);
 
-        return view('cvlan.index', compact('svlan', 'cvlans', 'koneksiFilter'));
-    }
+    // PERBAIKAN 2: Tambahkan sortField dan sortOrder di compact
+    return view('cvlan.index', compact('svlan', 'cvlans', 'koneksiFilter', 'sortField', 'sortOrder'));
+}
 
     /**
      * Menampilkan formulir untuk membuat CVLAN baru untuk SVLAN tertentu.
@@ -253,6 +258,10 @@ class CvlanController extends Controller
         $sortField = $request->query('sort', 'id'); 
         $sortOrder = $request->query('order', 'asc');
         $koneksiFilter = $request->query('koneksi_filter');
+        $perPage = $request->query('per_page', 10);
+        if (!in_array($perPage, [10, 25, 50, 100])) { // <-- TAMBAH 3 BARIS INI
+        $perPage = 10;
+    }
 
         $query = Cvlan::with(['svlan.node', 'node']);
 
@@ -301,7 +310,7 @@ class CvlanController extends Controller
             $query->orderBy($sortField, $sortOrder);
         }
         
-        $cvlans = $query->paginate(10);
+        $cvlans = $query->paginate($perPage);
         
         return view('cvlan.all', compact('cvlans', 'sortField', 'sortOrder', 'koneksiFilter'));
     }

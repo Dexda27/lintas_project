@@ -24,6 +24,12 @@ class SvlanController extends Controller
         $search = $request->query('search');
         $sortField = $request->query('sort', 'id');
         $sortOrder = $request->query('order', 'asc');
+        $perPage = $request->query('per_page', 10); // Default 10 data per halaman
+
+        // Validasi perPage agar hanya menerima nilai yang diizinkan
+        if (!in_array($perPage, [10, 25, 50, 100])) {
+            $perPage = 10;
+        }
 
         // Query dasar dengan eager loading untuk relasi node dan cvlans
         $query = Svlan::with(['cvlans', 'node']);
@@ -52,7 +58,8 @@ class SvlanController extends Controller
             $query->orderBy($sortField, $sortOrder);
         }
 
-        $svlans = $query->paginate(5); // Angka 5 bisa disesuaikan
+        // Pagination dengan jumlah data per halaman yang dapat disesuaikan
+        $svlans = $query->paginate($perPage);
         
         return view('svlan.index', compact('svlans', 'sortField', 'sortOrder'));
     }
