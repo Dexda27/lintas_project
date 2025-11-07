@@ -7,21 +7,21 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/png" href="{{ asset('assets/images/logo2.png') }}">
     <title>@yield('title', 'Fiber Core Management')</title>
-    
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
+
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    
+
     <!-- jQuery - HARUS DIMUAT PERTAMA -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    
+
     <!-- Select2 JS - DIMUAT SETELAH JQUERY -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+
     <!-- Alpine.js -->
     <script src="//unpkg.com/alpinejs" defer></script>
 </head>
@@ -104,6 +104,11 @@
                                     Splitters
                                 </a>
                             </li>
+                            <li>
+                                <a class="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100" href="{{ route('poles.index') }}">
+                                    <i data-lucide="radio-tower" class="w-5 h-5 mr-3"></i> Tiang
+                                </a>
+                            </li>
 
                             @if(auth()->user()->isSuperAdmin())
                             <li class="border-t border-gray-200 my-4"></li>
@@ -159,7 +164,7 @@
 
             <!-- Overlay for mobile -->
             <div id="sidebar-overlay" class="fixed inset-0 backdrop-blur-xs z-10 hidden transition-all duration-300"></div>
-            
+
             <!-- Main Content -->
             <div id="main-content" class="flex-1 transition-all duration-300 ease-in-out ml-64">
                 <div class="p-4 md:p-8">

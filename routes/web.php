@@ -10,7 +10,9 @@ use App\Http\Controllers\SvlanController;
 use App\Http\Controllers\NodeController;
 use App\Http\Controllers\CvlanController;
 use App\Http\Controllers\UserController; // Add this import
+use App\Http\Controllers\PoleController;
 use Illuminate\Support\Facades\Route;
+
 
 Route::get('/', function () {
     return redirect('/login');
@@ -91,5 +93,13 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/svlan/{svlan_id}/cvlans/{id}', [CvlanController::class, 'update'])->name('cvlan.update');
     Route::delete('/svlan/{svlan_id}/cvlans/{id}', [CvlanController::class, 'destroy'])->name('cvlan.destroy');
     Route::get('/svlan/{svlan_id}/cvlans/export', [CvlanController::class, 'exportCsvForSvlan'])->name('cvlan.exportForSvlan');
+
+    // AJAX routes for poles - Dynamic filter by region
+   Route::get('poles/joint-closures', [PoleController::class, 'getJointClosures'])->name('poles.joint-closures');
+Route::get('poles/splitters', [PoleController::class, 'getSplitters'])->name('poles.splitters');
+
+   // --- POLES MANAGEMENT ROUTES ---
+    Route::resource('poles', PoleController::class);
+
 
 });
