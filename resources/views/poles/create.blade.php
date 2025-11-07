@@ -234,7 +234,7 @@
         <!-- Joint Closures Terhubung -->
         <div class="bg-white border border-gray-200 rounded-lg overflow-hidden mb-6">
             <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Joint Closures Terhubung</h2>
+                <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Joint Closures</h2>
             </div>
             <div class="p-6">
                 <div id="jcContainer"
@@ -251,7 +251,7 @@
         <!-- Splitters Terhubung -->
         <div class="bg-white border border-gray-200 rounded-lg overflow-hidden mb-6">
             <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Splitters Terhubung</h2>
+                <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Splitters</h2>
             </div>
             <div class="p-6">
                 <div id="splitterContainer"
@@ -268,7 +268,7 @@
         <!-- Catatan -->
         <div class="bg-white border border-gray-200 rounded-lg overflow-hidden mb-6">
             <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Catatan</h2>
+                <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Deskripsi</h2>
             </div>
             <div class="p-6">
                 <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 @error('description') border-red-500 @enderror"

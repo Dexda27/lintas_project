@@ -151,8 +151,97 @@
         </div>
     </form>
 
+    <!-- Mobile Card View -->
+    <div class="block md:hidden divide-y divide-gray-200">
+        @forelse($poles as $pole)
+        <div class="p-4 hover:bg-gray-50 transition-colors">
+            <!-- Header -->
+            <div class="flex items-start justify-between mb-3">
+                <div class="flex-1 min-w-0 mr-3">
+                    <h3 class="font-semibold text-gray-900 text-sm mb-1">{{ $pole->pole_id }}</h3>
+                    <p class="text-xs text-gray-600">{{ $pole->name }}</p>
+                </div>
+                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 flex-shrink-0">
+                    {{ $pole->region }}
+                </span>
+            </div>
+
+            <!-- Location -->
+            <div class="mb-3">
+                <p class="text-xs text-gray-600 flex items-start">
+                    <svg class="w-3.5 h-3.5 mr-1.5 mt-0.5 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <span class="flex-1">{{ Str::limit($pole->location, 50) }}</span>
+                </p>
+            </div>
+
+            <!-- Badges -->
+            <div class="flex flex-wrap items-center gap-2 mb-3">
+                @if($pole->type == 'besi')
+                <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">Steel</span>
+                @else
+                <span class="px-2 py-1 bg-gray-800 text-white rounded-full text-xs font-medium">Concrete</span>
+                @endif
+                <span class="px-2 py-1 bg-gray-50 text-gray-600 rounded-full text-xs font-medium">{{ $pole->height }}m</span>
+                <span class="px-2 py-1 bg-blue-600 text-white rounded-full text-xs font-medium">JC: {{ $pole->jointClosures->count() }}</span>
+                <span class="px-2 py-1 bg-green-600 text-white rounded-full text-xs font-medium">SP: {{ $pole->splitters->count() }}</span>
+            </div>
+
+            <!-- Footer -->
+            <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+                <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $pole->status === 'ok' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">
+                    {{ $pole->status === 'ok' ? 'OK' : 'Not OK' }}
+                </span>
+
+                <div class="flex items-center gap-1">
+                    <a href="{{ route('poles.show', $pole) }}"
+                        class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Detail">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                    </a>
+
+                    <a href="{{ route('poles.edit', $pole) }}"
+                        class="p-2 text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors"
+                        title="Edit">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                    </a>
+
+                    <button type="button"
+                        onclick="confirmDelete('{{ $pole->id }}', '{{ addslashes($pole->name) }}', '{{ $pole->pole_id }}')"
+                        class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Delete">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        @empty
+        <div class="p-8 text-center">
+            <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+            </svg>
+            <p class="text-gray-500 mb-3">No poles found</p>
+            <a href="{{ route('poles.create') }}" class="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium text-sm">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Create your first pole
+            </a>
+        </div>
+        @endforelse
+    </div>
+
     <!-- Table - Desktop & Tablet -->
-    <div class="overflow-x-auto">
+    <div class="hidden md:block overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
