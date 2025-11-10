@@ -476,16 +476,45 @@
             </div>
         </div>
 
-        <div class="p-4 sm:p-6">
-            <form id="core-edit-form" class="space-y-3 sm:space-y-4">
-                <input type="hidden" id="edit-core-id">
+            <div class="p-6">
+                <form id="core-edit-form" class="space-y-4">
+                    <input type="hidden" id="edit-core-id">
 
-                <div>
-                    <label for="edit-core-status" class="block text-sm font-medium mb-1">Status</label>
-                    <select id="edit-core-status" class="w-full px-3 py-2 text-sm sm:text-base border rounded-md focus:ring-2 focus:ring-blue-500">
-                        <option value="ok">OK</option>
-                        <option value="not_ok">Not OK</option>
-                    </select>
+                    <div>
+                        <label for="edit-core-status" class="block text-sm font-medium mb-1">Status</label>
+                        <select id="edit-core-status" class="w-full px-3 py-2 border rounded-md">
+                            <option value="ok">OK</option>
+                            <option value="not_ok">Not OK</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="edit-core-usage" class="block text-sm font-medium mb-1">Usage</label>
+                        <select id="edit-core-usage" class="w-full px-3 py-2 border rounded-md">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="edit-core-attenuation" class="block text-sm font-medium mb-1">Attenuation (dB)</label>
+                        <input type="number" id="edit-core-attenuation" step="0.01" min="0" placeholder="0.00" class="w-full px-3 py-2 border rounded-md">
+                    </div>
+
+                    <div>
+                        <label for="edit-core-description" class="block text-sm font-medium mb-1">Description</label>
+                        <textarea id="edit-core-description" rows="3" placeholder="Enter core description or notes..." class="w-full px-3 py-2 border rounded-md resize-none"></textarea>
+                    </div>
+                </form>
+
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button type="button" onclick="closeCoreEditModal()" class="px-4 py-2 border rounded-md hover:bg-gray-50">Cancel</button>
+                    <button type="submit" form="core-edit-form" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Update Core
+                    </button>
                 </div>
 
                 <div>
@@ -521,5 +550,4 @@
         </div>
     </div>
 </div>
-
 @endsection

@@ -10,21 +10,25 @@ function initializeConnectionForm() {
         coreA: document.getElementById("core_a_id"),
         cableB: document.getElementById("cable_b_id"),
         tubeB: document.getElementById("tube_b_id"),
-        coreB: document.getElementById("core_b_id")
+        coreB: document.getElementById("core_b_id"),
     };
 
     // Add event listeners
     if (elements.cableA) {
-        elements.cableA.addEventListener("change", () => handleCableChange('A'));
+        elements.cableA.addEventListener("change", () =>
+            handleCableChange("A")
+        );
     }
     if (elements.cableB) {
-        elements.cableB.addEventListener("change", () => handleCableChange('B'));
+        elements.cableB.addEventListener("change", () =>
+            handleCableChange("B")
+        );
     }
     if (elements.tubeA) {
-        elements.tubeA.addEventListener("change", () => handleTubeChange('A'));
+        elements.tubeA.addEventListener("change", () => handleTubeChange("A"));
     }
     if (elements.tubeB) {
-        elements.tubeB.addEventListener("change", () => handleTubeChange('B'));
+        elements.tubeB.addEventListener("change", () => handleTubeChange("B"));
     }
     if (elements.coreA) {
         elements.coreA.addEventListener("change", updateConnectionPreview);
@@ -38,7 +42,9 @@ function initializeConnectionForm() {
 }
 
 function handleCableChange(side) {
-    const cableSelect = document.getElementById(`cable_${side.toLowerCase()}_id`);
+    const cableSelect = document.getElementById(
+        `cable_${side.toLowerCase()}_id`
+    );
     const tubeSelect = document.getElementById(`tube_${side.toLowerCase()}_id`);
     const coreSelect = document.getElementById(`core_${side.toLowerCase()}_id`);
 
@@ -64,7 +70,9 @@ function handleCableChange(side) {
 function handleTubeChange(side) {
     const tubeSelect = document.getElementById(`tube_${side.toLowerCase()}_id`);
     const coreSelect = document.getElementById(`core_${side.toLowerCase()}_id`);
-    const cableSelect = document.getElementById(`cable_${side.toLowerCase()}_id`);
+    const cableSelect = document.getElementById(
+        `cable_${side.toLowerCase()}_id`
+    );
 
     // Reset core dropdown
     resetDropdown(coreSelect, "Select core...");
@@ -87,17 +95,17 @@ function loadTubes(cableId, side) {
     showLoading(tubeSelect, "Loading tubes...");
 
     fetch(`/cables/${cableId}/tubes-data`)
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to load tubes');
+        .then((response) => {
+            if (!response.ok) throw new Error("Failed to load tubes");
             return response.json();
         })
-        .then(data => {
+        .then((data) => {
             resetDropdown(tubeSelect, "Select tube...");
 
             // Add tube options based on available tubes
             if (data.available_tubes && data.available_tubes.length > 0) {
-                data.available_tubes.forEach(tubeNumber => {
-                    const option = document.createElement('option');
+                data.available_tubes.forEach((tubeNumber) => {
+                    const option = document.createElement("option");
                     option.value = tubeNumber;
                     option.textContent = `Tube ${tubeNumber}`;
                     tubeSelect.appendChild(option);
@@ -105,15 +113,15 @@ function loadTubes(cableId, side) {
             } else {
                 // If no available_tubes data, use total_tubes
                 for (let i = 1; i <= data.total_tubes; i++) {
-                    const option = document.createElement('option');
+                    const option = document.createElement("option");
                     option.value = i;
                     option.textContent = `Tube ${i}`;
                     tubeSelect.appendChild(option);
                 }
             }
         })
-        .catch(error => {
-            console.error('Error loading tubes:', error);
+        .catch((error) => {
+            console.error("Error loading tubes:", error);
             resetDropdown(tubeSelect, "Error loading tubes");
         });
 }
@@ -124,20 +132,21 @@ function loadCores(cableId, tubeNumber, side) {
     showLoading(coreSelect, "Loading cores...");
 
     fetch(`/cables/${cableId}/tubes/${tubeNumber}/cores-data`)
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to load cores');
+        .then((response) => {
+            if (!response.ok) throw new Error("Failed to load cores");
             return response.json();
         })
-        .then(cores => {
+        .then((cores) => {
             resetDropdown(coreSelect, "Select core...");
 
             // Add core options
-            cores.forEach(core => {
-                const option = document.createElement('option');
+            cores.forEach((core) => {
+                const option = document.createElement("option");
                 option.value = core.id;
                 option.textContent = `Core ${core.core_number}`;
                 if (core.attenuation) {
                     option.textContent += ` (${core.attenuation}dB)`;
+                    a;
                 }
                 option.dataset.cable = cableId;
                 option.dataset.tube = tubeNumber;
@@ -149,8 +158,8 @@ function loadCores(cableId, tubeNumber, side) {
             updateCoreAvailability();
             updateSubmitButton();
         })
-        .catch(error => {
-            console.error('Error loading cores:', error);
+        .catch((error) => {
+            console.error("Error loading cores:", error);
             resetDropdown(coreSelect, "Error loading cores");
         });
 }
@@ -161,21 +170,22 @@ function updateConnectionPreview() {
 }
 
 function updateSubmitButton() {
-    const submitBtn = document.getElementById('submit-connection');
-    const coreA = document.getElementById('core_a_id');
-    const coreB = document.getElementById('core_b_id');
+    const submitBtn = document.getElementById("submit-connection");
+    const coreA = document.getElementById("core_a_id");
+    const coreB = document.getElementById("core_b_id");
 
     if (!submitBtn || !coreA || !coreB) return;
 
     // Check if both cores are selected and they are different
-    const bothSelected = coreA.value && coreB.value && coreA.value !== coreB.value;
+    const bothSelected =
+        coreA.value && coreB.value && coreA.value !== coreB.value;
 
     submitBtn.disabled = !bothSelected;
 
     if (bothSelected) {
-        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        submitBtn.classList.remove("opacity-50", "cursor-not-allowed");
     } else {
-        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.classList.add("opacity-50", "cursor-not-allowed");
     }
 }
 
@@ -189,7 +199,7 @@ function updateCableAvailability() {
     const selectedCableB = cableB.value;
 
     // Update Cable B options
-    Array.from(cableB.options).forEach(option => {
+    Array.from(cableB.options).forEach((option) => {
         if (option.value && option.value === selectedCableA) {
             option.disabled = true;
             option.style.color = "#9CA3AF";
@@ -200,7 +210,7 @@ function updateCableAvailability() {
     });
 
     // Update Cable A options
-    Array.from(cableA.options).forEach(option => {
+    Array.from(cableA.options).forEach((option) => {
         if (option.value && option.value === selectedCableB) {
             option.disabled = true;
             option.style.color = "#9CA3AF";
@@ -221,7 +231,7 @@ function updateCoreAvailability() {
     const selectedCoreB = coreB.value;
 
     // Update Core B options
-    Array.from(coreB.options).forEach(option => {
+    Array.from(coreB.options).forEach((option) => {
         if (option.value && option.value === selectedCoreA) {
             option.disabled = true;
             option.style.color = "#9CA3AF";
@@ -232,7 +242,7 @@ function updateCoreAvailability() {
     });
 
     // Update Core A options
-    Array.from(coreA.options).forEach(option => {
+    Array.from(coreA.options).forEach((option) => {
         if (option.value && option.value === selectedCoreB) {
             option.disabled = true;
             option.style.color = "#9CA3AF";
@@ -246,9 +256,9 @@ function updateCoreAvailability() {
 function resetDropdown(selectElement, placeholder) {
     if (!selectElement) return;
 
-    selectElement.innerHTML = '';
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
+    selectElement.innerHTML = "";
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
     defaultOption.textContent = placeholder;
     selectElement.appendChild(defaultOption);
 }
@@ -268,18 +278,22 @@ function showLoading(selectElement, message) {
 function resetForm() {
     // Reset all selects to default state
     const selects = [
-        'cable_a_id', 'tube_a_id', 'core_a_id',
-        'cable_b_id', 'tube_b_id', 'core_b_id'
+        "cable_a_id",
+        "tube_a_id",
+        "core_a_id",
+        "cable_b_id",
+        "tube_b_id",
+        "core_b_id",
     ];
 
-    selects.forEach(id => {
+    selects.forEach((id) => {
         const element = document.getElementById(id);
         if (element) {
             // Reset selection
             element.selectedIndex = 0;
 
             // Re-enable all options
-            Array.from(element.options).forEach(option => {
+            Array.from(element.options).forEach((option) => {
                 option.disabled = false;
                 option.style.color = "";
             });

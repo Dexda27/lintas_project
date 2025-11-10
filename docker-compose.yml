@@ -1,0 +1,29 @@
+services:
+  app:
+    image: m4nzm333/php:8.3-fpm-nginx-alpine
+    container_name: lintas_project_app
+    volumes:
+      - ./:/var/www/html
+    env_file:
+      - .env
+    ports:
+      - 8000:80
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.7
+    container_name: lintas_project_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: lintas_project
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userpassword
+
+  adminer:
+    image: adminer
+    container_name: lintas_project_adminer
+    ports:
+      - 8080:8080
+    depends_on:
+      - db

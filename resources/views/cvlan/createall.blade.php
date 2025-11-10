@@ -17,7 +17,7 @@
                             <h1 class="text-3xl font-bold text-gray-800">Add New CVLAN</h1>
                             <p class="text-gray-500 mt-1">Fill in the following CVLAN data</p>
                         </div>
-                        <a href="{{ route('cvlan.all') }}"
+                        <a href="{{ route('cvlan.all') }}" tabindex="11"
                            class="inline-flex items-center gap-2 py-1.5 px-3 font-semibold text-white bg-gray-500 rounded-lg shadow-sm hover:bg-gray-600 transition-colors">
                             &larr; Cancel
                         </a>
@@ -28,11 +28,11 @@
                         <h3 class="text-lg font-semibold text-gray-700 mb-2">Connection Status</h3>
                         <div id="connection-buttons">
                             {{-- Default --}}
-                            <button type="button" id="make-standalone-btn" class="hidden inline-flex items-center gap-2 py-2 px-4 font-semibold text-white bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 ease-in-out">
+                            <button type="button" id="make-standalone-btn" tabindex="-1" class="hidden inline-flex items-center gap-2 py-2 px-4 font-semibold text-white bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 ease-in-out">
                                 <i data-lucide="unlink" class="w-5 h-5"></i>
                                 Make Standalone
                             </button>
-                            <button type="button" id="reconnect-svlan-btn" class="inline-flex items-center gap-2 py-2 px-4 font-semibold text-white bg-gradient-to-br from-green-500 to-teal-600 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 ease-in-out">
+                            <button type="button" id="reconnect-svlan-btn" tabindex="-1" class="inline-flex items-center gap-2 py-2 px-4 font-semibold text-white bg-gradient-to-br from-green-500 to-teal-600 rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 ease-in-out">
                                 <i data-lucide="link" class="w-5 h-5"></i>
                                 Connect to SVLAN
                             </button>
@@ -63,7 +63,7 @@
                                  class="hidden md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="md:col-span-2">
                                     <label for="svlan_id" class="block text-sm font-medium text-gray-700 mb-1">Connect to SVLAN</label>
-                                    <select id="svlan_id" name="svlan_id" class="form-select">
+                                    <select id="svlan_id" name="svlan_id" class="form-select" tabindex="1">
                                         @foreach($svlans as $svlan)
                                             <option value="{{ $svlan->id }}" {{ old('svlan_id') == $svlan->id ? 'selected' : '' }}>
                                                 Node: {{ $svlan->node->nama_node ?? 'N/A' }} | NMS: {{ $svlan->svlan_nms }}
@@ -76,7 +76,7 @@
                                 <div class="md:col-span-2 mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label for="connection_type" class="block text-sm font-medium text-gray-700 mb-1">Connection Type</label>
-                                        <select id="connection_type" name="connection_type" class="form-select">
+                                        <select id="connection_type" name="connection_type" class="form-select" tabindex="2">
                                             <option value="nms" {{ old('connection_type') == 'nms' ? 'selected' : '' }}>NMS</option>
                                             <option value="metro" {{ old('connection_type') == 'metro' ? 'selected' : '' }}>Metro</option>
                                             <option value="vpn" {{ old('connection_type') == 'vpn' ? 'selected' : '' }}>VPN</option>
@@ -89,9 +89,9 @@
                                         <label id="connection-value-label" for="connection_value"
                                                class="block text-sm font-medium text-gray-700 mb-1">Value</label>
                                         <input type="number" id="connection_value" name="connection_value"
-                                               value="{{ old('connection_value') }}" max="9999"
+                                               value="{{ old('connection_value') }}" max="9999" tabindex="3"
                                                oninput="javascript: if (this.value.length > 4) this.value = this.value.slice(0, 4);"
-                                               onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46"
+                                               onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 9"
                                                class="form-input">
                                     </div>
                                 </div>
@@ -100,7 +100,7 @@
                             {{-- Node Wrapper --}}
                             <div id="node-field-wrapper" class="md:col-span-2">
                                 <label for="node_id" class="block text-sm font-medium text-gray-700 mb-1">Node (Required if standalone)</label>
-                                <select id="node_id" name="node_id" class="form-select">
+                                <select id="node_id" name="node_id" class="form-select" tabindex="1">
                                     <option value="">No Node Available</option>
                                     @foreach($nodes as $node)
                                         <option value="{{ $node->id }}" {{ old('node_id') == $node->id ? 'selected' : '' }}>
@@ -114,25 +114,25 @@
                             <div class="md:col-span-2">
                                 <label for="cvlan_slot" class="block text-sm font-medium text-gray-700 mb-1">CVLAN</label>
                                 <input type="number" id="cvlan_slot" name="cvlan_slot"
-                                       value="{{ old('cvlan_slot') }}" class="form-input"
+                                       value="{{ old('cvlan_slot') }}" class="form-input" tabindex="4"
                                        placeholder="Enter value..." required max="9999"
                                        oninput="javascript: if (this.value.length > 4) this.value = this.value.slice(0, 4);"
-                                       onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46">
+                                       onkeydown="return event.keyCode >= 48 && event.keyCode <= 57 || event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 9">
                             </div>
                             <div class="md:col-span-2">
                                 <label for="no_jaringan" class="block text-sm font-medium text-gray-700 mb-1">Network No</label>
                                 <input type="text" id="no_jaringan" name="no_jaringan"
-                                       value="{{ old('no_jaringan') }}" class="form-input">
+                                       value="{{ old('no_jaringan') }}" class="form-input" tabindex="5">
                             </div>
                             <div class="md:col-span-2">
                                 <label for="nama_pelanggan" class="block text-sm font-medium text-gray-700 mb-1">Customer</label>
                                 <input type="text" id="nama_pelanggan" name="nama_pelanggan"
-                                       value="{{ old('nama_pelanggan') }}" class="form-input">
+                                       value="{{ old('nama_pelanggan') }}" class="form-input" tabindex="6">
                             </div>
                         </div>
 
                         <div class="mt-8 text-right">
-                            <button type="submit"
+                            <button type="submit" tabindex="10"
                                     class="inline-flex items-center gap-2 py-2 px-6 font-semibold text-white bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg shadow-md hover:-translate-y-0.5 transition-transform duration-200">
                                 <i data-lucide="plus-circle" class="w-5 h-5"></i>
                                 Save CVLAN
@@ -149,12 +149,10 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
+    // Initialize form classes and Select2
     $('.form-input, .form-select').addClass('block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm');
     $('#svlan_id, #node_id').select2({ width: '100%' });
     $('#connection_type').select2({ width: '100%'});
-    $(document).ready(function() {
-        switchToStandaloneMode();
-    });
 
     const makeStandaloneBtn = $('#make-standalone-btn');
     const reconnectSvlanBtn = $('#reconnect-svlan-btn');
@@ -176,6 +174,12 @@ $(document).ready(function() {
         isStandaloneInput.val('1');
         hideBtn(makeStandaloneBtn);
         showBtn(reconnectSvlanBtn);
+        
+        // Update tabindex untuk mode standalone
+        $('#node_id').attr('tabindex', '1');
+        $('#cvlan_slot').attr('tabindex', '2');
+        $('#no_jaringan').attr('tabindex', '3');
+        $('#nama_pelanggan').attr('tabindex', '4');
     }
 
     function switchToSvlanMode() {
@@ -184,6 +188,16 @@ $(document).ready(function() {
         isStandaloneInput.val('0');
         hideBtn(reconnectSvlanBtn);
         showBtn(makeStandaloneBtn);
+        
+        // Update tabindex untuk mode SVLAN
+        $('#svlan_id').attr('tabindex', '1');
+        $('#connection_type').attr('tabindex', '2');
+        $('#connection_value').attr('tabindex', '3');
+        $('#cvlan_slot').attr('tabindex', '4');
+        $('#no_jaringan').attr('tabindex', '5');
+        $('#nama_pelanggan').attr('tabindex', '6');
+        
+        toggleConnectionValue();
     }
 
     makeStandaloneBtn.on('click', switchToStandaloneMode);
@@ -203,6 +217,9 @@ $(document).ready(function() {
 
     toggleConnectionValue();
     connectionTypeSelect.on('change', toggleConnectionValue);
+    
+    // Initialize mode - Set to Standalone by default
+    switchToStandaloneMode();
 });
 </script>
 @endpush
