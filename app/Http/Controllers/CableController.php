@@ -34,15 +34,29 @@ class CableController extends Controller
             });
         }
 
-        // Add subquery to count connected cores for each cable
+        // Add subquery to count total connections for each cable
         $cables = $query->withCount([
-            'fiberCores as connected_cores_count' => function ($q) {
-                $q->where(function ($query) {
-                    $query->whereHas('connectionA')
-                        ->orWhereHas('connectionB');
-                });
+            'fiberCores as active_cores_count' => function ($q) {
+                $q->where('usage', 'active');
+            },
+            'fiberCores as inactive_cores_count' => function ($q) {
+                $q->where('usage', 'inactive');
+            },
+            'fiberCores as problem_cores_count' => function ($q) {
+                $q->where('status', 'not_ok');
             }
-        ])->orderBy('created_at', 'desc')->paginate(5);
+        ])
+        ->withCount([
+            'coreConnectionsA as connections_count_a',
+            'coreConnectionsB as connections_count_b'
+        ])
+        ->orderBy('created_at', 'desc')
+        ->paginate(5);
+
+        // Add total connections count to each cable
+        foreach ($cables as $cable) {
+            $cable->total_connections_count = $cable->connections_count_a + $cable->connections_count_b;
+        }
 
         return view('cables.index', compact('cables'));
     }
@@ -76,7 +90,7 @@ class CableController extends Controller
             'source_site' => 'required|string|max:255',
             'destination_site' => 'required|string|max:255|different:source_site',
             'description' => 'nullable|string|max:1000',
-         
+
         ]);
 
         // Check region access for admin

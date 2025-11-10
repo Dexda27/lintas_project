@@ -8,7 +8,7 @@ use App\Http\Controllers\ConnectionController;
 use App\Http\Controllers\SvlanController;
 use App\Http\Controllers\NodeController;
 use App\Http\Controllers\CvlanController;
-use App\Http\Controllers\UserController; // Add this import
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -27,49 +27,48 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cables/{cable}/cores', [CableController::class, 'cores'])->name('cables.cores');
     Route::put('/cores/{core}', [CableController::class, 'updateCore'])->name('cores.update');
 
-    // AJAX routes for cable management
-    Route::get('/cables/{cable}/tubes', [CableController::class, 'getTubes'])->name('cables.tubes');
-    Route::get('/cables/{cable}/tubes/{tube}/cores/available', [CableController::class, 'getAvailableCores'])->name('cables.cores.available');
-
     // Joint closure routes
     Route::resource('closures', JointClosureController::class);
     Route::get('/closures/{closure}/connections', [JointClosureController::class, 'connections'])->name('closures.connections');
-    Route::post('/closures/{closure}/connect', [JointClosureController::class, 'connectCores'])->name('closures.connect');
-    Route::get('/{closure}/edit', [JointClosureController::class, 'edit'])->name('edit');
-    Route::delete('/connections/{connection}', [JointClosureController::class, 'disconnectCores'])->name('connections.disconnect');
+    Route::post('/closures/{closure}/connect', [JointClosureController::class, 'connect'])->name('closures.connect');
 
-    // Connection routes
-    Route::post('/connections', [ConnectionController::class, 'store'])->name('connections.store');
+    // Connection management routes (SINGLE GROUP - NO DUPLICATE)
+    Route::prefix('connections')->group(function () {
+        // Single & Bulk connections
+        Route::post('/', [ConnectionController::class, 'store'])->name('connections.store');
+        Route::post('/bulk', [ConnectionController::class, 'bulkStore'])->name('connections.bulk-store');
 
-    // AJAX endpoints for connection form
-    Route::get('/connections/joint-closures', [ConnectionController::class, 'getJointClosures'])->name('connections.joint-closures');
-    Route::get('/connections/joint-closures/{closure}/cables', [ConnectionController::class, 'getCablesByJointClosure'])->name('connections.joint-closures.cables');
-    Route::get('/connections/cables/{cable}/tubes', [ConnectionController::class, 'getTubesByCable'])->name('connections.cables.tubes');
-    Route::get('/connections/cables/{cable}/tubes/{tube}/cores', [ConnectionController::class, 'getAvailableCores'])->name('connections.cables.cores');
+        Route::delete('/{connection}', [ConnectionController::class, 'destroy'])->name('connections.destroy');
+        Route::get('/core/{core}', [ConnectionController::class, 'getCoreConnections'])->name('connections.core');
 
-    // New routes for enhanced connection form (Cable -> Tube -> Core flow)
-    Route::get('/cables/{cable}/tubes-data', [ConnectionController::class, 'getTubesByCable'])->name('cables.tubes.data');
-    Route::get('/cables/{cable}/tubes/{tube}/cores-data', [ConnectionController::class, 'getCoresByTube'])->name('cables.cores.data');
+        // Cascade dropdowns
+        Route::get('/joint-closures', [ConnectionController::class, 'getJointClosures']);
+        Route::get('/joint-closures/{closure}/cables', [ConnectionController::class, 'getCablesByJointClosure']);
+        Route::get('/cables/{cable}/tubes', [ConnectionController::class, 'getTubesByCable']);
+        Route::get('/cables/{cable}/tubes/{tube}/cores', [ConnectionController::class, 'getCoresByTube']);
+        Route::get('/cables/{cable}/cores', [ConnectionController::class, 'getAvailableCores']);
+        Route::get('/regions/{region}/cables', [ConnectionController::class, 'getCablesByRegion']);
+    });
 
-    // User management routes (only accessible by super admin)
+    // User management routes
     Route::resource('users', UserController::class);
     Route::patch('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
 
-    // --- Node ID---
+    // Node routes
     Route::resource('nodes', NodeController::class);
     Route::get('nodes-generate-sample', [NodeController::class, 'generateSampleData'])->name('nodes.generateSample');
 
-    // --- SVLAN ---
+    // SVLAN routes
     Route::get('/svlan', [SvlanController::class, 'index'])->name('svlan.index');
     Route::get('/svlan/create', [SvlanController::class, 'create'])->name('svlan.create');
     Route::post('/svlan', [SvlanController::class, 'store'])->name('svlan.store');
     Route::get('/svlan/{svlan}/edit', [SvlanController::class, 'edit'])->name('svlan.edit');
     Route::put('/svlan/{svlan}', [SvlanController::class, 'update'])->name('svlan.update');
     Route::delete('/svlan/{svlan}', [SvlanController::class, 'destroy'])->name('svlan.destroy');
-    Route::get('/svlan/export-all', [App\Http\Controllers\SvlanController::class, 'exportAll'])->name('svlan.exportAll');
+    Route::get('/svlan/export-all', [SvlanController::class, 'exportAll'])->name('svlan.exportAll');
 
-    // --- CVLAN (GLOBAL / STANDALONE) ---
-    Route::get('/cvlans', [CvlanController::class, 'all'])->name('cvlan.all'); // URL diubah ke /cvlans agar konsisten
+    // CVLAN routes (global)
+    Route::get('/cvlans', [CvlanController::class, 'all'])->name('cvlan.all');
     Route::get('/cvlans/create', [CvlanController::class, 'createall'])->name('cvlan.createall');
     Route::post('/cvlans', [CvlanController::class, 'storeAll'])->name('cvlan.storeAll');
     Route::get('/cvlans/{id}/edit', [CvlanController::class, 'editAll'])->name('cvlan.editall');
@@ -77,7 +76,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/cvlans/{id}', [CvlanController::class, 'destroyAll'])->name('cvlan.destroyall');
     Route::get('/cvlan/export-all', [CvlanController::class, 'exportAllCsv'])->name('cvlan.exportAll');
 
-    // --- CVLAN (NESTED UNDER SVLAN) ---
+    // CVLAN routes (nested under SVLAN)
     Route::get('/svlan/{svlan_id}/cvlans', [CvlanController::class, 'index'])->name('cvlan.index');
     Route::get('/svlan/{svlan_id}/cvlans/create', [CvlanController::class, 'create'])->name('cvlan.create');
     Route::post('/svlan/{svlan_id}/cvlans', [CvlanController::class, 'store'])->name('cvlan.store');
@@ -85,5 +84,4 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/svlan/{svlan_id}/cvlans/{id}', [CvlanController::class, 'update'])->name('cvlan.update');
     Route::delete('/svlan/{svlan_id}/cvlans/{id}', [CvlanController::class, 'destroy'])->name('cvlan.destroy');
     Route::get('/svlan/{svlan_id}/cvlans/export', [CvlanController::class, 'exportCsvForSvlan'])->name('cvlan.exportForSvlan');
-    
 });

@@ -88,7 +88,7 @@
                     <div class="text-xs text-gray-500">Total: {{ $cable->total_cores }}</div>
                 </div>
 
-                <div class="flex flex-wrap gap-1 mb-1 text-xs text-gray-500">{{ $cable->connected_cores_count }} connections</div>
+                <div class="flex flex-wrap gap-1 mb-1 text-xs text-gray-500">{{ $cable->total_connections_count ?? 0 }} connections</div>
 
                 <div class="flex justify-between items-center">
                     <div class="flex flex-wrap gap-1">
@@ -182,7 +182,7 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                <div class="text-md text-gray-500">{{ $cable->connected_cores_count }} connections</div>
+                                <div class="text-md text-gray-500">{{ $cable->total_connections_count ?? 0 }} connections</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex justify-center space-x-2">

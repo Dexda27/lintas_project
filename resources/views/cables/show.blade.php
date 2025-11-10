@@ -4,11 +4,7 @@
 
 @push('scripts')
 <script>
-    window.currentCableId = {
-        {
-            $cable - > id
-        }
-    };
+    window.currentCableId = {{ $cable->id }};
 </script>
 <script src="{{ asset('js/manage-cores.js') }}"></script>
 @endpush
@@ -284,35 +280,54 @@
                         @endif
 
 
-                        @if($core->connection)
-                        @php $connectedCore = $core->connection->coreA->id === $core->id ? $core->connection->coreB : $core->connection->coreA; @endphp
-                        <div class="mt-2 p-2 bg-blue-50 rounded text-xs border-l-4 border-blue-400">
-                            <p class="font-medium text-blue-800 border-b border-blue-300 pb-1 mb-2">Connected to:</p>
-                            <div class="space-y-1 text-blue-700">
-                                <p class="font-medium">{{ $connectedCore->cable->cable_id }} | {{ $connectedCore->cable->name }}</p>
-                                <p class="font-medium">Via: {{ $core->connection->closure->closure_id }} | {{ $core->connection->closure->name ?? $core->connection->closure->closure_id }}</p>
-                                <p>Tube {{ $connectedCore->tube_number }} Core {{ $connectedCore->core_number }}</p>
-                                @if($core->connection->connection_type)
-                                <p>Type: {{ ucfirst($core->connection->connection_type) }}</p>
-                                @endif
-                                @if($core->connection->loss)
-                                <p>Loss: {{ $core->connection->loss }} dB</p>
-                                @endif
-                                @if($core->connection->notes)
-                                <p class="text-md text-gray-600">{{ $core->connection->notes }}</p>
-                                @endif
-                            </div>
+                        @php
+                            $connections = \App\Models\CoreConnection::where('core_a_id', $core->id)
+                                ->orWhere('core_b_id', $core->id)
+                                ->with(['coreA.cable', 'coreB.cable', 'closure'])
+                                ->get();
+                        @endphp
+
+                        @if($connections->count() > 0)
+                        <div class="mt-2 space-y-2">
+                            <p class="font-medium text-blue-800 text-xs mb-1">
+                                Connected to {{ $connections->count() }} {{ $connections->count() === 1 ? 'core' : 'cores' }}:
+                            </p>
+
+                            @foreach($connections as $index => $connection)
+                                @php
+                                    $connectedCore = $connection->coreA->id === $core->id ? $connection->coreB : $connection->coreA;
+                                @endphp
+                                <div class="p-2 bg-blue-50 rounded text-xs border-l-4 border-blue-400">
+                                    <div class="space-y-1 text-blue-700">
+                                        <p class="font-medium">{{ $connectedCore->cable->cable_id }} | {{ $connectedCore->cable->name }}</p>
+                                        <p class="font-semibold text-green-700">Via: {{ $connection->closure->closure_id }} | {{ $connection->closure->name ?? $connection->closure->closure_id }}</p>
+                                        <p>Tube {{ $connectedCore->tube_number }} Core {{ $connectedCore->core_number }}</p>
+                                        @if($connection->connection_type)
+                                        <p>Type: {{ ucfirst($connection->connection_type) }}</p>
+                                        @endif
+                                        @if($connection->loss)
+                                        <p>Loss: {{ $connection->loss }} dB</p>
+                                        @endif
+                                        @if($connection->notes)
+                                        <p class="text-md text-gray-600">{{ $connection->notes }}</p>
+                                        @endif
+                                    </div>
+                                    <button onclick="showDisconnectModal({{ $connection->id }}, '{{ $core->core_number }}', '{{ $core->tube_number }}', '{{ $connectedCore->cable->name }}', '{{ $connectedCore->core_number }}', '{{ $connectedCore->tube_number }}', '{{ $connection->closure->closure_id }}')"
+                                        class="mt-2 w-full px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 flex items-center justify-center">
+                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                        Disconnect
+                                    </button>
+                                </div>
+                            @endforeach
                         </div>
                         @endif
                     </div>
 
                     <div class="mt-4 flex space-x-2">
                         <button onclick="openCoreEditModal({{ $core->id }})" class="flex-1 px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">Edit</button>
-                        @if($core->connection)
-                        <button onclick="showDisconnectModal({{ $core->connection->id }}, '{{ $core->core_number }}', '{{ $core->tube_number }}', '{{ $connectedCore->cable->name }}', '{{ $connectedCore->core_number }}', '{{ $connectedCore->tube_number }}')" class="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700">Disconnect</button>
-                        @else
                         <button onclick="joinCore({{ $core->id }})" class="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700">Join</button>
-                        @endif
                     </div>
                 </div>
                 @endforeach
@@ -343,15 +358,21 @@
                 <div class="mb-4">
                     <p class="text-sm text-gray-600 mb-4">You are about to disconnect the following connection:</p>
 
-                    <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                    <div class="bg-gray-50 rounded-lg p-4 space-y-3">
                         <div class="flex items-center justify-between text-sm">
                             <span class="font-medium text-gray-700">Source:</span>
                             <span id="disconnect-source-info" class="text-gray-900"></span>
                         </div>
-                        <div class="flex items-center justify-center">
-                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
-                            </svg>
+                        <div class="flex items-center justify-center py-2">
+                            <div class="flex flex-col items-center">
+                                <svg class="w-4 h-4 text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                </svg>
+                                <span id="disconnect-closure-info" class="text-xs font-semibold text-green-700"></span>
+                                <svg class="w-4 h-4 text-gray-400 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                </svg>
+                            </div>
                         </div>
                         <div class="flex items-center justify-between text-sm">
                             <span class="font-medium text-gray-700">Target:</span>
@@ -391,120 +412,114 @@
 </div>
 
 {{-- Join Core Modal --}}
-<div id="join-core-modal" class="fixed inset-0 backdrop-blur-xs hidden z-50">
-    <div class="flex items-center justify-center min-h-screen px-4">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg">
-            <div class="px-6 py-4 border-b">
-                <h3 class="text-lg font-semibold">Join Core to Connection</h3>
-            </div>
-            <form id="join-core-form" class="p-6">
-                <input type="hidden" id="join-core-id">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Joint Closure (JC)</label>
-                        <select id="jc-selection" class="w-full px-3 py-2 border rounded-md" required>
-                            <option value="">Select JC...</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Target Cable</label>
-                        <select id="target-cable" class="w-full px-3 py-2 border rounded-md" required disabled>
-                            <option value="">Select Cable...</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Target Tube</label>
-                        <select id="target-tube" class="w-full px-3 py-2 border rounded-md" required disabled>
-                            <option value="">Select Tube...</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Target Core</label>
-                        <select id="target-core" class="w-full px-3 py-2 border rounded-md" required disabled>
-                            <option value="">Select Core...</option>
-                        </select>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Connection Type</label>
-                            <select id="connection-type" class="w-full px-3 py-2 border rounded-md">
-                                <option value="splice">Splice</option>
-                                <option value="patch">Patch</option>
-                                <option value="direct">Direct</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Loss (dB)</label>
-                            <input type="number" id="connection-loss" step="0.01" min="0" class="w-full px-3 py-2 border rounded-md">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Notes</label>
-                        <textarea id="connection-notes" rows="2" class="w-full px-3 py-2 border rounded-md"></textarea>
-                    </div>
-                </div>
-                <div class="mt-6 flex justify-end space-x-4">
-                    <button type="button" onclick="closeJoinModal()" class="px-4 py-2 border rounded-md hover:bg-gray-50">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Create Connection</button>
-                </div>
-            </form>
+<div id="join-core-modal" class="fixed inset-0 hidden items-center justify-center backdrop-blur-xs z-50 p-4">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white">
+        <div class="flex justify-between items-center pb-3 border-b">
+            <h3 class="text-xl font-semibold text-gray-900">Create Connection</h3>
+            <button onclick="closeJoinModal()" class="text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
         </div>
+
+        <form id="join-core-form" class="mt-4">
+            @csrf
+            <input type="hidden" id="join-core-id" name="core_id">
+
+            {{-- Source Core Info --}}
+            <div id="source-core-info" class="mb-4">
+                <!-- Will be populated by JavaScript -->
+            </div>
+
+            {{-- Connection Rows Container - IMPORTANT! --}}
+            <div id="connection-rows-container" class="space-y-4">
+                <!-- Connection rows will be added here dynamically -->
+            </div>
+
+            {{-- Add Connection Button --}}
+            <div class="mt-4">
+                <button type="button" id="add-connection-btn" class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <span class="flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Add Another Connection
+                    </span>
+                </button>
+            </div>
+
+            {{-- Submit Button --}}
+            <div class="flex justify-end gap-2 mt-6 pt-4 border-t">
+                <button type="button" onclick="closeJoinModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
+                    Cancel
+                </button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <span>Create Connection</span>
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
 {{-- Core Edit Modal --}}
-<div id="core-edit-modal" class="fixed inset-0 backdrop-blur-xs hidden z-50">
-    <div class="flex items-center justify-center min-h-screen px-4">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg">
-            <div class="px-6 py-4 border-b">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-lg font-semibold">Edit Core Information</h3>
-                </div>
+<div id="core-edit-modal" class="fixed inset-0 hidden items-center justify-center bg-gray-600 bg-opacity-50 backdrop-blur-xs z-50 p-4" onclick="if(event.target === this) closeCoreEditModal()">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto mx-auto">
+        <div class="px-4 sm:px-6 py-3 sm:py-4 border-b sticky top-0 bg-white z-10">
+            <div class="flex justify-between items-center">
+                <h3 class="text-base sm:text-lg font-semibold">Edit Core Information</h3>
+                <button type="button" onclick="closeCoreEditModal()" class="text-gray-400 hover:text-gray-600 p-1">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
+        </div>
 
-            <div class="p-6">
+        <div class="p-4 sm:p-6">
+            <form id="core-edit-form" class="space-y-3 sm:space-y-4">
+                <input type="hidden" id="edit-core-id">
 
-                <form id="core-edit-form" class="space-y-4">
-                    <input type="hidden" id="edit-core-id">
-
-                    <div>
-                        <label for="edit-core-status" class="block text-sm font-medium mb-1">Status</label>
-                        <select id="edit-core-status" class="w-full px-3 py-2 border rounded-md">
-                            <option value="ok">OK</option>
-                            <option value="not_ok">Not OK</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="edit-core-usage" class="block text-sm font-medium mb-1">Usage</label>
-                        <select id="edit-core-usage" class="w-full px-3 py-2 border rounded-md">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="edit-core-attenuation" class="block text-sm font-medium mb-1">Attenuation (dB)</label>
-                        <input type="number" id="edit-core-attenuation" step="0.01" min="0" placeholder="0.00" class="w-full px-3 py-2 border rounded-md">
-                    </div>
-
-                    <div>
-                        <label for="edit-core-description" class="block text-sm font-medium mb-1">Description</label>
-                        <textarea id="edit-core-description" rows="3" placeholder="Enter core description or notes..." class="w-full px-3 py-2 border rounded-md resize-none"></textarea>
-                    </div>
-                </form>
-
-                <div class="mt-6 flex justify-end space-x-4">
-                    <button type="button" onclick="closeCoreEditModal()" class="px-4 py-2 border rounded-md hover:bg-gray-50">Cancel</button>
-                    <button type="submit" form="core-edit-form" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Update Core
-                    </button>
+                <div>
+                    <label for="edit-core-status" class="block text-sm font-medium mb-1">Status</label>
+                    <select id="edit-core-status" class="w-full px-3 py-2 text-sm sm:text-base border rounded-md focus:ring-2 focus:ring-blue-500">
+                        <option value="ok">OK</option>
+                        <option value="not_ok">Not OK</option>
+                    </select>
                 </div>
+
+                <div>
+                    <label for="edit-core-usage" class="block text-sm font-medium mb-1">Usage</label>
+                    <select id="edit-core-usage" class="w-full px-3 py-2 text-sm sm:text-base border rounded-md focus:ring-2 focus:ring-blue-500">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="edit-core-attenuation" class="block text-sm font-medium mb-1">Attenuation (dB)</label>
+                    <input type="number" id="edit-core-attenuation" step="0.01" min="0" placeholder="0.00" class="w-full px-3 py-2 text-sm sm:text-base border rounded-md focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label for="edit-core-description" class="block text-sm font-medium mb-1">Description</label>
+                    <textarea id="edit-core-description" rows="3" placeholder="Enter core description or notes..." class="w-full px-3 py-2 text-sm sm:text-base border rounded-md resize-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+            </form>
+
+            <div class="mt-4 sm:mt-6 flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 sm:justify-end">
+                <button type="button" onclick="closeCoreEditModal()" class="w-full sm:w-auto px-4 py-2 text-sm sm:text-base border rounded-md hover:bg-gray-50 transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" form="core-edit-form" class="w-full sm:w-auto px-4 py-2 text-sm sm:text-base bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Update Core
+                </button>
             </div>
         </div>
     </div>
-</div
-    @endsection
+</div>
+
+@endsection
