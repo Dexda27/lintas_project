@@ -41,7 +41,7 @@
     <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 border-l-4 border-gray-500 p-4">
         <div class="flex items-center justify-between">
             <div class="flex-1 min-w-0">
-                <p class="text-sm text-gray-600 font-medium">Steel</p>
+                <p class="text-sm text-gray-600 font-medium">Besi</p>
                 <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ $poles->where('type', 'besi')->count() }}</h3>
             </div>
             <div class="bg-gray-500 text-white p-3 rounded-lg ml-2 flex-shrink-0">
@@ -56,7 +56,7 @@
     <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 border-l-4 border-gray-800 p-4">
         <div class="flex items-center justify-between">
             <div class="flex-1 min-w-0">
-                <p class="text-sm text-gray-600 font-medium">Concrete</p>
+                <p class="text-sm text-gray-600 font-medium">Beton</p>
                 <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ $poles->where('type', 'beton')->count() }}</h3>
             </div>
             <div class="bg-gray-800 text-white p-3 rounded-lg ml-2 flex-shrink-0">
@@ -117,8 +117,8 @@
             <div>
                 <select name="type" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     <option value="">All Types</option>
-                    <option value="besi" {{ request('type') == 'besi' ? 'selected' : '' }}>Steel</option>
-                    <option value="beton" {{ request('type') == 'beton' ? 'selected' : '' }}>Concrete</option>
+                    <option value="besi" {{ request('type') == 'besi' ? 'selected' : '' }}>Besi</option>
+                    <option value="beton" {{ request('type') == 'beton' ? 'selected' : '' }}>Beton</option>
                 </select>
             </div>
 
@@ -180,9 +180,9 @@
             <!-- Badges -->
             <div class="flex flex-wrap items-center gap-2 mb-3">
                 @if($pole->type == 'besi')
-                <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">Steel</span>
+                <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">Besi</span>
                 @else
-                <span class="px-2 py-1 bg-gray-800 text-white rounded-full text-xs font-medium">Concrete</span>
+                <span class="px-2 py-1 bg-gray-800 text-white rounded-full text-xs font-medium">Beton</span>
                 @endif
                 <span class="px-2 py-1 bg-gray-50 text-gray-600 rounded-full text-xs font-medium">{{ $pole->height }}m</span>
                 <span class="px-2 py-1 bg-blue-600 text-white rounded-full text-xs font-medium">JC: {{ $pole->jointClosures->count() }}</span>
@@ -279,11 +279,11 @@
                     <td class="px-3 py-3 whitespace-nowrap text-sm">
                         @if($pole->type == 'besi')
                         <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-700">
-                            Steel
+                            Besi
                         </span>
                         @else
                         <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-800 text-white">
-                            Concrete
+                            Beton
                         </span>
                         @endif
                     </td>

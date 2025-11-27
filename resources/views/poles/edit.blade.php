@@ -41,86 +41,86 @@
         @csrf
         @method('PUT')
 
-       <!-- Informasi Dasar -->
-<div class="bg-white border border-gray-200 rounded-lg overflow-hidden mb-6">
-    <div class="px-6 py-4 border-b border-gray-200">
-        <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Informasi Dasar</h2>
-    </div>
-    <div class="p-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- ID Tiang (Read-only) -->
-            <div>
-                <label for="pole_id" class="block text-sm font-medium text-gray-700 mb-2">
-                    ID Tiang <span class="text-red-500">*</span>
-                </label>
-                <input type="text"
-                       class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed focus:ring-2 focus:ring-gray-900 focus:border-gray-900 @error('pole_id') border-red-500 @enderror"
-                       id="pole_id"
-                       name="pole_id"
-                       value="{{ old('pole_id', $pole->pole_id) }}"
-                       readonly
-                       required>
-                <p class="mt-1 text-xs text-gray-500">ID Tiang tidak dapat diubah</p>
-                @error('pole_id')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
+        <!-- Informasi Dasar -->
+        <div class="bg-white border border-gray-200 rounded-lg overflow-hidden mb-6">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Informasi Dasar</h2>
             </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- ID Tiang (Read-only) -->
+                    <div>
+                        <label for="pole_id" class="block text-sm font-medium text-gray-700 mb-2">
+                            ID Tiang <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed focus:ring-2 focus:ring-gray-900 focus:border-gray-900 @error('pole_id') border-red-500 @enderror"
+                               id="pole_id"
+                               name="pole_id"
+                               value="{{ old('pole_id', $pole->pole_id) }}"
+                               readonly
+                               required>
+                        <p class="mt-1 text-xs text-gray-500">ID Tiang tidak dapat diubah</p>
+                        @error('pole_id')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-            <!-- Nama Tiang -->
-            <div>
-                <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                    Nama Tiang <span class="text-red-500">*</span>
-                </label>
-                <input type="text"
-                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 @error('name') border-red-500 @enderror"
-                       id="name"
-                       name="name"
-                       value="{{ old('name', $pole->name) }}"
-                       required>
-                @error('name')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
+                    <!-- Nama Tiang -->
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                            Nama Tiang <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 @error('name') border-red-500 @enderror"
+                               id="name"
+                               name="name"
+                               value="{{ old('name', $pole->name) }}"
+                               required>
+                        @error('name')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-            <!-- Region -->
-            <div>
-                <label for="region" class="block text-sm font-medium text-gray-700 mb-2">
-                    Region <span class="text-red-500">*</span>
-                </label>
-                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 @error('region') border-red-500 @enderror"
-                        id="region"
-                        name="region"
-                        required>
-                    <option value="">Pilih Region</option>
-                    @foreach($regions as $region)
-                        <option value="{{ $region }}" {{ old('region', $pole->region) == $region ? 'selected' : '' }}>
-                            {{ $region }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('region')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
+                    <!-- Region -->
+                    <div>
+                        <label for="region" class="block text-sm font-medium text-gray-700 mb-2">
+                            Region <span class="text-red-500">*</span>
+                        </label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 @error('region') border-red-500 @enderror"
+                                id="region"
+                                name="region"
+                                required>
+                            <option value="">Pilih Region</option>
+                            @foreach($regions as $region)
+                                <option value="{{ $region }}" {{ old('region', $pole->region) == $region ? 'selected' : '' }}>
+                                    {{ $region }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('region')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-            <!-- Lokasi -->
-            <div>
-                <label for="location" class="block text-sm font-medium text-gray-700 mb-2">
-                    Lokasi <span class="text-red-500">*</span>
-                </label>
-                <input type="text"
-                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 @error('location') border-red-500 @enderror"
-                       id="location"
-                       name="location"
-                       value="{{ old('location', $pole->location) }}"
-                       required>
-                @error('location')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
+                    <!-- Lokasi -->
+                    <div>
+                        <label for="location" class="block text-sm font-medium text-gray-700 mb-2">
+                            Lokasi <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 @error('location') border-red-500 @enderror"
+                               id="location"
+                               name="location"
+                               value="{{ old('location', $pole->location) }}"
+                               required>
+                        @error('location')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
         <!-- Spesifikasi Teknis -->
         <div class="bg-white border border-gray-200 rounded-lg overflow-hidden mb-6">
@@ -232,12 +232,27 @@
         <!-- Joint Closures Terhubung -->
         <div class="bg-white border border-gray-200 rounded-lg overflow-hidden mb-6">
             <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Joint Closures Terhubung</h2>
+                <div class="flex items-center justify-between">
+                    <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Joint Closures</h2>
+                    <span id="jcSelectedCount" class="text-xs text-gray-500"></span>
+                </div>
             </div>
             <div class="p-6">
+                <!-- Search Input for JC -->
+                <div id="jcSearchContainer" class="mb-4 hidden">
+                    <div class="relative">
+                        <input type="text"
+                               id="jcSearch"
+                               class="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+                               placeholder="Cari Joint Closure (ID, nama, atau lokasi)...">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <div id="jcResultInfo" class="mt-2 text-xs text-gray-500"></div>
+                </div>
+
                 <div id="jcContainer"
                      class="border border-gray-200 rounded-lg p-4 bg-gray-50 overflow-y-auto"
-                     style="max-height: 300px;">
+                     style="max-height: 400px;">
                     <div class="text-gray-500 text-sm text-center py-8">
                         <i class="fas fa-spinner fa-spin text-xl mb-2"></i>
                         <p>Memuat data...</p>
@@ -249,12 +264,27 @@
         <!-- Splitters Terhubung -->
         <div class="bg-white border border-gray-200 rounded-lg overflow-hidden mb-6">
             <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Splitters Terhubung</h2>
+                <div class="flex items-center justify-between">
+                    <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Splitters</h2>
+                    <span id="splitterSelectedCount" class="text-xs text-gray-500"></span>
+                </div>
             </div>
             <div class="p-6">
+                <!-- Search Input for Splitters -->
+                <div id="splitterSearchContainer" class="mb-4 hidden">
+                    <div class="relative">
+                        <input type="text"
+                               id="splitterSearch"
+                               class="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+                               placeholder="Cari Splitter (ID, nama, atau lokasi)...">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <div id="splitterResultInfo" class="mt-2 text-xs text-gray-500"></div>
+                </div>
+
                 <div id="splitterContainer"
                      class="border border-gray-200 rounded-lg p-4 bg-gray-50 overflow-y-auto"
-                     style="max-height: 300px;">
+                     style="max-height: 400px;">
                     <div class="text-gray-500 text-sm text-center py-8">
                         <i class="fas fa-spinner fa-spin text-xl mb-2"></i>
                         <p>Memuat data...</p>
@@ -266,7 +296,7 @@
         <!-- Catatan -->
         <div class="bg-white border border-gray-200 rounded-lg overflow-hidden mb-6">
             <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Catatan</h2>
+                <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Deskripsi</h2>
             </div>
             <div class="p-6">
                 <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 @error('description') border-red-500 @enderror"
@@ -302,10 +332,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const regionSelect = document.getElementById('region');
     const jcContainer = document.getElementById('jcContainer');
     const splitterContainer = document.getElementById('splitterContainer');
+    const jcSearch = document.getElementById('jcSearch');
+    const splitterSearch = document.getElementById('splitterSearch');
+    const jcSearchContainer = document.getElementById('jcSearchContainer');
+    const splitterSearchContainer = document.getElementById('splitterSearchContainer');
+    const jcSelectedCount = document.getElementById('jcSelectedCount');
+    const splitterSelectedCount = document.getElementById('splitterSelectedCount');
+    const jcResultInfo = document.getElementById('jcResultInfo');
+    const splitterResultInfo = document.getElementById('splitterResultInfo');
 
     // Data yang sudah terhubung
     const existingJCs = @json($pole->jointClosures->pluck('id')->toArray());
     const existingSplitters = @json($pole->splitters->pluck('id')->toArray());
+
+    let jcData = [];
+    let splitterData = [];
+    const MAX_DISPLAY = 5; // Maksimal data yang ditampilkan
 
     // Load data saat halaman pertama kali dibuka
     const initialRegion = regionSelect.value;
@@ -330,11 +372,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p>Pilih region terlebih dahulu</p>
                 </div>
             `;
+            jcSearchContainer.classList.add('hidden');
+            splitterSearchContainer.classList.add('hidden');
             return;
         }
 
         loadJointClosures(region);
         loadSplitters(region);
+    });
+
+    // Search functionality for JC
+    jcSearch.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        filterJointClosures(searchTerm);
+    });
+
+    // Search functionality for Splitters
+    splitterSearch.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        filterSplitters(searchTerm);
     });
 
     function loadJointClosures(region) {
@@ -344,10 +400,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p>Memuat data...</p>
             </div>
         `;
+        jcSearchContainer.classList.add('hidden');
 
         fetch(`/poles/joint-closures?region=${region}`)
             .then(response => response.json())
             .then(data => {
+                jcData = data;
                 if (data.length === 0) {
                     jcContainer.innerHTML = `
                         <div class="text-gray-500 text-sm text-center py-8">
@@ -356,26 +414,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `;
                 } else {
-                    let html = '<div class="space-y-2">';
-                    data.forEach(jc => {
-                        const isChecked = existingJCs.includes(jc.id) ? 'checked' : '';
-                        html += `
-                            <label class="flex items-start p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-900 cursor-pointer transition duration-150">
-                                <input class="mt-1 mr-3 h-4 w-4 text-gray-900 border-gray-300 rounded focus:ring-gray-900"
-                                       type="checkbox"
-                                       name="joint_closures[]"
-                                       value="${jc.id}"
-                                       ${isChecked}>
-                                <div class="flex-1 min-w-0">
-                                    <div class="font-medium text-gray-900 text-sm">${jc.closure_id}</div>
-                                    <div class="text-sm text-gray-600">${jc.name}</div>
-                                    <div class="text-xs text-gray-500 mt-1">${jc.location}</div>
-                                </div>
-                            </label>
-                        `;
-                    });
-                    html += '</div>';
-                    jcContainer.innerHTML = html;
+                    jcSearchContainer.classList.remove('hidden');
+                    jcSearch.value = '';
+                    renderJointClosures(data);
+                    updateJCCount();
                 }
             })
             .catch(error => {
@@ -385,6 +427,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p>Gagal memuat data</p>
                     </div>
                 `;
+                jcSearchContainer.classList.add('hidden');
             });
     }
 
@@ -395,10 +438,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p>Memuat data...</p>
             </div>
         `;
+        splitterSearchContainer.classList.add('hidden');
 
         fetch(`/poles/splitters?region=${region}`)
             .then(response => response.json())
             .then(data => {
+                splitterData = data;
                 if (data.length === 0) {
                     splitterContainer.innerHTML = `
                         <div class="text-gray-500 text-sm text-center py-8">
@@ -407,26 +452,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `;
                 } else {
-                    let html = '<div class="space-y-2">';
-                    data.forEach(splitter => {
-                        const isChecked = existingSplitters.includes(splitter.id) ? 'checked' : '';
-                        html += `
-                            <label class="flex items-start p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-900 cursor-pointer transition duration-150">
-                                <input class="mt-1 mr-3 h-4 w-4 text-gray-900 border-gray-300 rounded focus:ring-gray-900"
-                                       type="checkbox"
-                                       name="splitters[]"
-                                       value="${splitter.id}"
-                                       ${isChecked}>
-                                <div class="flex-1 min-w-0">
-                                    <div class="font-medium text-gray-900 text-sm">${splitter.splitter_id}</div>
-                                    <div class="text-sm text-gray-600">${splitter.name}</div>
-                                    <div class="text-xs text-gray-500 mt-1">${splitter.location}</div>
-                                </div>
-                            </label>
-                        `;
-                    });
-                    html += '</div>';
-                    splitterContainer.innerHTML = html;
+                    splitterSearchContainer.classList.remove('hidden');
+                    splitterSearch.value = '';
+                    renderSplitters(data);
+                    updateSplitterCount();
                 }
             })
             .catch(error => {
@@ -436,7 +465,172 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p>Gagal memuat data</p>
                     </div>
                 `;
+                splitterSearchContainer.classList.add('hidden');
             });
+    }
+
+    function filterJointClosures(searchTerm) {
+        if (searchTerm === '') {
+            renderJointClosures(jcData);
+        } else {
+            const filtered = jcData.filter(jc => {
+                return jc.closure_id.toLowerCase().includes(searchTerm) ||
+                       jc.name.toLowerCase().includes(searchTerm) ||
+                       jc.location.toLowerCase().includes(searchTerm);
+            });
+            renderJointClosures(filtered);
+        }
+    }
+
+    function filterSplitters(searchTerm) {
+        if (searchTerm === '') {
+            renderSplitters(splitterData);
+        } else {
+            const filtered = splitterData.filter(splitter => {
+                return splitter.splitter_id.toLowerCase().includes(searchTerm) ||
+                       splitter.name.toLowerCase().includes(searchTerm) ||
+                       splitter.location.toLowerCase().includes(searchTerm);
+            });
+            renderSplitters(filtered);
+        }
+    }
+
+    function renderJointClosures(data) {
+        const displayData = data.slice(0, MAX_DISPLAY);
+        const hasMore = data.length > MAX_DISPLAY;
+
+        // Update info text
+        if (jcSearch.value !== '') {
+            jcResultInfo.textContent = `Menampilkan ${displayData.length} dari ${data.length} hasil`;
+        } else {
+            jcResultInfo.textContent = `Menampilkan ${displayData.length} dari ${data.length} data${hasMore ? ' - Gunakan pencarian untuk menemukan lebih banyak' : ''}`;
+        }
+
+        if (data.length === 0) {
+            jcContainer.innerHTML = `
+                <div class="text-gray-500 text-sm text-center py-8">
+                    <i class="fas fa-search text-xl mb-2"></i>
+                    <p>Tidak ada hasil yang cocok</p>
+                </div>
+            `;
+        } else {
+            let html = '<div class="space-y-2">';
+            displayData.forEach(jc => {
+                const isChecked = existingJCs.includes(jc.id) ? 'checked' : '';
+                html += `
+                    <label class="flex items-start p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-900 cursor-pointer transition duration-150">
+                        <input class="mt-1 mr-3 h-4 w-4 text-gray-900 border-gray-300 rounded focus:ring-gray-900 jc-checkbox"
+                               type="checkbox"
+                               name="joint_closures[]"
+                               value="${jc.id}"
+                               ${isChecked}>
+                        <div class="flex-1 min-w-0">
+                            <div class="font-medium text-gray-900 text-sm">${jc.closure_id}</div>
+                            <div class="text-sm text-gray-600">${jc.name}</div>
+                            <div class="text-xs text-gray-500 mt-1">${jc.location}</div>
+                        </div>
+                    </label>
+                `;
+            });
+
+            if (hasMore) {
+                html += `
+                    <div class="text-center py-3 text-xs text-gray-500 bg-gray-100 rounded-lg border border-gray-200">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        ${data.length - MAX_DISPLAY} data lainnya tersembunyi. Gunakan pencarian untuk menemukan data spesifik.
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            jcContainer.innerHTML = html;
+
+            // Add event listeners to checkboxes
+            document.querySelectorAll('.jc-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', updateJCCount);
+            });
+
+            // Update count after rendering
+            updateJCCount();
+        }
+    }
+
+    function renderSplitters(data) {
+        const displayData = data.slice(0, MAX_DISPLAY);
+        const hasMore = data.length > MAX_DISPLAY;
+
+        // Update info text
+        if (splitterSearch.value !== '') {
+            splitterResultInfo.textContent = `Menampilkan ${displayData.length} dari ${data.length} hasil`;
+        } else {
+            splitterResultInfo.textContent = `Menampilkan ${displayData.length} dari ${data.length} data${hasMore ? ' - Gunakan pencarian untuk menemukan lebih banyak' : ''}`;
+        }
+
+        if (data.length === 0) {
+            splitterContainer.innerHTML = `
+                <div class="text-gray-500 text-sm text-center py-8">
+                    <i class="fas fa-search text-xl mb-2"></i>
+                    <p>Tidak ada hasil yang cocok</p>
+                </div>
+            `;
+        } else {
+            let html = '<div class="space-y-2">';
+            displayData.forEach(splitter => {
+                const isChecked = existingSplitters.includes(splitter.id) ? 'checked' : '';
+                html += `
+                    <label class="flex items-start p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-900 cursor-pointer transition duration-150">
+                        <input class="mt-1 mr-3 h-4 w-4 text-gray-900 border-gray-300 rounded focus:ring-gray-900 splitter-checkbox"
+                               type="checkbox"
+                               name="splitters[]"
+                               value="${splitter.id}"
+                               ${isChecked}>
+                        <div class="flex-1 min-w-0">
+                            <div class="font-medium text-gray-900 text-sm">${splitter.splitter_id}</div>
+                            <div class="text-sm text-gray-600">${splitter.name}</div>
+                            <div class="text-xs text-gray-500 mt-1">${splitter.location}</div>
+                        </div>
+                    </label>
+                `;
+            });
+
+            if (hasMore) {
+                html += `
+                    <div class="text-center py-3 text-xs text-gray-500 bg-gray-100 rounded-lg border border-gray-200">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        ${data.length - MAX_DISPLAY} data lainnya tersembunyi. Gunakan pencarian untuk menemukan data spesifik.
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            splitterContainer.innerHTML = html;
+
+            // Add event listeners to checkboxes
+            document.querySelectorAll('.splitter-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', updateSplitterCount);
+            });
+
+            // Update count after rendering
+            updateSplitterCount();
+        }
+    }
+
+    function updateJCCount() {
+        const checked = document.querySelectorAll('.jc-checkbox:checked').length;
+        if (checked > 0) {
+            jcSelectedCount.textContent = `${checked} dipilih`;
+        } else {
+            jcSelectedCount.textContent = '';
+        }
+    }
+
+    function updateSplitterCount() {
+        const checked = document.querySelectorAll('.splitter-checkbox:checked').length;
+        if (checked > 0) {
+            splitterSelectedCount.textContent = `${checked} dipilih`;
+        } else {
+            splitterSelectedCount.textContent = '';
+        }
     }
 });
 </script>
