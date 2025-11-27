@@ -19,16 +19,42 @@ class Cable extends Model
         'status',
         'usage',
         'otdr_length',
-        'source_site',     
+        'source_site',
         'destination_site',
         'description',
     ];
 
-   
+
 
     public function fiberCores()
     {
         return $this->hasMany(FiberCore::class);
+    }
+
+    // Relasi untuk koneksi melalui core A
+    public function coreConnectionsA()
+    {
+        return $this->hasManyThrough(
+            CoreConnection::class,
+            FiberCore::class,
+            'cable_id',      // Foreign key on fiber_cores table
+            'core_a_id',     // Foreign key on core_connections table
+            'id',            // Local key on cables table
+            'id'             // Local key on fiber_cores table
+        );
+    }
+
+    // Relasi untuk koneksi melalui core B
+    public function coreConnectionsB()
+    {
+        return $this->hasManyThrough(
+            CoreConnection::class,
+            FiberCore::class,
+            'cable_id',      // Foreign key on fiber_cores table
+            'core_b_id',     // Foreign key on core_connections table
+            'id',            // Local key on cables table
+            'id'             // Local key on fiber_cores table
+        );
     }
 
     public function getActiveCoresCountAttribute()

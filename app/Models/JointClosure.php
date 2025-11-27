@@ -33,11 +33,11 @@ class JointClosure extends Model
         return $this->capacity - $this->used_capacity;
     }
     /**
- * Get the poles connected to this joint closure
- */
-public function poles(): BelongsToMany
-{
-    return $this->belongsToMany(Pole::class, 'pole_joint_closure')
-        ->withTimestamps();
-}
+     * Get the poles connected to this joint closure
+     */
+    public function poles(): BelongsToMany
+    {
+        return $this->belongsToMany(Pole::class, 'pole_joint_closure')
+            ->withTimestamps();
+    }
 }
