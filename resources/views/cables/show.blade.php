@@ -2,6 +2,35 @@
 
 @section('title', 'Cable Details - ' . $cable->name)
 
+@push('styles')
+<style>
+    /* Custom scrollbar for connection lists */
+    .scrollbar-thin::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-track {
+        background: #DBEAFE; /* blue-100 */
+        border-radius: 3px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        background: #60A5FA; /* blue-400 */
+        border-radius: 3px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+        background: #3B82F6; /* blue-500 */
+    }
+
+    /* For Firefox */
+    .scrollbar-thin {
+        scrollbar-width: thin;
+        scrollbar-color: #60A5FA #DBEAFE;
+    }
+</style>
+@endpush
+
 @push('scripts')
 <script>
     window.currentCableId = {{ $cable->id }};
@@ -288,39 +317,42 @@
                         @endphp
 
                         @if($connections->count() > 0)
-                        <div class="mt-2 space-y-2">
-                            <p class="font-medium text-blue-800 text-xs mb-1">
+                        <div class="mt-2">
+                            <p class="font-medium text-blue-800 text-xs mb-2">
                                 Connected to {{ $connections->count() }} {{ $connections->count() === 1 ? 'core' : 'cores' }}:
                             </p>
 
-                            @foreach($connections as $index => $connection)
-                                @php
-                                    $connectedCore = $connection->coreA->id === $core->id ? $connection->coreB : $connection->coreA;
-                                @endphp
-                                <div class="p-2 bg-blue-50 rounded text-xs border-l-4 border-blue-400">
-                                    <div class="space-y-1 text-blue-700">
-                                        <p class="font-medium">{{ $connectedCore->cable->cable_id }} | {{ $connectedCore->cable->name }}</p>
-                                        <p class="font-semibold text-green-700">Via: {{ $connection->closure->closure_id }} | {{ $connection->closure->name ?? $connection->closure->closure_id }}</p>
-                                        <p>Tube {{ $connectedCore->tube_number }} Core {{ $connectedCore->core_number }}</p>
-                                        @if($connection->connection_type)
-                                        <p>Type: {{ ucfirst($connection->connection_type) }}</p>
-                                        @endif
-                                        @if($connection->loss)
-                                        <p>Loss: {{ $connection->loss }} dB</p>
-                                        @endif
-                                        @if($connection->notes)
-                                        <p class="text-md text-gray-600">{{ $connection->notes }}</p>
-                                        @endif
+                            {{-- Scrollable connections container --}}
+                            <div class="max-h-44 overflow-y-auto space-y-2 pr-1 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100">
+                                @foreach($connections as $index => $connection)
+                                    @php
+                                        $connectedCore = $connection->coreA->id === $core->id ? $connection->coreB : $connection->coreA;
+                                    @endphp
+                                    <div class="p-2 bg-blue-50 rounded text-xs border-l-4 border-blue-400">
+                                        <div class="space-y-1 text-blue-700">
+                                            <p class="font-medium">{{ $connectedCore->cable->cable_id }} | {{ $connectedCore->cable->name }}</p>
+                                            <p class="font-semibold text-green-700">Via: {{ $connection->closure->closure_id }} | {{ $connection->closure->name ?? $connection->closure->closure_id }}</p>
+                                            <p>Tube {{ $connectedCore->tube_number }} Core {{ $connectedCore->core_number }}</p>
+                                            @if($connection->connection_type)
+                                            <p>Type: {{ ucfirst($connection->connection_type) }}</p>
+                                            @endif
+                                            @if($connection->loss)
+                                            <p>Loss: {{ $connection->loss }} dB</p>
+                                            @endif
+                                            @if($connection->notes)
+                                            <p class="text-md text-gray-600">{{ $connection->notes }}</p>
+                                            @endif
+                                        </div>
+                                        <button onclick="showDisconnectModal({{ $connection->id }}, '{{ $core->core_number }}', '{{ $core->tube_number }}', '{{ $connectedCore->cable->name }}', '{{ $connectedCore->core_number }}', '{{ $connectedCore->tube_number }}', '{{ $connection->closure->closure_id }}')"
+                                            class="mt-2 w-full px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 flex items-center justify-center transition-colors">
+                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                            Disconnect
+                                        </button>
                                     </div>
-                                    <button onclick="showDisconnectModal({{ $connection->id }}, '{{ $core->core_number }}', '{{ $core->tube_number }}', '{{ $connectedCore->cable->name }}', '{{ $connectedCore->core_number }}', '{{ $connectedCore->tube_number }}', '{{ $connection->closure->closure_id }}')"
-                                        class="mt-2 w-full px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 flex items-center justify-center">
-                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                        </svg>
-                                        Disconnect
-                                    </button>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
                         @endif
                     </div>
@@ -412,54 +444,69 @@
 </div>
 
 {{-- Join Core Modal --}}
-<div id="join-core-modal" class="fixed inset-0 hidden items-center justify-center backdrop-blur-xs z-50 p-4">
-    <div class="relative top-20 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white">
-        <div class="flex justify-between items-center pb-3 border-b">
-            <h3 class="text-xl font-semibold text-gray-900">Create Connection</h3>
-            <button onclick="closeJoinModal()" class="text-gray-400 hover:text-gray-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
+<div id="join-core-modal" class="fixed inset-0 hidden z-50 backdrop-blur-xs" onclick="if(event.target === this) closeJoinModal()">
+    <div class="flex items-center justify-center min-h-screen px-4 py-6">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col my-auto">
+
+            {{-- Modal Header - Sticky --}}
+            <div class="px-4 sm:px-6 py-4 border-b border-gray-200 sticky top-0 bg-white rounded-t-lg z-10">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-base sm:text-xl font-semibold text-gray-900">Create Connection</h3>
+                        <p class="text-xs sm:text-sm text-gray-600 mt-1">Connect this core to multiple targets via different joint closures</p>
+                    </div>
+                    <button onclick="closeJoinModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+        {{-- Modal Body - Scrollable --}}
+        <div class="flex-1 overflow-y-auto p-4 sm:p-6">
+            <form id="join-core-form">
+                @csrf
+                <input type="hidden" id="join-core-id" name="core_id">
+
+                {{-- Source Core Info --}}
+                <div id="source-core-info" class="mb-4">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+
+                {{-- Connection Rows Container - IMPORTANT! --}}
+                <div id="connection-rows-container" class="space-y-4">
+                    <!-- Connection rows will be added here dynamically -->
+                </div>
+
+                {{-- Add Connection Button --}}
+                <div class="mt-4">
+                    <button type="button" id="add-connection-btn" class="w-full px-4 py-2 sm:py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors">
+                        <span class="flex items-center justify-center text-sm sm:text-base">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            Add Another Connection
+                        </span>
+                    </button>
+                </div>
+            </form>
         </div>
 
-        <form id="join-core-form" class="mt-4">
-            @csrf
-            <input type="hidden" id="join-core-id" name="core_id">
-
-            {{-- Source Core Info --}}
-            <div id="source-core-info" class="mb-4">
-                <!-- Will be populated by JavaScript -->
-            </div>
-
-            {{-- Connection Rows Container - IMPORTANT! --}}
-            <div id="connection-rows-container" class="space-y-4">
-                <!-- Connection rows will be added here dynamically -->
-            </div>
-
-            {{-- Add Connection Button --}}
-            <div class="mt-4">
-                <button type="button" id="add-connection-btn" class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
-                    <span class="flex items-center justify-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                        </svg>
-                        Add Another Connection
-                    </span>
-                </button>
-            </div>
-
-            {{-- Submit Button --}}
-            <div class="flex justify-end gap-2 mt-6 pt-4 border-t">
-                <button type="button" onclick="closeJoinModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
+        {{-- Modal Footer - Sticky --}}
+        <div class="px-4 sm:px-6 py-4 border-t border-gray-200 sticky bottom-0 bg-white rounded-b-lg z-10">
+            <div class="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3">
+                <button type="button" onclick="closeJoinModal()" class="w-full sm:w-auto px-4 py-2 text-sm sm:text-base bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
                     Cancel
                 </button>
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button type="submit" form="join-core-form" class="w-full sm:w-auto px-4 py-2 text-sm sm:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
                     <span>Create Connection</span>
                 </button>
             </div>
-        </form>
+        </div>
     </div>
+    </div>
+</div>
 </div>
 
 {{-- Core Edit Modal --}}

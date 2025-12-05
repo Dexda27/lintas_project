@@ -244,190 +244,74 @@
     @endif
 </div>
 
-<!-- Enhanced Connect Cores Modal -->
-<div id="connect-modal" class="fixed inset-0 backdrop-blur-xs hidden z-50">
+<!-- Enhanced Connect Cores Modal - Multi-Connection Support -->
+<div id="connect-modal" class="fixed inset-0 backdrop-blur-xs hidden z-50" onclick="if(event.target === this) closeConnectModal()">
     <div class="flex items-center justify-center min-h-screen px-4 py-6">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-screen overflow-y-auto">
-            <!-- Modal Header -->
-            <div class="px-4 md:px-6 py-4 border-b border-gray-200 sticky top-0 bg-white rounded-t-lg">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] flex flex-col">
+
+            <!-- Modal Header - Sticky -->
+            <div class="px-4 sm:px-6 py-4 border-b border-gray-200 sticky top-0 bg-white rounded-t-lg z-10">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900">Connect Cores</h3>
-                        <p class="text-sm text-gray-600 mt-1">Follow the steps: Cable → Tube → Core for each connection</p>
+                        <h3 class="text-base sm:text-lg font-semibold text-gray-900">Connect Cores</h3>
+                        <p class="text-xs sm:text-sm text-gray-600 mt-1">Create multiple connections at once. Click "Add Connection" for more.</p>
                     </div>
                     <button onclick="closeConnectModal()" class="text-gray-400 hover:text-gray-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
             </div>
 
-            <!-- Modal Content -->
-            <form id="connect-form" method="POST" action="{{ route('closures.connect', $closure) }}" class="p-4 md:p-6">
-                @csrf
+            <!-- Hidden field for closure ID -->
+            <input type="hidden" id="current-closure-id" value="{{ $closure->id }}">
 
-                <!-- Connection Steps Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+            <!-- Modal Content - Scrollable -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-6">
 
-                    <!-- Core A Selection -->
-                    <div class="bg-blue-50 rounded-lg p-4 md:p-6">
-                        <h4 class="text-md font-semibold text-blue-800 mb-4 flex items-center">
-                            <span class="bg-blue-600 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center mr-2">A</span>
-                            First Core Selection
-                        </h4>
-
-                        <!-- Step 1: Select Cable A -->
-                        <div class="space-y-2 mb-4">
-                            <label for="cable_a_id" class="block text-sm font-medium text-gray-700">
-                                <span class="bg-gray-200 text-gray-700 rounded px-2 py-1 text-xs mr-2">1</span>
-                                Select Cable
-                            </label>
-                            <select id="cable_a_id" name="cable_a_id" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                                <option value="">Choose cable...</option>
-                                @foreach($availableCables as $cable)
-                                <option value="{{ $cable->id }}">
-                                    {{ $cable->name }} ({{ $cable->cable_id }})
-                                </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Step 2: Select Tube A -->
-                        <div class="space-y-2 mb-4">
-                            <label for="tube_a_id" class="block text-sm font-medium text-gray-700">
-                                <span class="bg-gray-200 text-gray-700 rounded px-2 py-1 text-xs mr-2">2</span>
-                                Select Tube
-                            </label>
-                            <select id="tube_a_id" name="tube_a_id" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                                <option value="">Select cable first...</option>
-                            </select>
-                        </div>
-
-                        <!-- Step 3: Select Core A -->
-                        <div class="space-y-2">
-                            <label for="core_a_id" class="block text-sm font-medium text-gray-700">
-                                <span class="bg-gray-200 text-gray-700 rounded px-2 py-1 text-xs mr-2">3</span>
-                                Select Core
-                            </label>
-                            <select id="core_a_id" name="core_a_id" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                                <option value="">Select tube first...</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Core B Selection -->
-                    <div class="bg-green-50 rounded-lg p-4 md:p-6">
-                        <h4 class="text-md font-semibold text-green-800 mb-4 flex items-center">
-                            <span class="bg-green-600 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center mr-2">B</span>
-                            Second Core Selection
-                        </h4>
-
-                        <!-- Step 1: Select Cable B -->
-                        <div class="space-y-2 mb-4">
-                            <label for="cable_b_id" class="block text-sm font-medium text-gray-700">
-                                <span class="bg-gray-200 text-gray-700 rounded px-2 py-1 text-xs mr-2">1</span>
-                                Select Cable
-                            </label>
-                            <select id="cable_b_id" name="cable_b_id" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm">
-                                <option value="">Choose cable...</option>
-                                @foreach($availableCables as $cable)
-                                <option value="{{ $cable->id }}">
-                                    {{ $cable->name }} ({{ $cable->cable_id }})
-                                </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Step 2: Select Tube B -->
-                        <div class="space-y-2 mb-4">
-                            <label for="tube_b_id" class="block text-sm font-medium text-gray-700">
-                                <span class="bg-gray-200 text-gray-700 rounded px-2 py-1 text-xs mr-2">2</span>
-                                Select Tube
-                            </label>
-                            <select id="tube_b_id" name="tube_b_id" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm">
-                                <option value="">Select cable first...</option>
-                            </select>
-                        </div>
-
-                        <!-- Step 3: Select Core B -->
-                        <div class="space-y-2">
-                            <label for="core_b_id" class="block text-sm font-medium text-gray-700">
-                                <span class="bg-gray-200 text-gray-700 rounded px-2 py-1 text-xs mr-2">3</span>
-                                Select Core
-                            </label>
-                            <select id="core_b_id" name="core_b_id" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-sm">
-                                <option value="">Select tube first...</option>
-                            </select>
-                        </div>
-                    </div>
+                <!-- Connection Rows Container -->
+                <div id="connection-rows-container" class="space-y-4">
+                    <!-- Connection rows will be added dynamically by JavaScript -->
                 </div>
 
-                <!-- Connection Details -->
-                <div class="bg-gray-50 rounded-lg p-4 md:p-6 mt-6">
-                    <h4 class="text-md font-semibold text-gray-800 mb-4">Connection Details</h4>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Splice Loss -->
-                        <div class="space-y-2">
-                            <label for="splice_loss" class="block text-sm font-medium text-gray-700">
-                                Splice Loss (dB)
-                                <span class="text-gray-400 text-xs">(Optional)</span>
-                            </label>
-                            <input type="number"
-                                id="splice_loss"
-                                name="splice_loss"
-                                step="0.001"
-                                min="0"
-                                max="10"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                                placeholder="e.g., 0.15">
-                            <p class="text-xs text-gray-500">Typical splice loss: 0.05 - 0.3 dB</p>
-                        </div>
-
-                        <!-- Connection Description -->
-                        <div class="space-y-2">
-                            <label for="connection_description" class="block text-sm font-medium text-gray-700">
-                                Description
-                                <span class="text-gray-400 text-xs">(Optional)</span>
-                            </label>
-                            <input type="text"
-                                id="connection_description"
-                                name="description"
-                                maxlength="500"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                                placeholder="Connection notes or comments...">
-                            <p class="text-xs text-gray-500">Max 500 characters</p>
-                        </div>
-                    </div>
+                <!-- Add Connection Button -->
+                <div class="mt-4">
+                    <button type="button" id="add-connection-btn"
+                        class="w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-blue-500 hover:text-blue-600 transition-colors flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        <span class="font-medium text-sm sm:text-base">Add Another Connection</span>
+                    </button>
                 </div>
 
-                <!-- Modal Actions -->
-                <div class="mt-6 pt-4 border-t border-gray-200 flex flex-col-reverse sm:flex-row sm:justify-end space-y-2 space-y-reverse sm:space-y-0 sm:space-x-4">
+            </div>
+
+            <!-- Modal Actions - Sticky Footer -->
+            <div class="px-4 sm:px-6 py-4 border-t border-gray-200 sticky bottom-0 bg-white rounded-b-lg z-10">
+                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3">
                     <button type="button"
                         onclick="closeConnectModal()"
-                        class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 text-sm">
+                        class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 text-sm font-medium">
                         Cancel
                     </button>
-                    <button type="submit" id="submit-connection"
-                        class="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled>
+                    <button type="button" id="submit-connection"
+                        onclick="jcConnectionManager.submitConnections()"
+                        class="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed">
                         Create Connection
                     </button>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- JavaScript for Google Maps Integration -->
 <script>
+    // Available cables data
+    window.availableCablesData = @json($availableCables);
+
     /**
      * Opens Google Maps with the given coordinates
      * Works on both mobile and desktop devices
@@ -472,6 +356,24 @@
             window.open(googleMapsUrl, '_blank');
         }
     }
+
+    // Initialize connection manager when modal opens
+    document.addEventListener('DOMContentLoaded', function() {
+        // Override showConnectModal to initialize first row
+        const originalShowConnectModal = window.showConnectModal;
+        window.showConnectModal = function() {
+            if (originalShowConnectModal) {
+                originalShowConnectModal();
+            }
+            // Add first connection row if container is empty
+            setTimeout(() => {
+                const container = document.getElementById('connection-rows-container');
+                if (container && container.children.length === 0) {
+                    jcConnectionManager.addConnectionRow();
+                }
+            }, 100);
+        };
+    });
 </script>
 
 @endsection
