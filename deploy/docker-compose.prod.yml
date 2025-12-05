@@ -7,7 +7,7 @@ services:
     restart: always
     pull_policy: always
     volumes:
-      - lintas-project-data:/var/www/html/storage/app/public
+      - $APP_NAME-data:/var/www/html/storage/app/public
     labels:
       maintainer: m4nzm333
       traefik.enable: true
@@ -19,14 +19,14 @@ services:
       traefik.docker.network: proxy
     networks:
       - proxy
-      - lintas-project-net
+      - $APP_NAME-net
 
 networks:
   proxy:
     external: true
-  lintas-project-net:
+  $APP_NAME-net:
     external: true
 
 volumes:
-  lintas-project-data:
-    name: lintas-project-data
+  $APP_NAME-data:
+    name: $APP_NAME-data
